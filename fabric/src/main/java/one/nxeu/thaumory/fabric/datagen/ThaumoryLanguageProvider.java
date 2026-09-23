@@ -163,6 +163,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("codex.thaumory.circles.success", "Success");
             builder.add("codex.thaumory.circles.failure", "Failure");
             builder.add("codex.thaumory.aspects.count", "Worked out %s of %s");
+            builder.add("codex.thaumory.aspects.unknown", "Not yet worked out");
+            builder.add("codex.thaumory.aspects.primal", "Primal");
             builder.add("codex.thaumory.scanned.count", "%s items scanned");
             builder.add("message.thaumory.scan.nothing", "Nothing to scan");
             builder.add("message.thaumory.scan.already", "%s is already scanned");
@@ -312,6 +314,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("codex.thaumory.circles.success", "成功");
             builder.add("codex.thaumory.circles.failure", "失敗");
             builder.add("codex.thaumory.aspects.count", "%2$s 種のうち %1$s 種が判明");
+            builder.add("codex.thaumory.aspects.unknown", "まだ名が分からない");
+            builder.add("codex.thaumory.aspects.primal", "Primal（根源）");
             builder.add("codex.thaumory.scanned.count", "%s 種類をスキャン済み");
             builder.add("message.thaumory.scan.nothing", "スキャンできるものがない");
             builder.add("message.thaumory.scan.already", "%s はスキャン済み");

@@ -50,6 +50,8 @@
   "circle_effect.thaumory.ward": "結界",
   "circle_effect.thaumory.weather": "天候",
   "codex.thaumory.aspects.count": "%2$s 種のうち %1$s 種が判明",
+  "codex.thaumory.aspects.primal": "Primal（根源）",
+  "codex.thaumory.aspects.unknown": "まだ名が分からない",
   "codex.thaumory.chapter.complete": "✔ %s",
   "codex.thaumory.chapter.open": "◇ %s",
   "codex.thaumory.chapter.unlocks": "開放: %s",

@@ -50,6 +50,8 @@
   "circle_effect.thaumory.ward": "Warding",
   "circle_effect.thaumory.weather": "Weather",
   "codex.thaumory.aspects.count": "Worked out %s of %s",
+  "codex.thaumory.aspects.primal": "Primal",
+  "codex.thaumory.aspects.unknown": "Not yet worked out",
   "codex.thaumory.chapter.complete": "✔ %s",
   "codex.thaumory.chapter.open": "◇ %s",
   "codex.thaumory.chapter.unlocks": "Unlocks: %s",
