@@ -8,6 +8,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.api.aspect.AspectStack;
+import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.aspect.data.ItemAspectFile;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
@@ -21,7 +23,10 @@ final class ItemAspectProvider extends FabricCodecDataProvider<ItemAspectFile> {
     protected void configure(BiConsumer<Identifier, ItemAspectFile> output, HolderLookup.Provider registries) {
         output.accept(Thaumory.id("vanilla"), VanillaItemAspects.build());
         // A rune's aspect lives in a component, so the item itself has none (requirements §4.2).
-        output.accept(Thaumory.id("thaumory"), new ItemAspectFileBuilder().none(ThaumoryItems.RUNE.get()).build());
+        output.accept(Thaumory.id("thaumory"), new ItemAspectFileBuilder().none(ThaumoryItems.RUNE.get())
+                .item(ThaumoryItems.POLLUTED_SOIL.get(), new AspectStack(ThaumoryAspects.TERRA, 4), new AspectStack(ThaumoryAspects.VENENUM, 2))
+                .item(ThaumoryItems.POLLUTED_STONE.get(), new AspectStack(ThaumoryAspects.TERRA, 4), new AspectStack(ThaumoryAspects.CHAOS, 2))
+                .build());
     }
 
     @Override

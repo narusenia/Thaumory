@@ -24,6 +24,8 @@ import one.nxeu.thaumory.data.SettingsFileReloadListener;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxReadings;
 import one.nxeu.thaumory.flux.FluxSettings;
+import one.nxeu.thaumory.flux.FluxWorldEffects;
+import one.nxeu.thaumory.flux.pollution.PollutionRules;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
@@ -38,6 +40,7 @@ public final class Thaumory {
     public static final String MOD_ID = ThaumoryApi.MOD_ID;
 
     private static KnowledgeManager knowledge;
+    private static FluxManager flux;
 
     public static void init(ThaumoryPlatform platform) {
         ThaumoryAspects.register(ThaumoryApi.aspects());
@@ -45,7 +48,7 @@ public final class Thaumory {
         VanillaWorldChanges.register(ThaumoryApi.recipeAdapters());
         ThaumoryRecipes.registerAdapters(ThaumoryApi.recipeAdapters());
         ThaumoryCircleEffects.register(ThaumoryApi.circleEffects());
-        FluxManager flux = new FluxManager(platform.fluxStorage());
+        flux = new FluxManager(platform.fluxStorage());
         ThaumoryApi.provideFlux(flux);
         knowledge = new KnowledgeManager(platform.knowledgeStorage());
         ThaumoryComponents.register();
@@ -67,6 +70,7 @@ public final class Thaumory {
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/circle.json"), CircleSettings.CODEC, CircleSettings.DEFAULT, CoreBlockEntity::updateSettings), id("circle"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new CircleDefinitionReloadListener(), id("circle_definitions"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new PollutionRules(), id("pollution"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();
@@ -74,6 +78,12 @@ public final class Thaumory {
         knowledge.registerEvents();
         ItemScanner.register();
         FluxReadings.register();
+        new FluxWorldEffects(flux).register();
+    }
+
+    /** Flux in every chunk, with its settings. Available once {@link #init} has run. */
+    public static FluxManager flux() {
+        return flux;
     }
 
     /** Every player's knowledge. Available once {@link #init} has run. */

@@ -291,7 +291,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 
 - 2 種類: 汚染された土（草・土系から）、汚染された石（石・丸石・深層岩から）。どちらも普通に掘れて、それ自身を落とす
 - 変質の対応は `data/<namespace>/thaumory/pollution/*.json` に 1 ファイル 1 種類で書く。上位の datapack の同じパスのファイルが丸ごと置き換える
-  - 形式: `{"polluted": "thaumory:polluted_soil", "from": ["#minecraft:dirt", "minecraft:grass_block"], "restore": "minecraft:dirt"}`（`from` はブロックかブロックタグ）
+  - 形式: `{"polluted": "thaumory:polluted_soil", "from": ["#minecraft:dirt", "#minecraft:grass_blocks", "minecraft:farmland"], "restore": "minecraft:dirt"}`（`from` はブロックかブロックタグ）
 - 浄化の陣: 1 秒ごとに、範囲内の汚染ブロックを最大「2 × 強度（切り上げ）」個、`restore` のブロックに戻す（`restore_per_second`）
 
 ### 5.3 虚空の残滓（Void Remnant）

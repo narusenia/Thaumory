@@ -1,21 +1,51 @@
 package one.nxeu.thaumory.circle.effect;
 
 import java.util.Optional;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.circle.CircleContext;
 import one.nxeu.thaumory.api.circle.CircleEffect;
+import one.nxeu.thaumory.flux.pollution.PollutedBlock;
+import one.nxeu.thaumory.flux.pollution.PollutionIndex;
+import one.nxeu.thaumory.flux.pollution.PollutionRules;
 
 /**
- * Ordo + Lux, sustained. Takes Flux out of every chunk the range touches. With a Primal in slot 3
- * the Flux taken is gathered back as that aspect's Essentia in the Core.
+ * Ordo + Lux, sustained. Takes Flux out of every chunk the range touches and turns polluted blocks
+ * in range back. With a Primal in slot 3 the Flux taken is gathered back as that aspect's Essentia
+ * in the Core.
  */
 final class PurificationEffect implements CircleEffect {
     private static final String POOL = "pool";
+
+    /** Turns up to {@code limit} polluted blocks in {@code box} back into what they were. */
+    private static void restore(ServerLevel level, AABB box, int limit) {
+        PollutionIndex index = PollutionIndex.of(level);
+        int restored = 0;
+        for (BlockPos pos : index.within(box)) {
+            if (restored >= limit) {
+                return;
+            }
+            Block block = level.getBlockState(pos).getBlock();
+            Optional<Block> original = block instanceof PollutedBlock ? PollutionRules.restoreFor(block) : Optional.empty();
+            if (original.isEmpty()) {
+                // Gone already, or no rule says what it was.
+                if (!(block instanceof PollutedBlock)) {
+                    index.remove(pos);
+                }
+                continue;
+            }
+            level.setBlockAndUpdate(pos, original.get().defaultBlockState());
+            level.sendParticles(ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 2, 0.25, 0.1, 0.25, 0.01);
+            restored++;
+        }
+    }
 
     @Override
     public void apply(CircleContext context) {
@@ -28,6 +58,7 @@ final class PurificationEffect implements CircleEffect {
                 removed += ThaumoryApi.flux().remove(level, new ChunkPos(cx, cz), rate);
             }
         }
+        restore(level, box, (int) Math.ceil(context.setting("restore_per_second", 2) * context.strength()));
         Optional<Aspect> gather = context.parameter().filter(Aspect::isPrimal);
         if (gather.isEmpty() || removed <= 0) {
             return;

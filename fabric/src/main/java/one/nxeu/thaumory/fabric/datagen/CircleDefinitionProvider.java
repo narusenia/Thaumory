@@ -44,7 +44,7 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
         triggered(output, ThaumoryCircleEffects.TELEPORT, ARCANUM, AER, List.of(CircleDefinitionFile.ANY), 4);
         sustained(output, ThaumoryCircleEffects.LIGHT, LUX, IGNIS, slot3(true, UMBRA), Map.of());
         sustained(output, ThaumoryCircleEffects.PURIFICATION, ORDO, LUX, slot3(true, IGNIS, AER, VITA, AQUA, TERRA, MORS),
-                Map.of("flux_per_second", 0.5, "flux_per_essentia", 2.0));
+                Map.of("flux_per_second", 0.5, "flux_per_essentia", 2.0, "restore_per_second", 2.0));
         sustained(output, ThaumoryCircleEffects.WARD, VINCULUM, ORDO, slot3(false, BESTIA, MORS, CHAOS), Map.of());
         sustained(output, ThaumoryCircleEffects.GROWTH, HERBA, VITA, slot3(false, HERBA, BESTIA), Map.of());
         sustained(output, ThaumoryCircleEffects.HEALING, VITA, ORDO, slot3(true, BESTIA), Map.of());

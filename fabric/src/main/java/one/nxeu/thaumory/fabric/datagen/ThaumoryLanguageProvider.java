@@ -72,6 +72,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "Economizing Chalk");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "Stabilizing Chalk");
             builder.add(ThaumoryBlocks.CORE.get(), "Circle Core");
+            builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "Polluted Soil");
+            builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "Polluted Stone");
             builder.add("message.thaumory.core.full", "All three rune slots are full");
             builder.add("hud.thaumory.core.runes", "Runes:");
             builder.add("hud.thaumory.core.empty_slot", "—");
@@ -175,6 +177,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "節約のチョーク");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "安定のチョーク");
             builder.add(ThaumoryBlocks.CORE.get(), "陣の核");
+            builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "汚染された土");
+            builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "汚染された石");
             builder.add("message.thaumory.core.full", "ルーンのスロットは 3 つとも埋まっている");
             builder.add("hud.thaumory.core.runes", "ルーン:");
             builder.add("hud.thaumory.core.empty_slot", "—");

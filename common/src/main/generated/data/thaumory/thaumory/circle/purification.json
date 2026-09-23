@@ -7,7 +7,8 @@
   ],
   "settings": {
     "flux_per_essentia": 2.0,
-    "flux_per_second": 0.5
+    "flux_per_second": 0.5,
+    "restore_per_second": 2.0
   },
   "slot3": [
     "none",

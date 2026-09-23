@@ -1,0 +1,10 @@
+{
+  "from": [
+    "#minecraft:dirt",
+    "#minecraft:grass_blocks",
+    "minecraft:dirt_path",
+    "minecraft:farmland"
+  ],
+  "polluted": "thaumory:polluted_soil",
+  "restore": "minecraft:dirt"
+}

@@ -50,6 +50,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     /** Cauldron shapes with Thaumory's own textures. Water is a plain texture, so it needs no tint. */
     @Override
     public void generateBlockStateModels(BlockModelGenerators generators) {
+        generators.createTrivialCube(ThaumoryBlocks.POLLUTED_SOIL.get());
+        generators.createTrivialCube(ThaumoryBlocks.POLLUTED_STONE.get());
         CrucibleBlock crucible = ThaumoryBlocks.CRUCIBLE.get();
         TextureMapping textures = new TextureMapping()
                 .put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(crucible, "_side"))

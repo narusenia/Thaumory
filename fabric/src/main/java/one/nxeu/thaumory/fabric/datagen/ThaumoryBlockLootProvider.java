@@ -21,6 +21,8 @@ final class ThaumoryBlockLootProvider extends FabricBlockLootSubProvider {
     public void generate() {
         dropSelf(ThaumoryBlocks.CRUCIBLE.get());
         dropSelf(ThaumoryBlocks.CORE.get());
+        dropSelf(ThaumoryBlocks.POLLUTED_SOIL.get());
+        dropSelf(ThaumoryBlocks.POLLUTED_STONE.get());
         // A broken jar keeps its Essentia and label.
         add(ThaumoryBlocks.JAR.get(), LootTable.lootTable().withPool(applyExplosionCondition(ThaumoryBlocks.JAR.get(), LootPool.lootPool()
                 .add(LootItem.lootTableItem(ThaumoryBlocks.JAR.get())

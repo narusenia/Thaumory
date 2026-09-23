@@ -1,0 +1,9 @@
+{
+  "from": [
+    "#minecraft:base_stone_overworld",
+    "minecraft:cobblestone",
+    "minecraft:cobbled_deepslate"
+  ],
+  "polluted": "thaumory:polluted_stone",
+  "restore": "minecraft:stone"
+}

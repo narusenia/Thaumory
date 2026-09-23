@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.flux.pollution.PollutedBlock;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CoreBlock;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
@@ -46,6 +47,12 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<ChalkPatternBlock> EXTENDING_PATTERN = pattern("extending_pattern", ThaumoryItems.EXTENDING_CHALK);
     public static final RegistrySupplier<ChalkPatternBlock> ECONOMIZING_PATTERN = pattern("economizing_pattern", ThaumoryItems.ECONOMIZING_CHALK);
     public static final RegistrySupplier<ChalkPatternBlock> STABILIZING_PATTERN = pattern("stabilizing_pattern", ThaumoryItems.STABILIZING_CHALK);
+
+    public static final RegistrySupplier<PollutedBlock> POLLUTED_SOIL = register("polluted_soil", PollutedBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.5f).sound(SoundType.GRAVEL));
+    public static final RegistrySupplier<PollutedBlock> POLLUTED_STONE = register("polluted_stone", PollutedBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).requiresCorrectToolForDrops().strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE));
 
     public static final RegistrySupplier<BlockEntityType<JarBlockEntity>> JAR_ENTITY = BLOCK_ENTITIES.register(
             "jar", () -> new BlockEntityType<>(JarBlockEntity::new, Set.of(JAR.get())));
