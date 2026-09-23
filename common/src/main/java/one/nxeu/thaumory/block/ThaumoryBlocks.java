@@ -14,6 +14,8 @@ import net.minecraft.world.level.material.MapColor;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
+import one.nxeu.thaumory.block.jar.JarBlock;
+import one.nxeu.thaumory.block.jar.JarBlockEntity;
 
 /** Blocks and their block entities. Block items are registered in {@link one.nxeu.thaumory.item.ThaumoryItems}. */
 public final class ThaumoryBlocks {
@@ -24,6 +26,12 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<CrucibleBlock> CRUCIBLE = register("crucible", CrucibleBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops()
                     .strength(2.0f).sound(SoundType.METAL).noOcclusion());
+
+    public static final RegistrySupplier<JarBlock> JAR = register("jar", JarBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
+
+    public static final RegistrySupplier<BlockEntityType<JarBlockEntity>> JAR_ENTITY = BLOCK_ENTITIES.register(
+            "jar", () -> new BlockEntityType<>(JarBlockEntity::new, Set.of(JAR.get())));
 
     public static final RegistrySupplier<BlockEntityType<CrucibleBlockEntity>> CRUCIBLE_ENTITY = BLOCK_ENTITIES.register(
             "crucible", () -> new BlockEntityType<>(CrucibleBlockEntity::new, Set.of(CRUCIBLE.get())));

@@ -1,0 +1,9 @@
+{
+  "parent": "thaumory:block/template_jar_labeled",
+  "textures": {
+    "bottom": "thaumory:block/jar_bottom",
+    "label": "thaumory:block/jar_label",
+    "lid": "thaumory:block/jar_lid",
+    "side": "thaumory:block/jar_side"
+  }
+}

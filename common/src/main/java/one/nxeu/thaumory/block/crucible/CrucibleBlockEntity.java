@@ -40,6 +40,7 @@ import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.crucible.CrucibleTank;
+import one.nxeu.thaumory.item.ThaumoryComponents;
 
 /**
  * Heats up while there is water and a heat source below, then melts the items inside one at a
@@ -80,6 +81,11 @@ public final class CrucibleBlockEntity extends BlockEntity {
 
     void setWater(int water) {
         setTank(tank.withWater(water));
+    }
+
+    /** Replaces the Essentia, keeping the water. For jars drawing from or pouring into the Crucible. */
+    public void setContents(AspectList contents) {
+        setTank(new CrucibleTank(contents, tank.water(), tank.essentiaSinceWaterDrop()));
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CrucibleBlockEntity crucible) {
@@ -131,7 +137,8 @@ public final class CrucibleBlockEntity extends BlockEntity {
                 return;
             }
             AspectList aspects = ItemAspects.get(stack);
-            if (aspects.isEmpty()) {
+            // A jar holding Essentia would take it into the melt unseen; leave it for the player to empty.
+            if (aspects.isEmpty() || stack.has(ThaumoryComponents.JAR_CONTENTS.get())) {
                 continue;
             }
             double ratio = ItemAspects.source(stack.getItem()) == ItemAspects.Source.DATAPACK

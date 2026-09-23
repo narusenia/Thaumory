@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:paper",
+    "minecraft:ink_sac"
+  ],
+  "result": {
+    "count": 4,
+    "id": "thaumory:label"
+  }
+}

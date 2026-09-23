@@ -10,6 +10,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -61,6 +62,19 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 alchemy("extending_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.EXTENDING_CHALK.get(), new AspectStack(AER, 8));
                 alchemy("economizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.ECONOMIZING_CHALK.get(), new AspectStack(VINCULUM, 4));
                 alchemy("stabilizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.STABILIZING_CHALK.get(), new AspectStack(ORDO, 4));
+                shaped(RecipeCategory.BREWING, ThaumoryItems.JAR.get())
+                        .pattern(" W ")
+                        .pattern("G G")
+                        .pattern("GGG")
+                        .define('W', ItemTags.WOODEN_SLABS)
+                        .define('G', Items.GLASS)
+                        .unlockedBy(getHasName(Items.GLASS), has(Items.GLASS))
+                        .save(output);
+                shapeless(RecipeCategory.MISC, ThaumoryItems.LABEL.get(), 4)
+                        .requires(Items.PAPER)
+                        .requires(Items.INK_SAC)
+                        .unlockedBy(getHasName(Items.PAPER), has(Items.PAPER))
+                        .save(output);
                 shapeless(RecipeCategory.BREWING, ThaumoryItems.CRUCIBLE.get())
                         .requires(Items.CAULDRON)
                         .requires(Items.GOLD_INGOT)

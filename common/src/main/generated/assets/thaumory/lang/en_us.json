@@ -19,6 +19,7 @@
   "aspect.thaumory.vinculum": "Vinculum",
   "aspect.thaumory.vita": "Vita",
   "block.thaumory.crucible": "Crucible",
+  "block.thaumory.jar": "Jar",
   "codex.thaumory.aspects.count": "Worked out %s of %s",
   "codex.thaumory.chapters.empty": "No chapters completed yet.",
   "codex.thaumory.circles.empty": "No circles tried yet.",
@@ -43,12 +44,16 @@
   "item.thaumory.chalk": "Chalk",
   "item.thaumory.economizing_chalk": "Economizing Chalk",
   "item.thaumory.extending_chalk": "Extending Chalk",
+  "item.thaumory.label": "Label",
   "item.thaumory.stabilizing_chalk": "Stabilizing Chalk",
   "itemGroup.thaumory": "Thaumory",
+  "message.thaumory.jar.cannot_label": "A label only goes on a jar holding exactly one aspect",
   "message.thaumory.scan.already": "%s is already scanned",
   "message.thaumory.scan.no_aspects": "Scanned %s: no aspects",
   "message.thaumory.scan.nothing": "Nothing to scan",
   "message.thaumory.scan.result": "Scanned %s: %s",
   "message.thaumory.scan.revealed": "Worked out a new aspect: %s",
-  "tooltip.thaumory.aspects": "Aspects:"
+  "tooltip.thaumory.aspects": "Aspects:",
+  "tooltip.thaumory.jar.essentia": "Essentia %s",
+  "tooltip.thaumory.jar.label": "Label: %s"
 }

@@ -19,6 +19,7 @@
   "aspect.thaumory.vinculum": "Vinculum",
   "aspect.thaumory.vita": "Vita",
   "block.thaumory.crucible": "るつぼ",
+  "block.thaumory.jar": "瓶",
   "codex.thaumory.aspects.count": "%2$s 種のうち %1$s 種が判明",
   "codex.thaumory.chapters.empty": "完了した章はまだない。",
   "codex.thaumory.circles.empty": "まだ陣を試していない。",
@@ -43,12 +44,16 @@
   "item.thaumory.chalk": "チョーク",
   "item.thaumory.economizing_chalk": "節約のチョーク",
   "item.thaumory.extending_chalk": "延長のチョーク",
+  "item.thaumory.label": "ラベル",
   "item.thaumory.stabilizing_chalk": "安定のチョーク",
   "itemGroup.thaumory": "Thaumory",
+  "message.thaumory.jar.cannot_label": "ラベルは中身が 1 種類の瓶にしか貼れない",
   "message.thaumory.scan.already": "%s はスキャン済み",
   "message.thaumory.scan.no_aspects": "%s をスキャンした: アスペクトなし",
   "message.thaumory.scan.nothing": "スキャンできるものがない",
   "message.thaumory.scan.result": "%s をスキャンした: %s",
   "message.thaumory.scan.revealed": "新しいアスペクトが判明した: %s",
-  "tooltip.thaumory.aspects": "アスペクト:"
+  "tooltip.thaumory.aspects": "アスペクト:",
+  "tooltip.thaumory.jar.essentia": "Essentia %s",
+  "tooltip.thaumory.jar.label": "ラベル: %s"
 }

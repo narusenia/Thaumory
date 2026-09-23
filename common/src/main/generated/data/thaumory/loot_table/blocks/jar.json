@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "include": [
+              "thaumory:jar_contents"
+            ],
+            "source": "block_entity"
+          },
+          "name": "thaumory:jar"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

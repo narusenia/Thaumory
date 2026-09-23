@@ -13,12 +13,15 @@ import one.nxeu.thaumory.aspect.estimate.VanillaRecipeAdapters;
 import one.nxeu.thaumory.aspect.estimate.VanillaWorldChanges;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
+import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.command.ThaumoryCommands;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.data.SettingsFileReloadListener;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxSettings;
+import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
+import one.nxeu.thaumory.jar.JarSettings;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.network.AspectSync;
 import one.nxeu.thaumory.scan.ItemScanner;
@@ -37,6 +40,7 @@ public final class Thaumory {
         FluxManager flux = new FluxManager(platform.fluxStorage());
         ThaumoryApi.provideFlux(flux);
         knowledge = new KnowledgeManager(platform.knowledgeStorage());
+        ThaumoryComponents.register();
         ThaumoryBlocks.register();
         ThaumoryItems.register();
         ThaumoryRecipes.register();
@@ -48,6 +52,8 @@ public final class Thaumory {
                 id("thaumory/scanning.json"), ScanSettings.CODEC, ScanSettings.DEFAULT, ItemScanner::updateSettings), id("scanning"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/crucible.json"), CrucibleSettings.CODEC, CrucibleSettings.DEFAULT, CrucibleBlockEntity::updateSettings), id("crucible"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
+                id("thaumory/jar.json"), JarSettings.CODEC, JarSettings.DEFAULT, JarBlockEntity::updateSettings), id("jar"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();

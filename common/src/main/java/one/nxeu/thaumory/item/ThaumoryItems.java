@@ -29,6 +29,10 @@ public final class ThaumoryItems {
     public static final RegistrySupplier<Item> EXTENDING_CHALK = chalk("extending_chalk");
     public static final RegistrySupplier<Item> ECONOMIZING_CHALK = chalk("economizing_chalk");
     public static final RegistrySupplier<Item> STABILIZING_CHALK = chalk("stabilizing_chalk");
+    public static final RegistrySupplier<JarItem> JAR =
+            register("jar", properties -> new JarItem(ThaumoryBlocks.JAR.get(), properties),
+                    new Item.Properties().stacksTo(1).useBlockDescriptionPrefix());
+    public static final RegistrySupplier<Item> LABEL = register("label", Item::new, new Item.Properties());
     public static final RegistrySupplier<BlockItem> CRUCIBLE =
             register("crucible", properties -> new BlockItem(ThaumoryBlocks.CRUCIBLE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
@@ -37,7 +41,7 @@ public final class ThaumoryItems {
 
     /** Every Thaumory item, in the order the creative tab shows them. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, ARCANE_CODEX, CRUCIBLE, BLANK_RUNE,
+            ARCANE_LOUPE, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, BLANK_RUNE,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK);
 
     public static final RegistrySupplier<CreativeModeTab> TAB = TABS.register("thaumory", () -> CreativeTabRegistry.create(builder -> builder

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:glass",
+    "W": "#minecraft:wooden_slabs"
+  },
+  "pattern": [
+    " W ",
+    "G G",
+    "GGG"
+  ],
+  "result": {
+    "id": "thaumory:jar"
+  }
+}

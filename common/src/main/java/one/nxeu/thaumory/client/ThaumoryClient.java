@@ -7,15 +7,19 @@ import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.transformers.SplitPacketTransformer;
 import java.util.List;
+import java.util.OptionalInt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
 import one.nxeu.thaumory.item.ArcaneCodexItem;
+import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
@@ -42,9 +46,19 @@ public final class ThaumoryClient {
             ClientItemAspects.clear();
             ClientKnowledge.clear();
         });
-        ClientGuiEvent.RENDER_HUD.register(CrucibleHud::render);
+        ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         ArcaneCodexItem.setScreenOpener(() -> Minecraft.getInstance().gui.setScreen(new ArcaneCodexScreen()));
-        ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> appendAspects(stack.getItem(), lines));
+        ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
+            appendJarContents(stack, lines);
+            appendAspects(stack.getItem(), lines);
+        });
+    }
+
+    private static void appendJarContents(ItemStack stack, List<Component> lines) {
+        JarContents contents = stack.get(ThaumoryComponents.JAR_CONTENTS.get());
+        if (contents != null) {
+            lines.addAll(JarText.describe(contents, OptionalInt.empty(), ClientKnowledge.get()));
+        }
     }
 
     /** Aspects of scanned items only; aspects the player has not worked out show as "?". */

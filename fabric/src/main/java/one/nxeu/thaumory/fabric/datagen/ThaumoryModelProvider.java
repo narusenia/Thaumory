@@ -13,7 +13,9 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.resources.Identifier;
+import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
@@ -24,6 +26,13 @@ final class ThaumoryModelProvider extends FabricModelProvider {
 
     private static final ModelTemplate CAULDRON = new ModelTemplate(Optional.of(Identifier.withDefaultNamespace("block/cauldron")),
             Optional.empty(), TextureSlot.PARTICLE, TextureSlot.TOP, TextureSlot.BOTTOM, TextureSlot.SIDE, TextureSlot.INSIDE);
+
+    private static final TextureSlot LID = TextureSlot.create("lid");
+    private static final TextureSlot LABEL = TextureSlot.create("label");
+    private static final ModelTemplate JAR = new ModelTemplate(Optional.of(Thaumory.id("block/template_jar")),
+            Optional.empty(), TextureSlot.SIDE, TextureSlot.BOTTOM, LID);
+    private static final ModelTemplate JAR_LABELED = new ModelTemplate(Optional.of(Thaumory.id("block/template_jar_labeled")),
+            Optional.empty(), TextureSlot.SIDE, TextureSlot.BOTTOM, LID, LABEL);
 
     /** Cauldron shapes with Thaumory's own textures. Water is a plain texture, so it needs no tint. */
     @Override
@@ -48,6 +57,19 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                 .select(2, BlockModelGenerators.plainVariant(level2))
                 .select(3, BlockModelGenerators.plainVariant(full))));
         generators.registerSimpleItemModel(crucible, empty);
+
+        JarBlock jar = ThaumoryBlocks.JAR.get();
+        TextureMapping jarTextures = new TextureMapping()
+                .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(jar, "_side"))
+                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(jar, "_bottom"))
+                .put(LID, TextureMapping.getBlockTexture(jar, "_lid"));
+        Identifier plain = JAR.create(jar, jarTextures, generators.modelOutput);
+        Identifier labeled = JAR_LABELED.createWithSuffix(jar, "_labeled",
+                jarTextures.copyAndUpdate(LABEL, TextureMapping.getBlockTexture(jar, "_label")), generators.modelOutput);
+        generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(jar).with(PropertyDispatch.initial(JarBlock.LABELED)
+                .select(false, BlockModelGenerators.plainVariant(plain))
+                .select(true, BlockModelGenerators.plainVariant(labeled))));
+        generators.registerSimpleItemModel(jar, plain);
     }
 
     @Override
@@ -55,6 +77,7 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.ARCANE_LOUPE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CODEX.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_RUNE.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.LABEL.get(), ModelTemplates.FLAT_ITEM);
         for (var chalk : List.of(ThaumoryItems.CHALK, ThaumoryItems.AMPLIFYING_CHALK, ThaumoryItems.EXTENDING_CHALK,
                 ThaumoryItems.ECONOMIZING_CHALK, ThaumoryItems.STABILIZING_CHALK)) {
             generators.generateFlatItem(chalk.get(), ModelTemplates.FLAT_HANDHELD_ITEM);

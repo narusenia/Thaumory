@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "labeled=false": {
+      "model": "thaumory:block/jar"
+    },
+    "labeled=true": {
+      "model": "thaumory:block/jar_labeled"
+    }
+  }
+}

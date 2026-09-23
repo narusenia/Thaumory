@@ -2,6 +2,7 @@ package one.nxeu.thaumory.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -15,16 +16,17 @@ import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
+import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.crucible.CrucibleTank;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 
-/** Shows a Crucible's contents beside the crosshair while the player holds the Arcane Loupe and looks at it. */
-final class CrucibleHud {
+/** Shows what a Crucible or a jar holds beside the crosshair while the player holds the Arcane Loupe and looks at it. */
+final class LoupeHud {
     private static final int GRAY = 0xFFAAAAAA;
     private static final int WHITE = 0xFFFFFFFF;
 
-    private CrucibleHud() {}
+    private LoupeHud() {}
 
     static void render(GuiGraphicsExtractor graphics, DeltaTracker delta) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -32,11 +34,31 @@ final class CrucibleHud {
         if (player == null || minecraft.level == null || !holdsLoupe(player)) {
             return;
         }
-        if (!(minecraft.hitResult instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK
-                || !(minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof CrucibleBlockEntity crucible)) {
+        if (!(minecraft.hitResult instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
+        List<Component> lines = switch (minecraft.level.getBlockEntity(hit.getBlockPos())) {
+            case CrucibleBlockEntity crucible -> crucibleLines(crucible);
+            case JarBlockEntity jar -> jarLines(jar);
+            case null, default -> List.of();
+        };
 
+        int x = graphics.guiWidth() / 2 + 12;
+        int y = graphics.guiHeight() / 2 - lines.size() * 5;
+        for (Component line : lines) {
+            graphics.text(minecraft.font, line, x, y, WHITE, true);
+            y += 10;
+        }
+    }
+
+    private static List<Component> jarLines(JarBlockEntity jar) {
+        List<Component> lines = new ArrayList<>();
+        lines.add(jar.getBlockState().getBlock().getName().withColor(WHITE));
+        lines.addAll(JarText.describe(jar.contents(), OptionalInt.of(jar.displayCapacity()), ClientKnowledge.get()));
+        return lines;
+    }
+
+    private static List<Component> crucibleLines(CrucibleBlockEntity crucible) {
         CrucibleTank tank = crucible.tank();
         boolean boiling = crucible.getBlockState().getValue(CrucibleBlock.BOILING);
         PlayerKnowledge knowledge = ClientKnowledge.get();
@@ -61,13 +83,7 @@ final class CrucibleHud {
                         .append(AspectText.name(pair.get(1), knowledge.knowsAspect(pair.get(1).id()))));
             }
         }
-
-        int x = graphics.guiWidth() / 2 + 12;
-        int y = graphics.guiHeight() / 2 - lines.size() * 5;
-        for (Component line : lines) {
-            graphics.text(minecraft.font, line, x, y, WHITE, true);
-            y += 10;
-        }
+        return lines;
     }
 
     private static boolean holdsLoupe(Player player) {
