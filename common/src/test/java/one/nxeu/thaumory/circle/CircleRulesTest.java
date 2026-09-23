@@ -83,6 +83,35 @@ class CircleRulesTest {
                 "{\"scan_interval\": 40, \"instability_threshold\": 3, \"ring_radius\": [2, 3]}")).isError());
     }
 
+    @Test
+    void settingsReadFailureFluxOrFallBackToDefaults() {
+        CircleSettings settings = CircleSettings.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("""
+                {"scan_interval": 40, "instability_threshold": 3, "instability_flux": {"chance_per_point": 0.5}, "undefined_flux": 8}
+                """)).getOrThrow();
+        assertEquals(new CircleSettings.InstabilityFlux(0.5, 2), settings.instabilityFlux());
+        assertEquals(8, settings.undefinedFlux(), 1e-9);
+        CircleSettings defaults = CircleSettings.CODEC.parse(JsonOps.INSTANCE,
+                JsonParser.parseString("{\"scan_interval\": 40, \"instability_threshold\": 3}")).getOrThrow();
+        assertEquals(CircleSettings.InstabilityFlux.DEFAULT, defaults.instabilityFlux());
+        assertEquals(5, defaults.undefinedFlux(), 1e-9);
+    }
+
+    @Test
+    void noInstabilityFluxAtOrUnderTheThreshold() {
+        assertEquals(0, CircleSettings.DEFAULT.instabilityFlux(0, 0), 1e-9);
+        assertEquals(0, CircleSettings.DEFAULT.instabilityFlux(3, 0), 1e-9);
+    }
+
+    @Test
+    void instabilityFluxChanceAndAmountGrowWithTheExcess() {
+        // 2 over the threshold: a 40% chance of 4 Flux.
+        assertEquals(4, CircleSettings.DEFAULT.instabilityFlux(5, 0.39), 1e-9);
+        assertEquals(0, CircleSettings.DEFAULT.instabilityFlux(5, 0.4), 1e-9);
+        // 5 or more over: certain.
+        assertEquals(10, CircleSettings.DEFAULT.instabilityFlux(8, 0.999), 1e-9);
+        assertEquals(20, CircleSettings.DEFAULT.instabilityFlux(13, 0.999), 1e-9);
+    }
+
     private CircleDefinitions definitions(String... jsonById) {
         Map<Identifier, CircleDefinitionFile> files = new java.util.HashMap<>();
         for (int i = 0; i < jsonById.length; i += 2) {

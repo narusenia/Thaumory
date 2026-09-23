@@ -7,8 +7,9 @@ import java.util.Map;
 import net.minecraft.resources.Identifier;
 
 /**
- * {@code data/thaumory/thaumory/circle.json}: how often a Core rescans, the instability threshold,
- * the radius each ring count gives, how much of each aspect a Core holds, and what each pattern
+ * {@code data/thaumory/thaumory/circle.json}: how often a Core rescans, the instability threshold
+ * and the Flux going over it releases, the Flux an undefined combination releases, the radius each
+ * ring count gives, how much of each aspect a Core holds, and what each pattern
  * (by block id) adds to instability and to the strength, range and cost multipliers. Values not
  * written are 0.
  *
@@ -16,6 +17,8 @@ import net.minecraft.resources.Identifier;
  * {
  *   "scan_interval": 40,
  *   "instability_threshold": 3,
+ *   "instability_flux": { "chance_per_point": 0.2, "flux_per_point": 2 },
+ *   "undefined_flux": 5,
  *   "ring_radius": [4, 8, 16],
  *   "essentia_capacity": 64,
  *   "patterns": {
@@ -27,16 +30,28 @@ import net.minecraft.resources.Identifier;
  * }
  * }</pre>
  */
-public record CircleSettings(int scanInterval, int instabilityThreshold, List<Integer> ringRadius, int essentiaCapacity,
-        Map<Identifier, PatternSettings> patterns) {
+public record CircleSettings(int scanInterval, int instabilityThreshold, InstabilityFlux instabilityFlux, double undefinedFlux,
+        List<Integer> ringRadius, int essentiaCapacity, Map<Identifier, PatternSettings> patterns) {
     /** No multiplier goes below this, however many modifiers lower it. */
     public static final double MIN_MULTIPLIER = 0.25;
 
-    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, List.of(4, 8, 16), 64, Map.of(
+    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, InstabilityFlux.DEFAULT, 5, List.of(4, 8, 16), 64, Map.of(
             thaumory("amplifying_pattern"), new PatternSettings(2, 0.5, 0, 0.5),
             thaumory("extending_pattern"), new PatternSettings(0, 0, 0.5, 0.25),
             thaumory("economizing_pattern"), new PatternSettings(0, -0.25, 0, -0.25),
             thaumory("stabilizing_pattern"), new PatternSettings(-3, 0, 0, 0)));
+
+    /** Each point of instability over the threshold adds to the chance of Flux on a payment, and to its amount. */
+    public record InstabilityFlux(double chancePerPoint, double fluxPerPoint) {
+        public static final InstabilityFlux DEFAULT = new InstabilityFlux(0.2, 2);
+
+        public static final Codec<InstabilityFlux> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.doubleRange(0, Double.MAX_VALUE).optionalFieldOf("chance_per_point", DEFAULT.chancePerPoint)
+                        .forGetter(InstabilityFlux::chancePerPoint),
+                Codec.doubleRange(0, Double.MAX_VALUE).optionalFieldOf("flux_per_point", DEFAULT.fluxPerPoint)
+                        .forGetter(InstabilityFlux::fluxPerPoint)
+        ).apply(i, InstabilityFlux::new));
+    }
 
     public record PatternSettings(int instability, double strength, double range, double cost) {
         private static final PatternSettings NONE = new PatternSettings(0, 0, 0, 0);
@@ -57,6 +72,9 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, List<In
     public static final Codec<CircleSettings> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("scan_interval").forGetter(CircleSettings::scanInterval),
             Codec.intRange(0, Integer.MAX_VALUE).fieldOf("instability_threshold").forGetter(CircleSettings::instabilityThreshold),
+            InstabilityFlux.CODEC.optionalFieldOf("instability_flux", InstabilityFlux.DEFAULT).forGetter(CircleSettings::instabilityFlux),
+            Codec.doubleRange(0, Double.MAX_VALUE).optionalFieldOf("undefined_flux", DEFAULT.undefinedFlux)
+                    .forGetter(CircleSettings::undefinedFlux),
             Codec.intRange(1, Integer.MAX_VALUE).listOf(CircleScan.MAX_RINGS, CircleScan.MAX_RINGS)
                     .optionalFieldOf("ring_radius", DEFAULT.ringRadius).forGetter(CircleSettings::ringRadius),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("essentia_capacity", DEFAULT.essentiaCapacity)
@@ -90,6 +108,22 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, List<In
             cost += pattern.cost();
         }
         return new Multipliers(Math.max(MIN_MULTIPLIER, strength), Math.max(MIN_MULTIPLIER, range), Math.max(MIN_MULTIPLIER, cost));
+    }
+
+    /**
+     * The Flux one payment releases at this instability: none at or under the threshold, otherwise
+     * {@code flux_per_point} for each point over it, with a chance of {@code chance_per_point} per
+     * point (at most certain).
+     *
+     * @param roll a uniform random number in [0, 1)
+     */
+    public double instabilityFlux(int instability, double roll) {
+        int excess = instability - instabilityThreshold;
+        if (excess <= 0) {
+            return 0;
+        }
+        double chance = Math.min(1, excess * instabilityFlux.chancePerPoint());
+        return roll < chance ? excess * instabilityFlux.fluxPerPoint() : 0;
     }
 
     /** The radius a circle of {@code rings} rings reaches; 0 without rings. */
