@@ -46,6 +46,8 @@
   "codex.thaumory.tab.circles": "陣",
   "codex.thaumory.tab.hints": "ヒント",
   "codex.thaumory.tab.scanned": "スキャン済み",
+  "hud.thaumory.block.no_aspects": "アスペクトなし",
+  "hud.thaumory.block.unscanned": "未スキャン",
   "hud.thaumory.core.effect": "%sの陣",
   "hud.thaumory.core.empty_slot": "—",
   "hud.thaumory.core.essentia": "Essentia（各 %s まで）",

@@ -48,6 +48,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_target", "The circle finds nothing to act on");
             builder.add("message.thaumory.wand.misfired", "The circle misfires and Flux leaks out");
             builder.add("hud.thaumory.flux.amount", "Flux here: %s");
+            builder.add("hud.thaumory.block.unscanned", "Not scanned");
+            builder.add("hud.thaumory.block.no_aspects", "No aspects");
             builder.add("hud.thaumory.flux.stage.none", "Calm");
             builder.add("hud.thaumory.flux.stage.stagnation", "Stagnation");
             builder.add("hud.thaumory.flux.stage.erosion", "Erosion");
@@ -149,6 +151,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_target", "陣が働きかける先が見つからない");
             builder.add("message.thaumory.wand.misfired", "陣が乱れ、Flux が漏れ出した");
             builder.add("hud.thaumory.flux.amount", "この辺りの Flux: %s");
+            builder.add("hud.thaumory.block.unscanned", "未スキャン");
+            builder.add("hud.thaumory.block.no_aspects", "アスペクトなし");
             builder.add("hud.thaumory.flux.stage.none", "平穏");
             builder.add("hud.thaumory.flux.stage.stagnation", "淀み");
             builder.add("hud.thaumory.flux.stage.erosion", "侵食");

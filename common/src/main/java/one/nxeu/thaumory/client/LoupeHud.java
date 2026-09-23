@@ -13,10 +13,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
+import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.api.flux.FluxStage;
 import one.nxeu.thaumory.aspect.AspectText;
@@ -32,7 +36,8 @@ import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 
 /**
  * While the player holds the Arcane Loupe: the Flux of the chunk they stand in at the top right,
- * and what a Crucible or a jar holds, or how a circle's Core reads, beside the crosshair.
+ * and beside the crosshair what the player looks at: what a Crucible or a jar holds, how a circle's
+ * Core reads, or for any other block its name and, once scanned, its aspects.
  */
 final class LoupeHud {
     private static final int GRAY = 0xFFAAAAAA;
@@ -54,7 +59,7 @@ final class LoupeHud {
             case CrucibleBlockEntity crucible -> crucibleLines(crucible);
             case JarBlockEntity jar -> jarLines(jar);
             case CoreBlockEntity core -> coreLines(core);
-            case null, default -> List.of();
+            case null, default -> blockLines(minecraft.level.getBlockState(hit.getBlockPos()));
         };
 
         int x = graphics.guiWidth() / 2 + 12;
@@ -85,6 +90,29 @@ final class LoupeHud {
             case MANIFESTATION -> 0xFFE0409A;
             case OVERLOAD -> 0xFFFF4040;
         };
+    }
+
+    /** The block's name, then its item's aspects if scanned. Blocks without an item show only the name. */
+    private static List<Component> blockLines(BlockState state) {
+        List<Component> lines = new ArrayList<>();
+        lines.add(state.getBlock().getName().withColor(WHITE));
+        Item item = state.getBlock().asItem();
+        if (item == Items.AIR) {
+            return lines;
+        }
+        PlayerKnowledge knowledge = ClientKnowledge.get();
+        if (!knowledge.hasScanned(PlayerKnowledge.ITEMS, BuiltInRegistries.ITEM.getKey(item))) {
+            lines.add(Component.translatable("hud.thaumory.block.unscanned").withColor(GRAY));
+            return lines;
+        }
+        AspectList aspects = ClientItemAspects.get(item);
+        if (aspects.isEmpty()) {
+            lines.add(Component.translatable("hud.thaumory.block.no_aspects").withColor(GRAY));
+        }
+        for (AspectStack stack : aspects.sortedByAmount()) {
+            lines.add(Component.literal(" ").append(AspectText.stack(stack, knowledge.knowsAspect(stack.aspect().id()))));
+        }
+        return lines;
     }
 
     private static List<Component> jarLines(JarBlockEntity jar) {

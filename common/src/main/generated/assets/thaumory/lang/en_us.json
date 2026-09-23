@@ -46,6 +46,8 @@
   "codex.thaumory.tab.circles": "Circles",
   "codex.thaumory.tab.hints": "Hints",
   "codex.thaumory.tab.scanned": "Scanned",
+  "hud.thaumory.block.no_aspects": "No aspects",
+  "hud.thaumory.block.unscanned": "Not scanned",
   "hud.thaumory.core.effect": "Circle of %s",
   "hud.thaumory.core.empty_slot": "—",
   "hud.thaumory.core.essentia": "Essentia (up to %s each)",
