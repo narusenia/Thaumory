@@ -5,6 +5,7 @@ import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.networking.transformers.SplitPacketTransformer;
 import java.util.List;
 import java.util.OptionalInt;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
+import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
 import one.nxeu.thaumory.item.ArcaneCodexItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
@@ -47,6 +49,7 @@ public final class ThaumoryClient {
             ClientKnowledge.clear();
         });
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
+        BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
         ArcaneCodexItem.setScreenOpener(() -> Minecraft.getInstance().gui.setScreen(new ArcaneCodexScreen()));
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
             appendJarContents(stack, lines);
