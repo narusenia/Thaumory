@@ -28,7 +28,7 @@ public final class Thaumory {
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new FluxSettingsReloadListener(flux), id("flux"));
         CommandRegistrationEvent.EVENT.register(
-                (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context));
+                (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();
         AspectSync.register();
     }
