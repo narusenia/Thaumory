@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
+import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.jar.EssentiaTransfer;
@@ -27,7 +28,7 @@ import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.rune.RuneInfusion;
 
 /**
- * A jar in hand. Right-clicking a Crucible or a placed jar draws Essentia into it; sneaking pours
+ * A jar in hand. Right-clicking a Crucible, a placed jar or a circle's Core draws Essentia into it; sneaking pours
  * it out. Sneaking with a blank rune in the off hand pours into the rune instead, in the air or at
  * any other block. Anywhere else it places the jar, contents and all.
  */
@@ -39,7 +40,7 @@ public final class JarItem extends BlockItem {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockEntity target = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (!(target instanceof CrucibleBlockEntity) && !(target instanceof JarBlockEntity)) {
+        if (!(target instanceof CrucibleBlockEntity) && !(target instanceof JarBlockEntity) && !(target instanceof CoreBlockEntity)) {
             Player player = context.getPlayer();
             if (player != null && pouringIntoRune(player, context.getHand())) {
                 return infuseRune(context.getLevel(), player, context.getItemInHand());
@@ -107,6 +108,12 @@ public final class JarItem extends BlockItem {
                     ? EssentiaTransfer.pour(held.aspects(), placed.aspects(), placed.label(), capacity, false, true, registry)
                     : EssentiaTransfer.draw(placed.aspects(), held.aspects(), held.label(), capacity, registry);
             jar.setContents(placed.withAspects(pour ? result.to() : result.from()));
+        } else if (target instanceof CoreBlockEntity core) {
+            // A Core keeps each aspect apart, so nothing cancels and only its runes' aspects go in.
+            result = pour
+                    ? EssentiaTransfer.pourSeparated(held.aspects(), core.essentia(), core.acceptedAspects(), CoreBlockEntity.capacity())
+                    : EssentiaTransfer.draw(core.essentia(), held.aspects(), held.label(), capacity, registry);
+            core.setEssentia(pour ? result.to() : result.from());
         } else {
             return;
         }

@@ -8,6 +8,7 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.circle.effect.ThaumoryCircleEffects;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 /** Every user-facing string, in English and Japanese. Aspect names stay Latin in both. */
@@ -66,6 +67,15 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.ignored", "%s modifiers off the nodes (no effect)");
             builder.add("hud.thaumory.core.instability", "Instability %s/%s");
             builder.add("hud.thaumory.core.unstable", "Unstable: activations may release Flux");
+            builder.add("hud.thaumory.core.running", "Running");
+            builder.add("hud.thaumory.core.stopped", "Stopped");
+            builder.add("hud.thaumory.core.upkeep.triggered", "Each activation: %s of each effect rune, 1 of slot 3");
+            builder.add("hud.thaumory.core.upkeep.sustained", "1 of each effect rune every %s s");
+            builder.add("hud.thaumory.core.effect", "Circle of %s");
+            builder.add("hud.thaumory.core.unknown_circle", "Unknown circle");
+            builder.add("hud.thaumory.core.failed_circle", "A combination that failed");
+            builder.add(ThaumoryCircleEffects.LIGHT.toLanguageKey("circle_effect"), "Light");
+            builder.add("hud.thaumory.core.essentia", "Essentia (up to %s each)");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
             builder.add(ThaumoryBlocks.EXTENDING_PATTERN.get(), "Extending Pattern");
@@ -136,6 +146,15 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.ignored", "節点の外の修飾 %s 個（効果なし）");
             builder.add("hud.thaumory.core.instability", "不安定度 %s/%s");
             builder.add("hud.thaumory.core.unstable", "不安定: 発動のたびに Flux が出るおそれがある");
+            builder.add("hud.thaumory.core.running", "動作中");
+            builder.add("hud.thaumory.core.stopped", "停止中");
+            builder.add("hud.thaumory.core.upkeep.triggered", "1 回ごとに効果のルーンを %s ずつ、スロット 3 を 1");
+            builder.add("hud.thaumory.core.upkeep.sustained", "%s 秒ごとに効果のルーンを 1 ずつ");
+            builder.add("hud.thaumory.core.effect", "%sの陣");
+            builder.add("hud.thaumory.core.unknown_circle", "未知の陣");
+            builder.add("hud.thaumory.core.failed_circle", "失敗した組み合わせ");
+            builder.add(ThaumoryCircleEffects.LIGHT.toLanguageKey("circle_effect"), "灯火");
+            builder.add("hud.thaumory.core.essentia", "Essentia（各 %s まで）");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
             builder.add(ThaumoryBlocks.EXTENDING_PATTERN.get(), "延長の紋様");

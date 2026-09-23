@@ -3,6 +3,7 @@ package one.nxeu.thaumory.client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.OptionalInt;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -22,6 +23,7 @@ import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
+import one.nxeu.thaumory.circle.CircleMode;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.crucible.CrucibleTank;
 import one.nxeu.thaumory.item.ThaumoryItems;
@@ -100,6 +102,30 @@ final class LoupeHud {
         }
         if (!scan.ignoredModifiers().isEmpty()) {
             lines.add(Component.translatable("hud.thaumory.core.ignored", scan.ignoredModifiers().size()).withColor(0xFFFFAA55));
+        }
+
+        lines.add(Component.translatable(core.isRunning() ? "hud.thaumory.core.running" : "hud.thaumory.core.stopped")
+                .withColor(core.isRunning() ? 0xFF55FF88 : GRAY));
+        // Name the circle and its cost only once this player has seen it work, so the loupe never gives answers away.
+        core.combination().filter(combination -> scan.rings() > 0).ifPresent(combination -> {
+            Optional<PlayerKnowledge.CircleOutcome> outcome = knowledge.circle(combination);
+            Optional<Identifier> effect = core.effectId();
+            if (outcome.filter(PlayerKnowledge.CircleOutcome.SUCCESS::equals).isPresent() && effect.isPresent()) {
+                lines.add(Component.translatable("hud.thaumory.core.effect", Component.translatable(effect.get().toLanguageKey("circle_effect")))
+                        .withColor(0xFFCC99FF));
+                core.upkeep().ifPresent(upkeep -> lines.add((upkeep.mode() == CircleMode.TRIGGERED
+                        ? Component.translatable("hud.thaumory.core.upkeep.triggered", upkeep.cost())
+                        : Component.translatable("hud.thaumory.core.upkeep.sustained", String.format(Locale.ROOT, "%.1f", upkeep.interval() / 20.0)))
+                        .withColor(GRAY)));
+            } else if (outcome.filter(PlayerKnowledge.CircleOutcome.FAILURE::equals).isPresent()) {
+                lines.add(Component.translatable("hud.thaumory.core.failed_circle").withColor(0xFFFFAA55));
+            } else {
+                lines.add(Component.translatable("hud.thaumory.core.unknown_circle").withColor(GRAY));
+            }
+        });
+        lines.add(Component.translatable("hud.thaumory.core.essentia", core.displayCapacity()).withColor(GRAY));
+        for (AspectStack stack : core.essentia().sortedByAmount()) {
+            lines.add(Component.literal(" ").append(AspectText.stack(stack, knowledge.knowsAspect(stack.aspect().id()))));
         }
 
         int threshold = core.displayThreshold();

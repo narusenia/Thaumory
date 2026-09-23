@@ -2,7 +2,17 @@
   "instability_threshold": 3,
   "patterns": {
     "thaumory:amplifying_pattern": {
-      "instability": 2
+      "cost": 0.5,
+      "instability": 2,
+      "strength": 0.5
+    },
+    "thaumory:economizing_pattern": {
+      "cost": -0.25,
+      "strength": -0.25
+    },
+    "thaumory:extending_pattern": {
+      "cost": 0.25,
+      "range": 0.5
     },
     "thaumory:stabilizing_pattern": {
       "instability": -3

@@ -14,7 +14,9 @@ import one.nxeu.thaumory.aspect.estimate.VanillaWorldChanges;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
+import one.nxeu.thaumory.circle.CircleDefinitionReloadListener;
 import one.nxeu.thaumory.circle.CircleSettings;
+import one.nxeu.thaumory.circle.effect.ThaumoryCircleEffects;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.command.ThaumoryCommands;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
@@ -41,6 +43,7 @@ public final class Thaumory {
         VanillaRecipeAdapters.register(ThaumoryApi.recipeAdapters());
         VanillaWorldChanges.register(ThaumoryApi.recipeAdapters());
         ThaumoryRecipes.registerAdapters(ThaumoryApi.recipeAdapters());
+        ThaumoryCircleEffects.register(ThaumoryApi.circleEffects());
         FluxManager flux = new FluxManager(platform.fluxStorage());
         ThaumoryApi.provideFlux(flux);
         knowledge = new KnowledgeManager(platform.knowledgeStorage());
@@ -62,6 +65,7 @@ public final class Thaumory {
                 id("thaumory/rune.json"), RuneSettings.CODEC, RuneSettings.DEFAULT, RuneItem::updateSettings), id("rune"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/circle.json"), CircleSettings.CODEC, CircleSettings.DEFAULT, CoreBlockEntity::updateSettings), id("circle"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new CircleDefinitionReloadListener(), id("circle_definitions"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();

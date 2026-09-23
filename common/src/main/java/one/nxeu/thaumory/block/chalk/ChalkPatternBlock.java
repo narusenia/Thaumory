@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +25,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A pattern drawn in chalk on top of a block: the plain line or one of the modifiers. Patterns of
- * any kind next to each other on the same level join up. Drawn and erased with a chalk item.
+ * any kind next to each other on the same level join up (any block in {@link #PATTERNS} does).
+ * Drawn and erased with a chalk item.
  */
 public final class ChalkPatternBlock extends Block {
     public static final Map<Direction, BooleanProperty> CONNECTIONS = Map.of(
@@ -30,6 +34,8 @@ public final class ChalkPatternBlock extends Block {
             Direction.EAST, BlockStateProperties.EAST,
             Direction.SOUTH, BlockStateProperties.SOUTH,
             Direction.WEST, BlockStateProperties.WEST);
+    /** Blocks that count as circle patterns and join up with chalk; addons put their own patterns here. */
+    public static final TagKey<Block> PATTERNS = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("thaumory", "circle_patterns"));
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 1, 16);
 
     private final Supplier<? extends Item> chalk;
@@ -60,7 +66,7 @@ public final class ChalkPatternBlock extends Block {
     }
 
     private static boolean joins(BlockState neighbor) {
-        return neighbor.getBlock() instanceof ChalkPatternBlock;
+        return neighbor.is(PATTERNS);
     }
 
     @Override

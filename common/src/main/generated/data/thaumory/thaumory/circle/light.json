@@ -1,0 +1,12 @@
+{
+  "effect": "thaumory:light",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:lux",
+    "thaumory:ignis"
+  ],
+  "slot3": [
+    "none",
+    "thaumory:umbra"
+  ]
+}

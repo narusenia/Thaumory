@@ -63,7 +63,11 @@ public final class ThaumoryCommands {
                             return showFlux(c, flux, chunk);
                         }))))
                 .then(Commands.literal("circle").then(Commands.argument("pos", BlockPosArgument.blockPos())
-                        .executes(ThaumoryCommands::showCircle)))
+                        .executes(ThaumoryCommands::showCircle)
+                        .then(Commands.literal("start").executes(c -> withCore(c, core -> "start: " + core.start(Optional.ofNullable(c.getSource().getEntity())))))
+                        .then(Commands.literal("stop").executes(c -> withCore(c, core -> "stop: " + (core.stop() ? "stopped" : "not running"))))
+                        .then(Commands.literal("trigger").executes(c -> withCore(c,
+                                core -> "trigger: " + core.trigger(Optional.ofNullable(c.getSource().getEntity())))))))
                 .then(Commands.literal("knowledge")
                         .then(Commands.literal("show").then(Commands.argument("player", EntityArgument.player())
                                 .executes(ThaumoryCommands::showKnowledge)))
@@ -155,6 +159,20 @@ public final class ThaumoryCommands {
                         .executes(c -> command.run(c, ChunkPos.containing(BlockPosArgument.getBlockPos(c, "pos")))));
     }
 
+    /** Rescans the Core at {@code pos}, runs {@code action} on it and prints the result, then the Core's state. */
+    private static int withCore(CommandContext<CommandSourceStack> context, java.util.function.Function<CoreBlockEntity, String> action)
+            throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "pos");
+        if (!(context.getSource().getLevel().getBlockEntity(pos) instanceof CoreBlockEntity core)) {
+            context.getSource().sendFailure(Component.literal("No Core at " + pos.toShortString()));
+            return 0;
+        }
+        core.rescan();
+        String result = action.apply(core);
+        context.getSource().sendSuccess(() -> Component.literal(result), false);
+        return showCircle(context);
+    }
+
     /** Rescans the Core at {@code pos} now and prints what it sees. */
     private static int showCircle(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "pos");
@@ -172,7 +190,8 @@ public final class ThaumoryCommands {
                 .collect(Collectors.joining(", "));
         context.getSource().sendSuccess(() -> Component.literal("Core at " + pos.toShortString() + ": runes " + core.runes()
                 + ", rings " + scan.rings() + ", nodes [" + nodes + "], ignored modifiers [" + ignored + "], instability "
-                + core.instability() + " (threshold " + CoreBlockEntity.settings().instabilityThreshold() + ")"), false);
+                + core.instability() + " (threshold " + CoreBlockEntity.settings().instabilityThreshold() + "), essentia " + core.essentia()
+                + ", upkeep " + core.upkeep().map(Object::toString).orElse("undefined") + ", running " + core.isRunning()), false);
         return scan.rings();
     }
 
