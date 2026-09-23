@@ -53,13 +53,16 @@ Every user-facing string needs both `en_us` and `ja_jp` entries. Generate lang f
 ./gradlew :fabric:runClient
 ./gradlew :fabric:runServer
 ./gradlew :fabric:runDatagen   # regenerate common/src/main/generated
+./gradlew :fabric:runGameTest  # GameTests on a headless server (also part of check/build)
 ```
 
-Files under `common/src/main/generated/` come from datagen (`fabric/src/main/java/.../fabric/datagen/`). Never edit them by hand; change the provider and rerun `runDatagen`, then commit both. GameTest is set up in M0-5.
+Files under `common/src/main/generated/` come from datagen (`fabric/src/main/java/.../fabric/datagen/`). Never edit them by hand; change the provider and rerun `runDatagen`, then commit both.
+
+GameTests live in `fabric/src/gametest/` (their own source set and test mod `thaumory-gametest`, never shipped). Add each test class to the `fabric-gametest` entrypoint in `fabric/src/gametest/resources/fabric.mod.json`. Results go to `fabric/build/gametest/junit.xml`. Tests run side by side in one world, so a test whose effect reaches past its area (Flux in whole chunks, say) needs `padding` to keep clear of the others.
 
 ### Manual checks on a dev server
 
-Until GameTest exists, verify data-driven behavior on `:fabric:runServer` (the dev EULA lives in the git-ignored `fabric/run/`). Pipe commands into the console, e.g. `thaumory aspects minecraft:oak_log`, and use `reload` after editing a test datapack under `fabric/run/world/datapacks/`. Remove test datapacks afterwards.
+Cover behavior in the world with a GameTest where you can. For what a GameTest cannot show (screens, visuals, reloading datapacks), verify on `:fabric:runServer` (the dev EULA lives in the git-ignored `fabric/run/`). Pipe commands into the console, e.g. `thaumory aspects minecraft:oak_log`, and use `reload` after editing a test datapack under `fabric/run/world/datapacks/`. Remove test datapacks afterwards.
 
 ## Git
 

@@ -56,8 +56,29 @@ shadowJar {
 
 assemble.dependsOn shadowJar
 
+// GameTests live in their own source set and test mod, so they never ship in the jar.
+// ./gradlew :fabric:runGameTest runs them on a headless server; `check` (and so `build`) runs them too.
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'thaumory-gametest'
+        enableClientGameTests = false
+    }
+}
+
+processGametestResources {
+    inputs.property 'version', project.version
+
+    filesMatching('fabric.mod.json') {
+        expand version: project.version
+    }
+}
+
 loom {
     runs {
+        gameTest {
+            vmArg "-Dfabric-api.gametest.report-file=${project.file('build/gametest/junit.xml')}"
+        }
         // Always "Dev" (an operator on the dev server), joining the local :fabric:runServer on launch.
         client {
             programArgs '--username', 'Dev', '--quickPlayMultiplayer', 'localhost'
