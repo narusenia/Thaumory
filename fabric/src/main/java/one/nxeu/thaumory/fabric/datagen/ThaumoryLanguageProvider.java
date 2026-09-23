@@ -45,6 +45,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_rings", "No ring holds around the Core");
             builder.add("message.thaumory.wand.no_response", "The circle does not answer");
             builder.add("message.thaumory.wand.no_essentia", "The Core lacks Essentia");
+            builder.add("message.thaumory.wand.no_target", "The circle finds nothing to act on");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "Arcane Codex");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "Blank Rune");
@@ -82,6 +83,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.unknown_circle", "Unknown circle");
             builder.add("hud.thaumory.core.failed_circle", "A combination that failed");
             builder.add(ThaumoryCircleEffects.LIGHT.toLanguageKey("circle_effect"), "Light");
+            builder.add(ThaumoryCircleEffects.TELEPORT.toLanguageKey("circle_effect"), "Teleportation");
+            builder.add(ThaumoryCircleEffects.PURIFICATION.toLanguageKey("circle_effect"), "Purification");
+            builder.add(ThaumoryCircleEffects.WARD.toLanguageKey("circle_effect"), "Warding");
+            builder.add(ThaumoryCircleEffects.GROWTH.toLanguageKey("circle_effect"), "Growth");
+            builder.add(ThaumoryCircleEffects.HEALING.toLanguageKey("circle_effect"), "Healing");
+            builder.add(ThaumoryCircleEffects.ATTRACTION.toLanguageKey("circle_effect"), "Attraction");
+            builder.add(ThaumoryCircleEffects.WEATHER.toLanguageKey("circle_effect"), "Weather");
             builder.add("hud.thaumory.core.essentia", "Essentia (up to %s each)");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
@@ -131,6 +139,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_rings", "Core のまわりにリングが成立していない");
             builder.add("message.thaumory.wand.no_response", "陣は応えなかった");
             builder.add("message.thaumory.wand.no_essentia", "Core の Essentia が足りない");
+            builder.add("message.thaumory.wand.no_target", "陣が働きかける先が見つからない");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "魔術の書");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "空のルーン");
@@ -168,6 +177,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.unknown_circle", "未知の陣");
             builder.add("hud.thaumory.core.failed_circle", "失敗した組み合わせ");
             builder.add(ThaumoryCircleEffects.LIGHT.toLanguageKey("circle_effect"), "灯火");
+            builder.add(ThaumoryCircleEffects.TELEPORT.toLanguageKey("circle_effect"), "テレポート");
+            builder.add(ThaumoryCircleEffects.PURIFICATION.toLanguageKey("circle_effect"), "浄化");
+            builder.add(ThaumoryCircleEffects.WARD.toLanguageKey("circle_effect"), "結界");
+            builder.add(ThaumoryCircleEffects.GROWTH.toLanguageKey("circle_effect"), "成長");
+            builder.add(ThaumoryCircleEffects.HEALING.toLanguageKey("circle_effect"), "治癒");
+            builder.add(ThaumoryCircleEffects.ATTRACTION.toLanguageKey("circle_effect"), "引き寄せ");
+            builder.add(ThaumoryCircleEffects.WEATHER.toLanguageKey("circle_effect"), "天候");
             builder.add("hud.thaumory.core.essentia", "Essentia（各 %s まで）");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");

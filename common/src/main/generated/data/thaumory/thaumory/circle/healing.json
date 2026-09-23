@@ -1,0 +1,12 @@
+{
+  "effect": "thaumory:healing",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:vita",
+    "thaumory:ordo"
+  ],
+  "slot3": [
+    "none",
+    "thaumory:bestia"
+  ]
+}

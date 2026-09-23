@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.circle.CircleDefinitionReloadListener;
 import one.nxeu.thaumory.circle.CircleDefinitions;
+import one.nxeu.thaumory.circle.CircleIndex;
 import one.nxeu.thaumory.circle.CircleMode;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.circle.CircleSettings;
@@ -57,7 +59,6 @@ import one.nxeu.thaumory.knowledge.PlayerKnowledge;
  */
 public final class CoreBlockEntity extends BlockEntity {
     public static final int SLOTS = 3;
-    private static final int EFFECT_INTERVAL = 20;
     private static final Codec<List<Identifier>> RUNES_CODEC = Identifier.CODEC.listOf(0, SLOTS);
     private static final Codec<AspectList> ESSENTIA_CODEC = AspectCodecs.aspectList(ThaumoryApi.aspects());
     private static final CircleScan UNSCANNED = new CircleScan(0, List.of(), List.of());
@@ -90,7 +91,7 @@ public final class CoreBlockEntity extends BlockEntity {
 
     public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, TRIGGERED_ONLY, NO_ESSENTIA }
 
-    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, SUSTAINED_ONLY, NO_ESSENTIA }
+    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA }
 
     private List<Identifier> runes = List.of();
     private AspectList essentia = AspectList.empty();
@@ -153,6 +154,7 @@ public final class CoreBlockEntity extends BlockEntity {
         instability = settings.instability(scan.nodes());
         if (!level.isClientSide()) {
             stopIfBroken();
+            updateIndex();
             if (!scan.equals(previousScan) || instability != previousInstability) {
                 sync();
             }
@@ -205,7 +207,21 @@ public final class CoreBlockEntity extends BlockEntity {
         setChanged();
         if (level != null && !level.isClientSide()) {
             stopIfBroken();
+            updateIndex();
             sync();
+        }
+    }
+
+    /** Keeps this Core listed under its combination while its circle works, so others can find it. */
+    private void updateIndex() {
+        if (level instanceof ServerLevel server) {
+            CircleIndex index = CircleIndex.of(server);
+            Optional<CircleCombination> combination = combination().filter(c -> circle().isPresent());
+            if (combination.isPresent()) {
+                index.put(worldPosition, combination.get());
+            } else {
+                index.remove(worldPosition);
+            }
         }
     }
 
@@ -341,9 +357,10 @@ public final class CoreBlockEntity extends BlockEntity {
         }
         Identifier effectId = runningEffect;
         Optional<Circle> circle = circle();
-        CircleContext context = new Context(server, worldPosition, circle.flatMap(Circle::parameter),
+        CircleContext context = new Context(server, circle.flatMap(Circle::parameter),
                 circle.map(c -> c.multipliers().strength()).orElse(1.0),
-                circle.map(c -> settings.radius(scan.rings(), c.multipliers())).orElse(0.0), Optional.empty(), effectData);
+                circle.map(c -> settings.radius(scan.rings(), c.multipliers())).orElse(0.0), Optional.empty(),
+                circle.map(c -> c.definition().settings()).orElse(Map.of()));
         effect(effectId).ifPresent(effect -> effect.stop(context));
         running = Optional.empty();
         runningEffect = null;
@@ -369,13 +386,18 @@ public final class CoreBlockEntity extends BlockEntity {
         if (definition.mode() != CircleMode.TRIGGERED) {
             return TriggerResult.SUSTAINED_ONLY;
         }
+        Optional<CircleEffect> effect = effect(definition.effect());
+        CircleContext context = context(server, circle.get(), activator);
+        if (effect.isEmpty() || !effect.get().canApply(context)) {
+            return TriggerResult.NO_TARGET;
+        }
         int cost = CircleUpkeep.triggeredCost(definition.cost(), circle.get().multipliers().cost());
         Optional<AspectList> paid = CircleUpkeep.payTriggered(essentia, definition.first(), definition.second(), circle.get().parameter(), cost);
         if (paid.isEmpty()) {
             return TriggerResult.NO_ESSENTIA;
         }
         setEssentia(paid.get());
-        effect(definition.effect()).ifPresent(effect -> effect.apply(context(server, circle.get(), activator)));
+        effect.get().apply(context);
         recordSuccess(activator);
         return TriggerResult.TRIGGERED;
     }
@@ -397,8 +419,9 @@ public final class CoreBlockEntity extends BlockEntity {
             nextPayment = time + CircleUpkeep.sustainedInterval(definition.interval(), circle.get().multipliers().cost());
             setChanged();
         }
-        if (Math.floorMod(time + worldPosition.hashCode(), EFFECT_INTERVAL) == 0) {
-            effect(runningEffect).ifPresent(effect -> effect.apply(context(server, circle.get(), Optional.empty())));
+        Optional<CircleEffect> effect = effect(runningEffect);
+        if (effect.isPresent() && Math.floorMod(time + worldPosition.hashCode(), Math.max(1, effect.get().period())) == 0) {
+            effect.get().apply(context(server, circle.get(), Optional.empty()));
             setChanged();
         }
     }
@@ -419,12 +442,80 @@ public final class CoreBlockEntity extends BlockEntity {
     }
 
     private CircleContext context(ServerLevel server, Circle circle, Optional<Entity> activator) {
-        return new Context(server, worldPosition, circle.parameter(), circle.multipliers().strength(),
-                settings.radius(scan.rings(), circle.multipliers()), activator, effectData);
+        return new Context(server, circle.parameter(), circle.multipliers().strength(),
+                settings.radius(scan.rings(), circle.multipliers()), activator, circle.definition().settings());
     }
 
-    private record Context(ServerLevel level, BlockPos core, Optional<Aspect> parameter, double strength, double radius,
-            Optional<Entity> activator, CompoundTag data) implements CircleContext {}
+    private final class Context implements CircleContext {
+        private final ServerLevel level;
+        private final Optional<Aspect> parameter;
+        private final double strength;
+        private final double radius;
+        private final Optional<Entity> activator;
+        private final Map<String, Double> numbers;
+
+        Context(ServerLevel level, Optional<Aspect> parameter, double strength, double radius, Optional<Entity> activator,
+                Map<String, Double> numbers) {
+            this.level = level;
+            this.parameter = parameter;
+            this.strength = strength;
+            this.radius = radius;
+            this.activator = activator;
+            this.numbers = numbers;
+        }
+
+        @Override
+        public ServerLevel level() {
+            return level;
+        }
+
+        @Override
+        public BlockPos core() {
+            return worldPosition;
+        }
+
+        @Override
+        public Optional<Aspect> parameter() {
+            return parameter;
+        }
+
+        @Override
+        public double strength() {
+            return strength;
+        }
+
+        @Override
+        public double radius() {
+            return radius;
+        }
+
+        @Override
+        public Optional<Entity> activator() {
+            return activator;
+        }
+
+        @Override
+        public CompoundTag data() {
+            return effectData;
+        }
+
+        @Override
+        public double setting(String key, double fallback) {
+            return numbers.getOrDefault(key, fallback);
+        }
+
+        @Override
+        public int store(Aspect aspect, int amount) {
+            if (amount <= 0 || !acceptedAspects().contains(aspect)) {
+                return 0;
+            }
+            int stored = Math.min(amount, Math.max(0, capacity() - essentia.amount(aspect)));
+            if (stored > 0) {
+                setEssentia(essentia.plus(AspectList.of(aspect, stored)));
+            }
+            return stored;
+        }
+    }
 
     // Saving and syncing
 
@@ -438,6 +529,7 @@ public final class CoreBlockEntity extends BlockEntity {
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         if (level instanceof ServerLevel server) {
             stop();
+            CircleIndex.of(server).remove(pos);
             for (Identifier aspect : runes) {
                 Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, RuneItem.of(aspect));
             }

@@ -1,0 +1,12 @@
+{
+  "effect": "thaumory:growth",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:herba",
+    "thaumory:vita"
+  ],
+  "slot3": [
+    "thaumory:herba",
+    "thaumory:bestia"
+  ]
+}

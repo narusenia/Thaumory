@@ -118,6 +118,17 @@ class CircleRulesTest {
     }
 
     @Test
+    void anyInAListAlsoAllowsTheListedEntries() {
+        CircleDefinitions table = definitions("thaumory:attraction", """
+                {"effect": "thaumory:light", "runes": ["thaumory:lux", "thaumory:ignis"], "slot3": ["none", "any"],
+                 "mode": "sustained", "settings": {"speed": 0.3}}""");
+
+        assertTrue(table.find(LUX, IGNIS, Optional.empty()).isPresent());
+        CircleDefinitions.Definition definition = table.find(LUX, IGNIS, Optional.of(AER)).orElseThrow();
+        assertEquals(Map.of("speed", 0.3), definition.settings());
+    }
+
+    @Test
     void laterFileWinsAndBrokenFilesAreSkipped() {
         List<String> warnings = new ArrayList<>();
         Map<Identifier, CircleDefinitionFile> files = Map.of(

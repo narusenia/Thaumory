@@ -1,0 +1,12 @@
+{
+  "cost": 4,
+  "effect": "thaumory:teleport",
+  "mode": "triggered",
+  "runes": [
+    "thaumory:arcanum",
+    "thaumory:aer"
+  ],
+  "slot3": [
+    "any"
+  ]
+}

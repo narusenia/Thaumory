@@ -1,13 +1,13 @@
 package one.nxeu.thaumory.circle;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
@@ -17,13 +17,15 @@ public final class CircleDefinitions {
     public static final CircleDefinitions EMPTY = new CircleDefinitions(List.of());
 
     /**
-     * @param parameters slot 3 runes accepted, empty meaning no rune; unused when {@code anyParameter}
+     * @param anyParameter whether slot 3 may hold any aspect
+     * @param parameters   slot 3 contents accepted besides that, empty meaning no rune
+     * @param settings     numbers for the effect, by name
      */
     public record Definition(Identifier id, Identifier effect, Aspect first, Aspect second, boolean anyParameter,
-            Set<Optional<Aspect>> parameters, CircleMode mode, int cost, int interval) {
+            Set<Optional<Aspect>> parameters, CircleMode mode, int cost, int interval, Map<String, Double> settings) {
         public boolean matches(Aspect a, Aspect b, Optional<Aspect> parameter) {
             boolean runes = (first.equals(a) && second.equals(b)) || (first.equals(b) && second.equals(a));
-            return runes && (anyParameter ? parameter.isPresent() : parameters.contains(parameter));
+            return runes && ((anyParameter && parameter.isPresent()) || parameters.contains(parameter));
         }
     }
 
@@ -51,18 +53,24 @@ public final class CircleDefinitions {
                 warn.accept("Skipping circle " + id + ": unknown aspect in " + file.runes());
                 return;
             }
-            Set<Optional<Aspect>> parameters = Set.of();
-            if (file.slot3().isPresent()) {
-                List<Optional<Identifier>> unknown = file.slot3().get().stream()
-                        .filter(p -> p.isPresent() && aspects.get(p.get()).isEmpty()).toList();
-                if (!unknown.isEmpty()) {
-                    warn.accept("Skipping circle " + id + ": unknown slot 3 aspect in " + file.slot3().get());
-                    return;
+            boolean any = false;
+            Set<Optional<Aspect>> parameters = new HashSet<>();
+            for (String slot3 : file.slot3()) {
+                if (slot3.equals(CircleDefinitionFile.ANY)) {
+                    any = true;
+                } else if (slot3.equals(CircleDefinitionFile.NONE)) {
+                    parameters.add(Optional.empty());
+                } else {
+                    Optional<Aspect> aspect = Optional.ofNullable(Identifier.tryParse(slot3)).flatMap(aspects::get);
+                    if (aspect.isEmpty()) {
+                        warn.accept("Skipping circle " + id + ": unknown slot 3 aspect " + slot3);
+                        return;
+                    }
+                    parameters.add(aspect);
                 }
-                parameters = file.slot3().get().stream().map(p -> p.flatMap(aspects::get)).collect(Collectors.toUnmodifiableSet());
             }
-            definitions.add(new Definition(id, file.effect(), first.get(), second.get(), file.slot3().isEmpty(),
-                    parameters, file.mode(), file.cost(), file.interval()));
+            definitions.add(new Definition(id, file.effect(), first.get(), second.get(), any,
+                    Set.copyOf(parameters), file.mode(), file.cost(), file.interval(), Map.copyOf(file.settings())));
         });
         return new CircleDefinitions(List.copyOf(definitions.reversed()));
     }

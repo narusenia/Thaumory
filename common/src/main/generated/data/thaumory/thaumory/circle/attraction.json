@@ -1,0 +1,12 @@
+{
+  "effect": "thaumory:attraction",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:tempestas",
+    "thaumory:vinculum"
+  ],
+  "slot3": [
+    "none",
+    "any"
+  ]
+}

@@ -11,9 +11,22 @@ package one.nxeu.thaumory.api.circle;
 public interface CircleEffect {
     /**
      * A triggered circle calls this once per activation, after paying for it. A sustained circle
-     * calls it once a second while it runs.
+     * calls it every {@link #period()} ticks while it runs.
      */
     void apply(CircleContext context);
+
+    /** Ticks between calls to {@link #apply} while a sustained circle runs. */
+    default int period() {
+        return 20;
+    }
+
+    /**
+     * Checked before a triggered circle pays. Return false when there is nothing to act on (a
+     * teleport circle with nowhere to go, say) and the activation is called off at no cost.
+     */
+    default boolean canApply(CircleContext context) {
+        return true;
+    }
 
     /**
      * Called once when a sustained circle stops, for whatever reason: it was stopped, ran out of

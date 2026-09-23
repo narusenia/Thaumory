@@ -1,0 +1,21 @@
+{
+  "effect": "thaumory:purification",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:ordo",
+    "thaumory:lux"
+  ],
+  "settings": {
+    "flux_per_essentia": 2.0,
+    "flux_per_second": 0.5
+  },
+  "slot3": [
+    "none",
+    "thaumory:ignis",
+    "thaumory:aer",
+    "thaumory:vita",
+    "thaumory:aqua",
+    "thaumory:terra",
+    "thaumory:mors"
+  ]
+}

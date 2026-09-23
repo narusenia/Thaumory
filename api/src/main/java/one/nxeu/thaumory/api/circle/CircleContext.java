@@ -32,4 +32,17 @@ public interface CircleContext {
      * CircleEffect#stop} can undo it.
      */
     CompoundTag data();
+
+    /**
+     * A number from the combination's {@code settings} in the datapack, or {@code fallback} when
+     * the file does not set it.
+     */
+    double setting(String key, double fallback);
+
+    /**
+     * Puts Essentia into the Core, as far as its runes let in and its capacity allows.
+     *
+     * @return how much went in
+     */
+    int store(Aspect aspect, int amount);
 }

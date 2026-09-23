@@ -1,0 +1,13 @@
+{
+  "effect": "thaumory:ward",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:vinculum",
+    "thaumory:ordo"
+  ],
+  "slot3": [
+    "thaumory:bestia",
+    "thaumory:mors",
+    "thaumory:chaos"
+  ]
+}

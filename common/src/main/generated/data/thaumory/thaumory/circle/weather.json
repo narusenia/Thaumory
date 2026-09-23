@@ -1,0 +1,14 @@
+{
+  "cost": 8,
+  "effect": "thaumory:weather",
+  "mode": "triggered",
+  "runes": [
+    "thaumory:tempestas",
+    "thaumory:arcanum"
+  ],
+  "slot3": [
+    "thaumory:aqua",
+    "thaumory:ignis",
+    "thaumory:tempestas"
+  ]
+}
