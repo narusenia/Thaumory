@@ -2,20 +2,41 @@ package one.nxeu.thaumory.aspect;
 
 import java.util.function.Predicate;
 import net.minecraft.network.chat.Component;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.objects.AtlasSprite;
+import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 
-/** How aspects read in tooltips and messages. Unknown aspects show as "?" in their own color. */
+/**
+ * How aspects read in tooltips and messages: the aspect's icon, then its name, both in its color.
+ * Unknown aspects show a shared icon and "?" instead, so the picture gives nothing away.
+ */
 public final class AspectText {
     public static final String UNKNOWN_KEY = "aspect.thaumory.unknown";
+    /** Icons live in the GUI atlas: {@code assets/<namespace>/textures/gui/sprites/aspect/<path>.png}. */
+    public static final Identifier UNKNOWN_ICON = Identifier.fromNamespaceAndPath("thaumory", "aspect/unknown");
 
     private AspectText() {}
 
     public static MutableComponent name(Aspect aspect, boolean known) {
-        return (known ? Component.translatable(aspect.translationKey()) : Component.translatable(UNKNOWN_KEY))
+        return Component.empty()
+                .append(icon(aspect, known))
+                .append(" ")
+                .append(known ? Component.translatable(aspect.translationKey()) : Component.translatable(UNKNOWN_KEY))
                 .withColor(aspect.color());
+    }
+
+    /** The aspect's icon sprite, or the shared unknown one. */
+    public static Identifier iconSprite(Aspect aspect, boolean known) {
+        return known ? aspect.id().withPrefix("aspect/") : UNKNOWN_ICON;
+    }
+
+    /** The icon alone, tinted with the aspect's color. */
+    public static MutableComponent icon(Aspect aspect, boolean known) {
+        return Component.object(new AtlasSprite(AtlasIds.GUI, iconSprite(aspect, known))).withColor(aspect.color());
     }
 
     /** e.g. "Herba ×16". */
