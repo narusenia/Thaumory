@@ -2,6 +2,7 @@ package one.nxeu.thaumory.jar;
 
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.Set;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
@@ -78,6 +79,23 @@ public final class EssentiaTransfer {
             return settle(left, received, label, spilled, registry);
         }
         return new Result(left, received, spilled);
+    }
+
+    /**
+     * Pours into a container that keeps each aspect apart, such as a circle's Core: only
+     * {@code accepted} aspects move, each up to {@code perAspect}, and nothing cancels. What does
+     * not fit stays behind.
+     */
+    public static Result pourSeparated(AspectList from, AspectList to, Set<Aspect> accepted, int perAspect) {
+        AspectList.Builder moved = AspectList.builder();
+        for (AspectStack stack : from.stacks()) {
+            if (accepted.contains(stack.aspect())) {
+                int space = Math.max(0, perAspect - to.amount(stack.aspect()));
+                moved.add(stack.aspect(), Math.min(space, stack.amount()));
+            }
+        }
+        AspectList movedList = moved.build();
+        return new Result(from.minus(movedList), to.plus(movedList), 0);
     }
 
     /** Unlabeled jars cancel opposites the moment they mix; a labeled jar only ever holds one aspect. */
