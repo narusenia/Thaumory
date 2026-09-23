@@ -21,6 +21,7 @@ import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.command.ThaumoryCommands;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.data.SettingsFileReloadListener;
+import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxReadings;
 import one.nxeu.thaumory.flux.FluxSettings;
@@ -54,6 +55,7 @@ public final class Thaumory {
         ThaumoryComponents.register();
         ThaumoryBlocks.register();
         ThaumoryItems.register();
+        ThaumoryEntities.register();
         ThaumoryRecipes.register();
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));

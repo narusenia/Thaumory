@@ -5,6 +5,7 @@ import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.networking.transformers.SplitPacketTransformer;
 import java.util.List;
@@ -25,6 +26,8 @@ import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
+import one.nxeu.thaumory.client.entity.VoidRemnantRenderer;
+import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.network.FluxReadingPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
 import org.slf4j.Logger;
@@ -56,6 +59,7 @@ public final class ThaumoryClient {
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CORE_ENTITY.get(), CoreRenderer::new);
+        EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
         RuneTint.register();
         ArcaneCodexItem.setScreenOpener(() -> Minecraft.getInstance().gui.setScreen(new ArcaneCodexScreen()));
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {

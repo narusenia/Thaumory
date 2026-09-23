@@ -8,6 +8,7 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.circle.effect.ThaumoryCircleEffects;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
@@ -46,6 +47,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_essentia", "The Core lacks Essentia");
             builder.add("message.thaumory.wand.no_target", "The circle finds nothing to act on");
             builder.add("message.thaumory.wand.misfired", "The circle misfires and Flux leaks out");
+            builder.add("message.thaumory.wand.overloaded", "Overloaded with Flux, the circle bursts!");
             builder.add("message.thaumory.circle.discovered", "You found a new circle: %s");
             builder.add("hud.thaumory.flux.amount", "Flux here: %s");
             builder.add("hud.thaumory.block.unscanned", "Not scanned");
@@ -74,6 +76,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryBlocks.CORE.get(), "Circle Core");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "Polluted Soil");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "Polluted Stone");
+            builder.add(ThaumoryEntities.VOID_REMNANT.get(), "Void Remnant");
             builder.add("message.thaumory.core.full", "All three rune slots are full");
             builder.add("hud.thaumory.core.runes", "Runes:");
             builder.add("hud.thaumory.core.empty_slot", "—");
@@ -151,6 +154,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_essentia", "Core の Essentia が足りない");
             builder.add("message.thaumory.wand.no_target", "陣が働きかける先が見つからない");
             builder.add("message.thaumory.wand.misfired", "陣が乱れ、Flux が漏れ出した");
+            builder.add("message.thaumory.wand.overloaded", "Flux にあふれた陣が暴発した！");
             builder.add("message.thaumory.circle.discovered", "新しい陣を見出した: %s");
             builder.add("hud.thaumory.flux.amount", "この辺りの Flux: %s");
             builder.add("hud.thaumory.block.unscanned", "未スキャン");
@@ -179,6 +183,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryBlocks.CORE.get(), "陣の核");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "汚染された土");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "汚染された石");
+            builder.add(ThaumoryEntities.VOID_REMNANT.get(), "虚空の残滓");
             builder.add("message.thaumory.core.full", "ルーンのスロットは 3 つとも埋まっている");
             builder.add("hud.thaumory.core.runes", "ルーン:");
             builder.add("hud.thaumory.core.empty_slot", "—");

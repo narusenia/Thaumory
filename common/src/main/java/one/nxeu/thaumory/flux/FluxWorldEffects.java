@@ -9,16 +9,20 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 import one.nxeu.thaumory.api.flux.FluxStage;
+import one.nxeu.thaumory.entity.ThaumoryEntities;
+import one.nxeu.thaumory.entity.VoidRemnant;
 import one.nxeu.thaumory.flux.pollution.PollutionRules;
 
 /**
  * What each Flux stage does to the world near players (requirements §5.1): purple particles from
- * stagnation on and polluted blocks from erosion on. Chunks within {@link #RADIUS} chunks of a
+ * stagnation on, polluted blocks from erosion on and Void Remnants from manifestation on. Chunks within {@link #RADIUS} chunks of a
  * player are looked at on each effect's interval.
  */
 public final class FluxWorldEffects {
@@ -40,7 +44,8 @@ public final class FluxWorldEffects {
         long time = level.getGameTime();
         boolean particles = time % PARTICLE_INTERVAL == 0;
         boolean pollution = time % effects.pollutionInterval() == 0;
-        if (!particles && !pollution) {
+        boolean spawning = time % effects.spawnInterval() == 0;
+        if (!particles && !pollution && !spawning) {
             return;
         }
         RandomSource random = level.getRandom();
@@ -60,6 +65,22 @@ public final class FluxWorldEffects {
                     pollute(level, surface(level, chunk, random));
                 }
             }
+            if (spawning && effects.spawnsRemnants(stage) && random.nextDouble() < effects.spawnChance()) {
+                spawnRemnant(level, chunk, random, effects.spawnCap());
+            }
+        }
+    }
+
+    /** One Void Remnant above the chunk's surface, unless it already holds {@code cap} of them. */
+    private static void spawnRemnant(ServerLevel level, ChunkPos chunk, RandomSource random, int cap) {
+        AABB column = new AABB(chunk.getMinBlockX(), level.getMinY(), chunk.getMinBlockZ(),
+                chunk.getMaxBlockX() + 1, level.getMaxY() + 1, chunk.getMaxBlockZ() + 1);
+        if (level.getEntitiesOfClass(VoidRemnant.class, column).size() >= cap) {
+            return;
+        }
+        BlockPos above = surface(level, chunk, random).above(2);
+        if (level.getBlockState(above).isAir() && level.getBlockState(above.above()).isAir()) {
+            ThaumoryEntities.VOID_REMNANT.get().spawn(level, above, EntitySpawnReason.EVENT);
         }
     }
 
