@@ -9,14 +9,21 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.Aspect;
+import one.nxeu.thaumory.api.aspect.AspectList;
+import one.nxeu.thaumory.api.essentia.EssentiaContainer;
+import one.nxeu.thaumory.aspect.AspectCancellation;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.jar.EssentiaTransfer;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.jar.JarSettings;
 
@@ -44,6 +51,40 @@ public final class JarBlockEntity extends BlockEntity {
     /** The capacity to show: the server's, even on the client. */
     public int displayCapacity() {
         return level != null && level.isClientSide() ? clientCapacity : capacity();
+    }
+
+    /**
+     * For pipes and other mods: a labeled jar lets only its label's aspect in and out. An unlabeled
+     * one takes anything and cancels opposites into Flux once a transfer is final (requirements §8.2).
+     */
+    private final EssentiaContainer container = new EssentiaContainer() {
+        @Override
+        public AspectList contents() {
+            return contents.aspects();
+        }
+
+        @Override
+        public int space(AspectList held, Aspect aspect) {
+            return EssentiaTransfer.jarSpace(held, contents.label(), capacity(), aspect);
+        }
+
+        @Override
+        public boolean canExtract(Aspect aspect) {
+            return contents.label().map(aspect::equals).orElse(true);
+        }
+
+        @Override
+        public void update(AspectList held) {
+            AspectCancellation.Result settled = EssentiaTransfer.settleJar(held, contents.label(), ThaumoryApi.aspects());
+            setContents(contents.withAspects(settled.remaining()));
+            if (settled.removed() > 0 && level instanceof ServerLevel server) {
+                ThaumoryApi.flux().add(server, ChunkPos.containing(worldPosition), settled.removed());
+            }
+        }
+    };
+
+    public EssentiaContainer container() {
+        return container;
     }
 
     public JarContents contents() {

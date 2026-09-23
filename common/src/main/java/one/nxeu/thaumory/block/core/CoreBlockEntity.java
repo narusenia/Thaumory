@@ -41,7 +41,9 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.circle.CircleContext;
 import one.nxeu.thaumory.api.circle.CircleEffect;
+import one.nxeu.thaumory.api.essentia.EssentiaContainer;
 import one.nxeu.thaumory.api.flux.FluxStage;
+import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
@@ -58,7 +60,6 @@ import one.nxeu.thaumory.flux.FluxWorldEffects;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
-import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
@@ -242,6 +243,36 @@ public final class CoreBlockEntity extends BlockEntity {
                 index.remove(worldPosition);
             }
         }
+    }
+
+    /**
+     * For pipes and other mods: only the runes' aspects go in, each up to the capacity, and
+     * nothing comes out (requirements §8.2).
+     */
+    private final EssentiaContainer container = new EssentiaContainer() {
+        @Override
+        public AspectList contents() {
+            return essentia;
+        }
+
+        @Override
+        public int space(AspectList contents, Aspect aspect) {
+            return acceptedAspects().contains(aspect) ? Math.max(0, capacity() - contents.amount(aspect)) : 0;
+        }
+
+        @Override
+        public boolean canExtract(Aspect aspect) {
+            return false;
+        }
+
+        @Override
+        public void update(AspectList contents) {
+            setEssentia(contents);
+        }
+    };
+
+    public EssentiaContainer container() {
+        return container;
     }
 
     public AspectList essentia() {

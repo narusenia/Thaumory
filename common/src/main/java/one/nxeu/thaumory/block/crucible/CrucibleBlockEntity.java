@@ -7,6 +7,7 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -16,7 +17,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -35,14 +35,16 @@ import one.nxeu.thaumory.alchemy.AlchemyInput;
 import one.nxeu.thaumory.alchemy.AlchemyRecipe;
 import one.nxeu.thaumory.alchemy.AlchemySelection;
 import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
+import one.nxeu.thaumory.api.essentia.EssentiaContainer;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.crucible.CrucibleTank;
-import one.nxeu.thaumory.research.ResearchProgress;
 import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.research.ResearchProgress;
 
 /**
  * Heats up while there is water and a heat source below, then melts the items inside one at a
@@ -67,6 +69,36 @@ public final class CrucibleBlockEntity extends BlockEntity {
 
     public static void updateSettings(CrucibleSettings newSettings) {
         settings = newSettings;
+    }
+
+    /**
+     * For pipes and other mods: any aspect comes out, and what goes in stops at the capacity
+     * without spilling (requirements §8.2).
+     */
+    private final EssentiaContainer container = new EssentiaContainer() {
+        @Override
+        public AspectList contents() {
+            return tank.contents();
+        }
+
+        @Override
+        public int space(AspectList contents, Aspect aspect) {
+            return Math.max(0, capacity() - contents.total());
+        }
+
+        @Override
+        public boolean canExtract(Aspect aspect) {
+            return true;
+        }
+
+        @Override
+        public void update(AspectList contents) {
+            setContents(contents);
+        }
+    };
+
+    public EssentiaContainer container() {
+        return container;
     }
 
     public CrucibleTank tank() {

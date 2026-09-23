@@ -20,8 +20,11 @@ import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 public class CrucibleGameTests {
     private static final BlockPos CRUCIBLE = new BlockPos(2, 2, 2);
 
-    /** Ignis 10 and Aqua 4 lose 1 each per second while boiling, until the Aqua is gone: 8 Flux. */
-    @GameTest(maxTicks = 300)
+    /**
+     * Ignis 10 and Aqua 4 lose 1 each per second while boiling, until the Aqua is gone: 8 Flux.
+     * Kept apart from other tests, since it checks the Flux of its whole chunk.
+     */
+    @GameTest(maxTicks = 300, padding = 24)
     public void oppositesCancelIntoFlux(GameTestHelper helper) {
         helper.setBlock(CRUCIBLE.below(), Blocks.MAGMA_BLOCK);
         helper.setBlock(CRUCIBLE, ThaumoryBlocks.CRUCIBLE.get());
