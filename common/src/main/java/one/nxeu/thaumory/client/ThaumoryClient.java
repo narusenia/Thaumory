@@ -1,6 +1,7 @@
 package one.nxeu.thaumory.client;
 
 import com.mojang.logging.LogUtils;
+import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
@@ -38,6 +39,7 @@ public final class ThaumoryClient {
             ClientItemAspects.clear();
             ClientKnowledge.clear();
         });
+        ClientGuiEvent.RENDER_HUD.register(CrucibleHud::render);
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> appendAspects(stack.getItem(), lines));
     }
 

@@ -7,6 +7,7 @@ import net.minecraft.core.HolderLookup;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
+import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 /** Every user-facing string, in English and Japanese. Aspect names stay Latin in both. */
@@ -41,6 +42,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.scan.result", "Scanned %s: %s");
             builder.add("message.thaumory.scan.no_aspects", "Scanned %s: no aspects");
             builder.add("message.thaumory.scan.revealed", "Worked out a new aspect: %s");
+            builder.add(ThaumoryBlocks.CRUCIBLE.get(), "Crucible");
+            builder.add("hud.thaumory.crucible.water", "Water %s/%s");
+            builder.add("hud.thaumory.crucible.boiling", "Boiling");
+            builder.add("hud.thaumory.crucible.not_boiling", "Not boiling");
+            builder.add("hud.thaumory.crucible.essentia", "Essentia %s/%s");
         }
     }
 
@@ -59,6 +65,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.scan.result", "%s をスキャンした: %s");
             builder.add("message.thaumory.scan.no_aspects", "%s をスキャンした: アスペクトなし");
             builder.add("message.thaumory.scan.revealed", "新しいアスペクトが判明した: %s");
+            builder.add(ThaumoryBlocks.CRUCIBLE.get(), "るつぼ");
+            builder.add("hud.thaumory.crucible.water", "水 %s/%s");
+            builder.add("hud.thaumory.crucible.boiling", "沸騰中");
+            builder.add("hud.thaumory.crucible.not_boiling", "沸騰していない");
+            builder.add("hud.thaumory.crucible.essentia", "Essentia %s/%s");
         }
     }
 }

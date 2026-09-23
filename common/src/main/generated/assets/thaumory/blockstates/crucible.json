@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "level=0": {
+      "model": "thaumory:block/crucible"
+    },
+    "level=1": {
+      "model": "thaumory:block/crucible_level1"
+    },
+    "level=2": {
+      "model": "thaumory:block/crucible_level2"
+    },
+    "level=3": {
+      "model": "thaumory:block/crucible_full"
+    }
+  }
+}

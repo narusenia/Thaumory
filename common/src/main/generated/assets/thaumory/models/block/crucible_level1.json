@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/template_cauldron_level1",
+  "textures": {
+    "bottom": "thaumory:block/crucible_bottom",
+    "content": "thaumory:block/crucible_water",
+    "inside": "thaumory:block/crucible_inner",
+    "particle": "thaumory:block/crucible_side",
+    "side": "thaumory:block/crucible_side",
+    "top": "thaumory:block/crucible_top"
+  }
+}

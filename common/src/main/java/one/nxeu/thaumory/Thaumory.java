@@ -10,7 +10,10 @@ import one.nxeu.thaumory.aspect.data.ItemAspectReloadListener;
 import one.nxeu.thaumory.aspect.estimate.AspectEstimation;
 import one.nxeu.thaumory.aspect.estimate.VanillaRecipeAdapters;
 import one.nxeu.thaumory.aspect.estimate.VanillaWorldChanges;
+import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.command.ThaumoryCommands;
+import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.data.SettingsFileReloadListener;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxSettings;
@@ -32,6 +35,7 @@ public final class Thaumory {
         FluxManager flux = new FluxManager(platform.fluxStorage());
         ThaumoryApi.provideFlux(flux);
         knowledge = new KnowledgeManager(platform.knowledgeStorage());
+        ThaumoryBlocks.register();
         ThaumoryItems.register();
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
@@ -39,6 +43,8 @@ public final class Thaumory {
                 id("thaumory/flux.json"), FluxSettings.CODEC, FluxSettings.DEFAULT, flux::updateSettings), id("flux"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/scanning.json"), ScanSettings.CODEC, ScanSettings.DEFAULT, ItemScanner::updateSettings), id("scanning"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
+                id("thaumory/crucible.json"), CrucibleSettings.CODEC, CrucibleSettings.DEFAULT, CrucibleBlockEntity::updateSettings), id("crucible"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();
