@@ -65,4 +65,4 @@ GameTest and datagen tasks are set up in M0-5 and M0-6.
 
 ## Licensing
 
-Mod code is MPL-2.0 and `thaumory-api` is MIT (the switch is task M0-2). Do not copy code or assets from Thaumcraft or other mods.
+Mod code is MPL-2.0 (`LICENSE.txt`) and `thaumory-api` is MIT (`LICENSE-API.txt`). When `api/` is created, include `LICENSE-API.txt` in its jar. Do not copy code or assets from Thaumcraft or other mods.

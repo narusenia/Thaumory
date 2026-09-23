@@ -43,7 +43,5 @@ Thaumory will ship a separate `thaumory-api` artifact. You will be able to add a
 
 ## License
 
-- Mod code: MPL-2.0
-- `thaumory-api`: MIT
-
-(The repository still has the initial MIT `LICENSE.txt`. It will be replaced when the license switch lands.)
+- Mod code: [MPL-2.0](LICENSE.txt)
+- `thaumory-api` (the `api/` subproject): [MIT](LICENSE-API.txt)
