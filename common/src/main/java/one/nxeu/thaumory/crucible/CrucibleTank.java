@@ -3,7 +3,9 @@ package one.nxeu.thaumory.crucible;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import one.nxeu.thaumory.api.aspect.AspectList;
+import one.nxeu.thaumory.api.aspect.AspectRegistry;
 import one.nxeu.thaumory.api.aspect.AspectStack;
+import one.nxeu.thaumory.aspect.AspectCancellation;
 
 /**
  * What a Crucible holds: mixed Essentia, the water level (0 to {@link #MAX_WATER}), and how much
@@ -59,6 +61,14 @@ public record CrucibleTank(AspectList contents, int water, int essentiaSinceWate
         int left = newWater <= 0 ? 0 : used % settings.essentiaPerWaterLevel();
         return new MeltResult(new CrucibleTank(added.build(), newWater, left), overflow);
     }
+
+    /** What opposite aspects in the tank wear down in one step; {@link AspectCancellation.Result#removed()} becomes Flux. */
+    public CancelResult cancel(AspectRegistry registry, CrucibleSettings settings) {
+        AspectCancellation.Result result = AspectCancellation.step(contents, registry, settings.cancelAmount());
+        return new CancelResult(new CrucibleTank(result.remaining(), water, essentiaSinceWaterDrop), result.removed());
+    }
+
+    public record CancelResult(CrucibleTank tank, int flux) {}
 
     /** Saved with the block entity. */
     public static Codec<CrucibleTank> codec(Codec<AspectList> aspects) {

@@ -48,6 +48,7 @@ public final class CrucibleBlockEntity extends BlockEntity {
     private CrucibleTank tank = CrucibleTank.EMPTY;
     private int heat;
     private int meltCooldown;
+    private int cancelCooldown;
     /** The server's capacity, as last received. Only meaningful on the client. */
     private int clientCapacity = CrucibleSettings.DEFAULT.capacity();
 
@@ -83,11 +84,30 @@ public final class CrucibleBlockEntity extends BlockEntity {
         if (state.getValue(CrucibleBlock.BOILING) != boiling) {
             level.setBlock(pos, state.setValue(CrucibleBlock.BOILING, boiling), Block.UPDATE_CLIENTS);
         }
-        if (!boiling || ++crucible.meltCooldown < current.meltInterval()) {
+        if (!boiling) {
             return;
         }
-        crucible.meltCooldown = 0;
-        crucible.meltOne((ServerLevel) level, current);
+        if (++crucible.cancelCooldown >= current.cancelInterval()) {
+            crucible.cancelCooldown = 0;
+            crucible.cancelOpposites((ServerLevel) level, current);
+        }
+        if (++crucible.meltCooldown >= current.meltInterval()) {
+            crucible.meltCooldown = 0;
+            crucible.meltOne((ServerLevel) level, current);
+        }
+    }
+
+    /** Opposite aspects wear each other down; what they lose becomes Flux. */
+    private void cancelOpposites(ServerLevel level, CrucibleSettings current) {
+        CrucibleTank.CancelResult result = tank.cancel(ThaumoryApi.aspects(), current);
+        if (result.flux() == 0) {
+            return;
+        }
+        setTank(result.tank());
+        ThaumoryApi.flux().add(level, ChunkPos.containing(worldPosition), result.flux());
+        level.sendParticles(ParticleTypes.WITCH, worldPosition.getX() + 0.5, worldPosition.getY() + 0.9, worldPosition.getZ() + 0.5,
+                4, 0.25, 0.05, 0.25, 0);
+        level.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.15f, 1.6f);
     }
 
     /** Melts one item from the first stack inside that has aspects. */

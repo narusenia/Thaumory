@@ -9,6 +9,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
@@ -48,6 +50,16 @@ final class CrucibleHud {
         lines.add(Component.translatable("hud.thaumory.crucible.essentia", tank.contents().total(), crucible.capacity()).withColor(GRAY));
         for (AspectStack stack : tank.contents().sortedByAmount()) {
             lines.add(Component.literal(" ").append(AspectText.stack(stack, knowledge.knowsAspect(stack.aspect().id()))));
+        }
+        List<List<Aspect>> cancelling = tank.contents().cancellingPairs(ThaumoryApi.aspects());
+        if (boiling && !cancelling.isEmpty()) {
+            lines.add(Component.translatable("hud.thaumory.crucible.cancelling").withColor(0xFFFF5555));
+            for (List<Aspect> pair : cancelling) {
+                lines.add(Component.literal(" ")
+                        .append(AspectText.name(pair.get(0), knowledge.knowsAspect(pair.get(0).id())))
+                        .append(Component.literal(" ⇄ ").withColor(0xFFFF5555))
+                        .append(AspectText.name(pair.get(1), knowledge.knowsAspect(pair.get(1).id()))));
+            }
         }
 
         int x = graphics.guiWidth() / 2 + 12;

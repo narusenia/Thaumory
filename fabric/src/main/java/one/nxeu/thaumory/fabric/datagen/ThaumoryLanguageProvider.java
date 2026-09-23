@@ -60,6 +60,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.crucible.boiling", "Boiling");
             builder.add("hud.thaumory.crucible.not_boiling", "Not boiling");
             builder.add("hud.thaumory.crucible.essentia", "Essentia %s/%s");
+            builder.add("hud.thaumory.crucible.cancelling", "Opposites are cancelling out!");
         }
     }
 
@@ -96,6 +97,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.crucible.boiling", "沸騰中");
             builder.add("hud.thaumory.crucible.not_boiling", "沸騰していない");
             builder.add("hud.thaumory.crucible.essentia", "Essentia %s/%s");
+            builder.add("hud.thaumory.crucible.cancelling", "正反対のアスペクトが打ち消し合っている！");
         }
     }
 }

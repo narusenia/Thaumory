@@ -32,6 +32,7 @@
   "codex.thaumory.tab.hints": "ヒント",
   "codex.thaumory.tab.scanned": "スキャン済み",
   "hud.thaumory.crucible.boiling": "沸騰中",
+  "hud.thaumory.crucible.cancelling": "正反対のアスペクトが打ち消し合っている！",
   "hud.thaumory.crucible.essentia": "Essentia %s/%s",
   "hud.thaumory.crucible.not_boiling": "沸騰していない",
   "hud.thaumory.crucible.water": "水 %s/%s",

@@ -1,5 +1,7 @@
 {
   "boil_time": 100,
+  "cancel_amount": 1,
+  "cancel_interval": 20,
   "capacity": 500,
   "essentia_per_water_level": 100,
   "melt_interval": 5,
