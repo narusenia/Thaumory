@@ -31,7 +31,7 @@
 | [x] | M0-2 | ライセンスを本体 MPL-2.0 / API MIT に切り替える | `LICENSE.txt` と `fabric.mod.json` の `license` が要件と一致する | - |
 | [x] | M0-3 | `api` サブプロジェクトを追加する | `common` と `fabric` が `api` に依存してビルドできる。`thaumory-api` として publish できる。jar に `LICENSE-API.txt` が入る | M0-1 |
 | [x] | M0-4 | JUnit を `common` と `api` に導入する | サンプルのテストが `./gradlew test` で通る | M0-3 |
-| [ ] | M0-5 | Fabric GameTest の実行環境を整える | 空の GameTest が `runGametest` で通る | - |
+| [ ] | M0-5 | Fabric GameTest の実行環境を整える | 空の GameTest が `runGametest` で通る。M1-13 の打ち消しの GameTest も足す | - |
 | [x] | M0-6 | datagen（言語・モデル・タグ・レシピ）の土台を作る | `runDatagen` で `ja_jp` / `en_us` が生成される | - |
 | [ ] | M0-7 | `fabric.mod.json` のメタデータを埋める | description・authors・contact が埋まり、不要な `suggests` が消えている | - |
 
@@ -65,7 +65,7 @@
 | 状態 | ID | タスク | 完了条件 | 依存 |
 |---|---|---|---|---|
 | [x] | M1-12 | Crucible: 水・熱源・アイテムの溶解・容量 | 投げ入れたアイテムが Essentia になり、容量超過分が Flux になる。推定されたアイテムは 75% で溶ける（要件 §3） | M1-4 |
-| [ ] | M1-13 | Crucible: 正反対のアスペクトの打ち消し | 打ち消しで Essentia が減り Flux が出ることを単体テストと GameTest で確認 | M1-12, M1-20 |
+| [ ] | M1-13 | Crucible: 正反対のアスペクトの打ち消し | 打ち消しで Essentia が減り Flux が出ることを単体テストとサーバーでの確認で確かめる（GameTest は M0-5 の後に足す） | M1-12, M1-20 |
 | [ ] | M1-14 | 瓶（Jar）とラベル | ラベル付きの瓶は指定アスペクトだけ、ラベルなしは最多のアスペクトを取り出す。瓶内の打ち消しで Flux が出る | M1-12 |
 | [ ] | M1-15 | 錬金術レシピ（datapack） | 空の Rune・チョーク類を錬金術で作れる。レシピを JSON で追加できる | M1-12 |
 
@@ -153,3 +153,4 @@
 - 2026-09-23: 初版
 - 2026-09-23: M4-2 を「抽象化」から「NeoForge 側の実装」に変更（抽象化は M1-20 から `ThaumoryPlatform` として進める）
 - 2026-09-24: スキャンと Flux の計測を杖から魔術のルーペに移す（M1-8・M1-24）
+- 2026-09-24: M1-13 の GameTest を M0-5 に移す（GameTest の環境が未整備のため）
