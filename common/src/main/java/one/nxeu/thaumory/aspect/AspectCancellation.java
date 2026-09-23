@@ -47,4 +47,18 @@ public final class AspectCancellation {
         }
         return new Result(remaining.build(), removed);
     }
+
+    /** Cancels until no opposite pair is left: each pair loses whatever its smaller side holds. */
+    public static Result full(AspectList aspects, AspectRegistry registry) {
+        AspectList current = aspects;
+        int removed = 0;
+        while (true) {
+            Result step = step(current, registry, Integer.MAX_VALUE);
+            if (step.removed() == 0) {
+                return new Result(current, removed);
+            }
+            current = step.remaining();
+            removed += step.removed();
+        }
+    }
 }

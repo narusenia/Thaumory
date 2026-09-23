@@ -74,4 +74,13 @@ class AspectCancellationTest {
         assertEquals(AspectList.of(LUX, 3), result.remaining());
         assertEquals(2, result.removed());
     }
+
+    @Test
+    void fullCancellationRunsUntilOneSideIsGone() {
+        AspectCancellation.Result result = AspectCancellation.full(
+                AspectList.of(new AspectStack(IGNIS, 10), new AspectStack(AQUA, 4), new AspectStack(TERRA, 3)), registry);
+
+        assertEquals(AspectList.of(new AspectStack(IGNIS, 6), new AspectStack(TERRA, 3)), result.remaining());
+        assertEquals(8, result.removed());
+    }
 }
