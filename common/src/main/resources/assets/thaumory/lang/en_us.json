@@ -1,0 +1,21 @@
+{
+  "aspect.thaumory.ignis": "Ignis",
+  "aspect.thaumory.aer": "Aer",
+  "aspect.thaumory.vita": "Vita",
+  "aspect.thaumory.aqua": "Aqua",
+  "aspect.thaumory.terra": "Terra",
+  "aspect.thaumory.mors": "Mors",
+  "aspect.thaumory.lux": "Lux",
+  "aspect.thaumory.arcanum": "Arcanum",
+  "aspect.thaumory.herba": "Herba",
+  "aspect.thaumory.umbra": "Umbra",
+  "aspect.thaumory.vinculum": "Vinculum",
+  "aspect.thaumory.bellum": "Bellum",
+  "aspect.thaumory.bestia": "Bestia",
+  "aspect.thaumory.tempestas": "Tempestas",
+  "aspect.thaumory.ordo": "Ordo",
+  "aspect.thaumory.venenum": "Venenum",
+  "aspect.thaumory.metallum": "Metallum",
+  "aspect.thaumory.chaos": "Chaos",
+  "tooltip.thaumory.aspects": "Aspects:"
+}

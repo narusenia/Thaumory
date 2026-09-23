@@ -17,6 +17,7 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.estimate.EstimationRecipe;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
+import one.nxeu.thaumory.network.AspectSync;
 import org.slf4j.Logger;
 
 /**
@@ -71,6 +72,7 @@ public final class AspectEstimation {
 
         AspectEstimator.Result result = AspectEstimator.estimate(manual, recipes, AspectEstimation::remainder);
         ItemAspects.updateEstimated(result.estimated());
+        AspectSync.sendToAll(server);
 
         LOGGER.info("Estimated aspects for {} items from {} recipes in {} rounds ({} ms); {} items stayed unresolved, {} recipes failed",
                 result.estimated().size(), recipes.size(), result.rounds(),

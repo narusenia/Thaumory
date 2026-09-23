@@ -10,6 +10,7 @@ import one.nxeu.thaumory.aspect.data.ItemAspectReloadListener;
 import one.nxeu.thaumory.aspect.estimate.AspectEstimation;
 import one.nxeu.thaumory.aspect.estimate.VanillaRecipeAdapters;
 import one.nxeu.thaumory.command.ThaumoryCommands;
+import one.nxeu.thaumory.network.AspectSync;
 
 public final class Thaumory {
     public static final String MOD_ID = ThaumoryApi.MOD_ID;
@@ -22,6 +23,7 @@ public final class Thaumory {
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context));
         AspectEstimation.registerEvents();
+        AspectSync.register();
     }
 
     public static Identifier id(String path) {

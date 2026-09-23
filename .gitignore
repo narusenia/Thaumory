@@ -19,3 +19,6 @@ hs_err_pid*
 
 # Common working directory
 run
+
+# Logs written by unit tests that touch Minecraft logging
+logs/
