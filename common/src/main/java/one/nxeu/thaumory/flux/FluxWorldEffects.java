@@ -1,7 +1,9 @@
 package one.nxeu.thaumory.flux;
 
 import dev.architectury.event.events.common.TickEvent;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -10,7 +12,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -18,11 +22,13 @@ import net.minecraft.world.phys.AABB;
 import one.nxeu.thaumory.api.flux.FluxStage;
 import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.entity.VoidRemnant;
+import one.nxeu.thaumory.flux.pollution.PollutionIndex;
 import one.nxeu.thaumory.flux.pollution.PollutionRules;
 
 /**
  * What each Flux stage does to the world near players (requirements §5.1): purple particles from
- * stagnation on, polluted blocks from erosion on and Void Remnants from manifestation on. Chunks within {@link #RADIUS} chunks of a
+ * stagnation on, polluted blocks from erosion on and Void Remnants from manifestation on. Polluted
+ * blocks keep adding Flux to their chunk, short of erosion. Chunks within {@link #RADIUS} chunks of a
  * player are looked at on each effect's interval.
  */
 public final class FluxWorldEffects {
@@ -30,6 +36,13 @@ public final class FluxWorldEffects {
     private static final int PARTICLE_INTERVAL = 40;
 
     private final FluxManager flux;
+    /**
+     * Flux from polluted blocks not yet added, by chunk. A chunk forgets Flux below 1, so small
+     * amounts wait here until they reach 1. Lost on restart, which costs at most 1 per chunk.
+     */
+    private final Map<PendingKey, Double> pending = new HashMap<>();
+
+    private record PendingKey(ResourceKey<Level> dimension, long chunk) {}
 
     public FluxWorldEffects(FluxManager flux) {
         this.flux = flux;
@@ -49,7 +62,22 @@ public final class FluxWorldEffects {
             return;
         }
         RandomSource random = level.getRandom();
+        PollutionIndex pollutionIndex = PollutionIndex.of(level);
         for (ChunkPos chunk : chunksNearPlayers(level)) {
+            if (pollution) {
+                double current = flux.get(level, chunk);
+                double gain = flux.settings().pollutedBlockGain(pollutionIndex.count(chunk), current);
+                if (gain > 0) {
+                    PendingKey key = new PendingKey(level.dimension(), chunk.pack());
+                    double waiting = pending.getOrDefault(key, 0.0) + gain;
+                    if (current >= 1 || waiting >= 1) {
+                        flux.add(level, chunk, waiting);
+                        pending.remove(key);
+                    } else {
+                        pending.put(key, waiting);
+                    }
+                }
+            }
             FluxStage stage = flux.stage(level, chunk);
             if (stage == FluxStage.NONE) {
                 continue;

@@ -73,6 +73,16 @@ class FluxSettingsTest {
     }
 
     @Test
+    void pollutedBlocksAddFluxButStopShortOfErosion() {
+        assertEquals(0, SETTINGS.pollutedBlockGain(0, 10), 1e-9);
+        assertEquals(0.1, SETTINGS.pollutedBlockGain(5, 10), 1e-9);
+        assertEquals(0.05, SETTINGS.pollutedBlockGain(5, 149.94), 1e-6);
+        assertEquals(0, SETTINGS.pollutedBlockGain(5, 149.99), 1e-9);
+        assertEquals(0, SETTINGS.pollutedBlockGain(5, 400), 1e-9);
+        assertEquals(FluxStage.STAGNATION, SETTINGS.stage(149.99));
+    }
+
+    @Test
     void effectsFallBackPerValueAndCheckListLengths() {
         FluxSettings settings = parse("""
                 { "decay": { "fraction": 0.1, "interval": 72000 },

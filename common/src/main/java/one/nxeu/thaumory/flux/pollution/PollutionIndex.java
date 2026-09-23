@@ -57,6 +57,11 @@ public final class PollutionIndex extends SavedData {
         }
     }
 
+    /** How many polluted blocks the chunk holds, as recorded. */
+    public int count(ChunkPos chunk) {
+        return chunks.getOrDefault(chunk.pack(), Set.of()).size();
+    }
+
     /** Polluted positions inside {@code box}, in no particular order. */
     public List<BlockPos> within(AABB box) {
         List<BlockPos> found = new ArrayList<>();

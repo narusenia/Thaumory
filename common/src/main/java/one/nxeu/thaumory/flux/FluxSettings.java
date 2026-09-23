@@ -68,10 +68,10 @@ public record FluxSettings(Decay decay, Stages stages, Effects effects) {
      * from erosion on, Void Remnants and extra circle instability from manifestation on, and
      * misfiring circles at overload. Stage lists run in stage order from where the effect starts.
      */
-    public record Effects(List<Integer> particles, int pollutionInterval, List<Integer> pollutionAttempts, int spawnInterval,
+    public record Effects(List<Integer> particles, int pollutionInterval, List<Integer> pollutionAttempts, double pollutedBlockFlux, int spawnInterval,
             double spawnChance, int spawnCap, int manifestationInstability, double misfireChance, double explosionRadius,
             float explosionDamage) {
-        public static final Effects DEFAULT = new Effects(List.of(2, 4, 6, 10), 200, List.of(1, 2, 3), 600, 0.5, 3, 3, 0.25, 4, 4);
+        public static final Effects DEFAULT = new Effects(List.of(2, 4, 6, 10), 200, List.of(1, 2, 3), 0.02, 600, 0.5, 3, 3, 0.25, 4, 4);
 
         private static final Codec<Integer> COUNT = Codec.intRange(0, Integer.MAX_VALUE);
         private static final Codec<Integer> INTERVAL = Codec.intRange(1, Integer.MAX_VALUE);
@@ -81,6 +81,8 @@ public record FluxSettings(Decay decay, Stages stages, Effects effects) {
                 COUNT.listOf(4, 4).optionalFieldOf("particles", DEFAULT.particles).forGetter(Effects::particles),
                 INTERVAL.optionalFieldOf("pollution_interval", DEFAULT.pollutionInterval).forGetter(Effects::pollutionInterval),
                 COUNT.listOf(3, 3).optionalFieldOf("pollution_attempts", DEFAULT.pollutionAttempts).forGetter(Effects::pollutionAttempts),
+                Codec.doubleRange(0, Double.MAX_VALUE).optionalFieldOf("polluted_block_flux", DEFAULT.pollutedBlockFlux)
+                        .forGetter(Effects::pollutedBlockFlux),
                 INTERVAL.optionalFieldOf("spawn_interval", DEFAULT.spawnInterval).forGetter(Effects::spawnInterval),
                 CHANCE.optionalFieldOf("spawn_chance", DEFAULT.spawnChance).forGetter(Effects::spawnChance),
                 COUNT.optionalFieldOf("spawn_cap", DEFAULT.spawnCap).forGetter(Effects::spawnCap),
@@ -117,6 +119,15 @@ public record FluxSettings(Decay decay, Stages stages, Effects effects) {
         public boolean stopsCrops(FluxStage stage) {
             return stage.compareTo(FluxStage.EROSION) >= 0;
         }
+    }
+
+    /**
+     * The Flux {@code blocks} polluted blocks add to a chunk holding {@code current} each pollution
+     * interval. They never push it up to erosion on their own.
+     */
+    public double pollutedBlockGain(int blocks, double current) {
+        double room = stages.erosion() - 0.01 - current;
+        return blocks <= 0 || room <= 0 ? 0 : Math.min(blocks * effects.pollutedBlockFlux(), room);
     }
 
     /** The amount each stage starts at. Each must be higher than the one before. */
