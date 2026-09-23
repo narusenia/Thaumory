@@ -33,6 +33,8 @@ import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.crucible.CrucibleTank;
 import one.nxeu.thaumory.item.ArcaneLoupeItem;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.api.text.TextEffect;
+import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
  * While the player holds the Arcane Loupe: the Flux of the chunk they stand in at the top right,
@@ -74,12 +76,23 @@ final class LoupeHud {
     private static void renderFlux(GuiGraphicsExtractor graphics, Minecraft minecraft) {
         ClientFlux.get().ifPresent(reading -> {
             Component amount = Component.translatable("hud.thaumory.flux.amount", (int) Math.floor(reading.amount())).withColor(WHITE);
-            Component stage = Component.translatable("hud.thaumory.flux.stage." + reading.stage().name().toLowerCase(Locale.ROOT))
+            MutableComponent stage = Component.translatable("hud.thaumory.flux.stage." + reading.stage().name().toLowerCase(Locale.ROOT))
                     .withColor(stageColor(reading.stage()));
+            stageEffect(reading.stage()).ifPresent(effect -> ThaumoryText.withEffect(stage, effect));
             int right = graphics.guiWidth() - 6;
             graphics.text(minecraft.font, amount, right - minecraft.font.width(amount), 6, WHITE, true);
             graphics.text(minecraft.font, stage, right - minecraft.font.width(stage), 16, WHITE, true);
         });
+    }
+
+    private static Optional<TextEffect> stageEffect(FluxStage stage) {
+        return switch (stage) {
+            case NONE -> Optional.empty();
+            case STAGNATION -> Optional.of(TextEffect.PULSE);
+            case EROSION -> Optional.of(TextEffect.FLICKER);
+            case MANIFESTATION -> Optional.of(TextEffect.WAVE);
+            case OVERLOAD -> Optional.of(TextEffect.SHAKE);
+        };
     }
 
     private static int stageColor(FluxStage stage) {
@@ -156,21 +169,25 @@ final class LoupeHud {
             lines.add(Component.translatable("hud.thaumory.core.ignored", scan.ignoredModifiers().size()).withColor(0xFFFFAA55));
         }
 
-        lines.add(Component.translatable(core.isRunning() ? "hud.thaumory.core.running" : "hud.thaumory.core.stopped")
-                .withColor(core.isRunning() ? 0xFF55FF88 : GRAY));
+        // A running circle pulses in its first rune's color.
+        int runningColor = core.runes().isEmpty() ? 0xFF55FF88
+                : ThaumoryApi.aspects().get(core.runes().getFirst()).map(aspect -> 0xFF000000 | aspect.color()).orElse(0xFF55FF88);
+        lines.add(core.isRunning()
+                ? ThaumoryText.withEffect(Component.translatable("hud.thaumory.core.running").withColor(runningColor), TextEffect.PULSE)
+                : Component.translatable("hud.thaumory.core.stopped").withColor(GRAY));
         // Name the circle and its cost only once this player has seen it work, so the loupe never gives answers away.
         core.combination().filter(combination -> scan.rings() > 0).ifPresent(combination -> {
             Optional<PlayerKnowledge.CircleOutcome> outcome = knowledge.circle(combination);
             Optional<Identifier> effect = core.effectId();
             if (outcome.filter(PlayerKnowledge.CircleOutcome.SUCCESS::equals).isPresent() && effect.isPresent()) {
-                lines.add(Component.translatable("hud.thaumory.core.effect", Component.translatable(effect.get().toLanguageKey("circle_effect")))
-                        .withColor(0xFFCC99FF));
+                MutableComponent name = Component.translatable("hud.thaumory.core.effect", Component.translatable(effect.get().toLanguageKey("circle_effect")));
+                lines.add(core.isRunning() ? ThaumoryText.withEffect(name.withColor(runningColor), TextEffect.PULSE) : name.withColor(0xFFCC99FF));
                 core.upkeep().ifPresent(upkeep -> lines.add((upkeep.mode() == CircleMode.TRIGGERED
                         ? Component.translatable("hud.thaumory.core.upkeep.triggered", upkeep.cost())
                         : Component.translatable("hud.thaumory.core.upkeep.sustained", String.format(Locale.ROOT, "%.1f", upkeep.interval() / 20.0)))
                         .withColor(GRAY)));
             } else if (outcome.filter(PlayerKnowledge.CircleOutcome.FAILURE::equals).isPresent()) {
-                lines.add(Component.translatable("hud.thaumory.core.failed_circle").withColor(0xFFFFAA55));
+                lines.add(ThaumoryText.withEffect(Component.translatable("hud.thaumory.core.failed_circle").withColor(0xFFFFAA55), TextEffect.TREMBLE));
             } else {
                 lines.add(Component.translatable("hud.thaumory.core.unknown_circle").withColor(GRAY));
             }
@@ -185,7 +202,7 @@ final class LoupeHud {
         lines.add(Component.translatable("hud.thaumory.core.instability", core.instability(), threshold)
                 .withColor(unstable ? 0xFFFF5555 : GRAY));
         if (unstable) {
-            lines.add(Component.translatable("hud.thaumory.core.unstable").withColor(0xFFFF5555));
+            lines.add(ThaumoryText.withEffect(Component.translatable("hud.thaumory.core.unstable").withColor(0xFFFF5555), TextEffect.SHAKE));
         }
         return lines;
     }

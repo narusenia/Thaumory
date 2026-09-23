@@ -1,8 +1,9 @@
-package one.nxeu.thaumory.text;
+package one.nxeu.thaumory.api.text;
 
 /**
- * Ways text can move or glow. Each is a font id under {@code thaumory:effect/}, drawn with the
- * default font's glyphs, so it works wherever a text component goes. The unknown-aspect glyphs
+ * Ways text can move or glow, such as the name of an aspect ({@code Aspect#withNameEffect}). In
+ * text components each is the font {@code thaumory:effect/<id>}, drawn with the default font's
+ * glyphs, so it shows the same wherever the text goes. The glyphs of unknown aspects
  * ({@code thaumory:glyphs}) always shimmer.
  */
 public enum TextEffect {

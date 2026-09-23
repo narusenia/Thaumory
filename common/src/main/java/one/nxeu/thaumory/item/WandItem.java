@@ -2,6 +2,7 @@ package one.nxeu.thaumory.item;
 
 import java.util.Optional;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -11,6 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.api.text.TextEffect;
+import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
  * The working tool for magic circles. Right-clicking a Core starts or stops a sustained circle, or
@@ -29,7 +32,8 @@ public final class WandItem extends Item {
         if (context.getLevel() instanceof ServerLevel level && context.getPlayer() != null) {
             Player player = context.getPlayer();
             Outcome outcome = operate(core, player);
-            player.sendOverlayMessage(Component.translatable("message.thaumory.wand." + outcome.key));
+            MutableComponent message = Component.translatable("message.thaumory.wand." + outcome.key);
+            player.sendOverlayMessage(outcome == Outcome.MISFIRED ? ThaumoryText.withEffect(message, TextEffect.SHAKE) : message);
             level.playSound(null, context.getClickedPos(), outcome.sound, SoundSource.BLOCKS, 0.8f, 1.0f);
         }
         return InteractionResult.SUCCESS;

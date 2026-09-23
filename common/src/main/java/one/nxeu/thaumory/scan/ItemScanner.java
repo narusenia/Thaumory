@@ -23,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.AspectText;
+import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
@@ -76,7 +77,7 @@ public final class ItemScanner {
                 : Component.translatable("message.thaumory.scan.result", name,
                         AspectText.list(aspects, aspect -> knowledge.knowsAspect(aspect.id()))));
         result.revealed().forEach(aspect -> player.sendSystemMessage(
-                Component.translatable("message.thaumory.scan.revealed", AspectText.name(aspect, true))));
+                Component.translatable("message.thaumory.scan.revealed", AspectText.name(aspect, TextEffect.STREAK))));
 
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 result.revealed().isEmpty() ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.PLAYER_LEVELUP,

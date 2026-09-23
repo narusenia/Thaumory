@@ -36,7 +36,6 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
         @Override
         protected void translations(TranslationBuilder builder) {
             builder.add("tooltip.thaumory.aspects", "Aspects:");
-            builder.add(AspectText.UNKNOWN_KEY, "?");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "Arcane Loupe");
             builder.add(ThaumoryItems.WAND.get(), "Wand");
             builder.add("message.thaumory.wand.started", "The circle comes to life");
@@ -47,6 +46,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_essentia", "The Core lacks Essentia");
             builder.add("message.thaumory.wand.no_target", "The circle finds nothing to act on");
             builder.add("message.thaumory.wand.misfired", "The circle misfires and Flux leaks out");
+            builder.add("message.thaumory.circle.discovered", "You found a new circle: %s");
             builder.add("hud.thaumory.flux.amount", "Flux here: %s");
             builder.add("hud.thaumory.block.unscanned", "Not scanned");
             builder.add("hud.thaumory.block.no_aspects", "No aspects");
@@ -139,7 +139,6 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
         @Override
         protected void translations(TranslationBuilder builder) {
             builder.add("tooltip.thaumory.aspects", "アスペクト:");
-            builder.add(AspectText.UNKNOWN_KEY, "？");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "魔術のルーペ");
             builder.add(ThaumoryItems.WAND.get(), "杖");
             builder.add("message.thaumory.wand.started", "陣が動き出した");
@@ -150,6 +149,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_essentia", "Core の Essentia が足りない");
             builder.add("message.thaumory.wand.no_target", "陣が働きかける先が見つからない");
             builder.add("message.thaumory.wand.misfired", "陣が乱れ、Flux が漏れ出した");
+            builder.add("message.thaumory.circle.discovered", "新しい陣を見出した: %s");
             builder.add("hud.thaumory.flux.amount", "この辺りの Flux: %s");
             builder.add("hud.thaumory.block.unscanned", "未スキャン");
             builder.add("hud.thaumory.block.no_aspects", "アスペクトなし");

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.resources.Identifier;
+import one.nxeu.thaumory.api.text.TextEffect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,16 @@ class AspectRegistryTest {
         wind = registry.register(Aspect.primal(id("wind"), 0xFFFF00, 90));
         water = registry.register(Aspect.primal(id("water"), 0x0000FF, 180));
         earth = registry.register(Aspect.primal(id("earth"), 0x884400, 270));
+    }
+
+    @Test
+    void nameEffectIsOptionalAndKeepsTheRest() {
+        assertEquals(Optional.empty(), fire.nameEffect());
+        Aspect flickering = fire.withNameEffect(TextEffect.FLICKER);
+        assertEquals(Optional.of(TextEffect.FLICKER), flickering.nameEffect());
+        assertEquals(fire, flickering);
+        assertEquals(fire.color(), flickering.color());
+        assertEquals(fire.degrees(), flickering.degrees());
     }
 
     @Test

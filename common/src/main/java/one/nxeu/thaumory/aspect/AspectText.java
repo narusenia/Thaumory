@@ -9,13 +9,16 @@ import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
+import one.nxeu.thaumory.api.text.TextEffect;
+import one.nxeu.thaumory.text.ThaumoryText;
+import one.nxeu.thaumory.text.UnknownGlyphs;
 
 /**
  * How aspects read in tooltips and messages: the aspect's icon, then its name, both in its color.
- * Unknown aspects show a shared icon and "?" instead, so the picture gives nothing away.
+ * Unknown aspects show a shared icon and shimmering glyphs of their own instead, so neither the
+ * picture nor the name gives anything away.
  */
 public final class AspectText {
-    public static final String UNKNOWN_KEY = "aspect.thaumory.unknown";
     /** Icons live in the GUI atlas: {@code assets/<namespace>/textures/gui/sprites/aspect/<path>.png}. */
     public static final Identifier UNKNOWN_ICON = Identifier.fromNamespaceAndPath("thaumory", "aspect/unknown");
 
@@ -25,8 +28,28 @@ public final class AspectText {
         return Component.empty()
                 .append(icon(aspect, known))
                 .append(" ")
-                .append(known ? Component.translatable(aspect.translationKey()) : Component.translatable(UNKNOWN_KEY))
+                .append(known ? knownName(aspect) : glyphs(aspect))
                 .withColor(aspect.color());
+    }
+
+    /** The translated name, with the aspect's own effect if it has one. */
+    private static MutableComponent knownName(Aspect aspect) {
+        MutableComponent name = Component.translatable(aspect.translationKey());
+        return aspect.nameEffect().map(effect -> ThaumoryText.withEffect(name, effect)).orElse(name);
+    }
+
+    /** A known aspect with {@code effect} on its name (not its icon). */
+    public static MutableComponent name(Aspect aspect, TextEffect effect) {
+        return Component.empty()
+                .append(icon(aspect, true))
+                .append(" ")
+                .append(ThaumoryText.withEffect(Component.translatable(aspect.translationKey()), effect))
+                .withColor(aspect.color());
+    }
+
+    /** What an unknown aspect shows for a name: its own glyphs, which always shimmer. */
+    public static MutableComponent glyphs(Aspect aspect) {
+        return Component.literal(UnknownGlyphs.of(aspect.id().toString())).withStyle(style -> style.withFont(ThaumoryText.GLYPHS));
     }
 
     /** The aspect's icon sprite, or the shared unknown one. */

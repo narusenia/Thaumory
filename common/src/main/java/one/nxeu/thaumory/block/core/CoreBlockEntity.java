@@ -14,6 +14,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -51,6 +52,8 @@ import one.nxeu.thaumory.circle.CircleUpkeep;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.api.text.TextEffect;
+import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
  * A magic circle's Core: up to three runes, kept by aspect id in slot order, the Essentia poured
@@ -310,11 +313,17 @@ public final class CoreBlockEntity extends BlockEntity {
         return Optional.of(new CircleCombination(runes.get(0), runes.get(1), runes.size() > 2 ? Optional.of(runes.get(2)) : Optional.empty()));
     }
 
-    /** The one who started or triggered the circle has now seen it work. */
-    private void recordSuccess(Optional<Entity> activator) {
-        if (activator.orElse(null) instanceof ServerPlayer player) {
-            combination().ifPresent(combination ->
-                    Thaumory.knowledge().update(player, k -> k.withCircle(combination, PlayerKnowledge.CircleOutcome.SUCCESS)));
+    /** The one who started or triggered the circle has now seen it work; the first time, they are told what it is. */
+    private void recordSuccess(Optional<Entity> activator, Identifier effect) {
+        if (!(activator.orElse(null) instanceof ServerPlayer player) || combination().isEmpty()) {
+            return;
+        }
+        CircleCombination combination = combination().get();
+        boolean known = Thaumory.knowledge().get(player).circle(combination).filter(PlayerKnowledge.CircleOutcome.SUCCESS::equals).isPresent();
+        Thaumory.knowledge().update(player, k -> k.withCircle(combination, PlayerKnowledge.CircleOutcome.SUCCESS));
+        if (!known) {
+            player.sendSystemMessage(Component.translatable("message.thaumory.circle.discovered",
+                    ThaumoryText.withEffect(Component.translatable(effect.toLanguageKey("circle_effect")).withColor(0xCC99FF), TextEffect.STREAK)));
         }
     }
 
@@ -383,7 +392,7 @@ public final class CoreBlockEntity extends BlockEntity {
         effectData = new CompoundTag();
         nextPayment = server.getGameTime() + CircleUpkeep.sustainedInterval(definition.interval(), circle.get().multipliers().cost());
         effect(runningEffect).ifPresent(effect -> effect.apply(context(server, circle.get(), Optional.empty())));
-        recordSuccess(activator);
+        recordSuccess(activator, runningEffect);
         setChanged();
         sync();
         return StartResult.STARTED;
@@ -438,7 +447,7 @@ public final class CoreBlockEntity extends BlockEntity {
         setEssentia(paid.get());
         rollInstability(server);
         effect.get().apply(context);
-        recordSuccess(activator);
+        recordSuccess(activator, definition.effect());
         return TriggerResult.TRIGGERED;
     }
 

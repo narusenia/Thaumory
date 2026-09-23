@@ -1,5 +1,7 @@
 package one.nxeu.thaumory.text;
 
+import one.nxeu.thaumory.api.text.TextEffect;
+
 /**
  * Where a glyph drawn with an effect sits and how bright it is at a given moment. Each glyph is told
  * apart by its x position, so neighbours move on their own while one glyph stays put between the

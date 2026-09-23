@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
+import one.nxeu.thaumory.api.text.TextEffect;
 import org.junit.jupiter.api.Test;
 
 class TextMotionTest {
