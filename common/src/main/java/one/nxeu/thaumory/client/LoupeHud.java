@@ -22,7 +22,6 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
-import one.nxeu.thaumory.api.flux.FluxStage;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
@@ -76,33 +75,11 @@ final class LoupeHud {
     private static void renderFlux(GuiGraphicsExtractor graphics, Minecraft minecraft) {
         ClientFlux.get().ifPresent(reading -> {
             Component amount = Component.translatable("hud.thaumory.flux.amount", (int) Math.floor(reading.amount())).withColor(WHITE);
-            MutableComponent stage = Component.translatable("hud.thaumory.flux.stage." + reading.stage().name().toLowerCase(Locale.ROOT))
-                    .withColor(stageColor(reading.stage()));
-            stageEffect(reading.stage()).ifPresent(effect -> ThaumoryText.withEffect(stage, effect));
+            Component stage = FluxStageText.styled("hud.thaumory.flux.stage", reading.stage());
             int right = graphics.guiWidth() - 6;
             graphics.text(minecraft.font, amount, right - minecraft.font.width(amount), 6, WHITE, true);
             graphics.text(minecraft.font, stage, right - minecraft.font.width(stage), 16, WHITE, true);
         });
-    }
-
-    private static Optional<TextEffect> stageEffect(FluxStage stage) {
-        return switch (stage) {
-            case NONE -> Optional.empty();
-            case STAGNATION -> Optional.of(TextEffect.PULSE);
-            case EROSION -> Optional.of(TextEffect.FLICKER);
-            case MANIFESTATION -> Optional.of(TextEffect.WAVE);
-            case OVERLOAD -> Optional.of(TextEffect.SHAKE);
-        };
-    }
-
-    private static int stageColor(FluxStage stage) {
-        return switch (stage) {
-            case NONE -> GRAY;
-            case STAGNATION -> 0xFFD7A6FF;
-            case EROSION -> 0xFFB266FF;
-            case MANIFESTATION -> 0xFFE0409A;
-            case OVERLOAD -> 0xFFFF4040;
-        };
     }
 
     /** The block's name, then its item's aspects if scanned. Blocks without an item show only the name. */

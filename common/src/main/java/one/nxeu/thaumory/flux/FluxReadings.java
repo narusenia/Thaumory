@@ -10,7 +10,7 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.item.ArcaneLoupeItem;
 import one.nxeu.thaumory.network.FluxReadingPayload;
 
-/** Once a second, tells each player holding the Arcane Loupe how much Flux their chunk holds. */
+/** Once a second, tells each player holding the Arcane Loupe how much Flux their chunk holds; also when they open the Codex. */
 public final class FluxReadings {
     private static final int INTERVAL = 20;
 
@@ -26,11 +26,16 @@ public final class FluxReadings {
             }
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (ArcaneLoupeItem.isHeldBy(player)) {
-                    ChunkPos chunk = player.chunkPosition();
-                    NetworkManager.sendToPlayer(player, new FluxReadingPayload(
-                            ThaumoryApi.flux().get(player.level(), chunk), ThaumoryApi.flux().stage(player.level(), chunk)));
+                    send(player);
                 }
             }
         });
+    }
+
+    /** Tells {@code player} the Flux of the chunk they stand in, now. */
+    public static void send(ServerPlayer player) {
+        ChunkPos chunk = player.chunkPosition();
+        NetworkManager.sendToPlayer(player, new FluxReadingPayload(
+                ThaumoryApi.flux().get(player.level(), chunk), ThaumoryApi.flux().stage(player.level(), chunk)));
     }
 }

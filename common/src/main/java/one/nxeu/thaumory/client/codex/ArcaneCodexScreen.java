@@ -18,11 +18,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
+import one.nxeu.thaumory.api.flux.FluxStage;
 import one.nxeu.thaumory.aspect.AspectText;
+import one.nxeu.thaumory.client.ClientFlux;
 import one.nxeu.thaumory.client.ClientKnowledge;
+import one.nxeu.thaumory.client.FluxStageText;
 import one.nxeu.thaumory.knowledge.CircleCombination;
-import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
+import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 
 /** The Arcane Codex: tabs on the left, a scrolling list on the right. Reads the client's copy of the player's knowledge. */
 public final class ArcaneCodexScreen extends Screen {
@@ -115,6 +118,18 @@ public final class ArcaneCodexScreen extends Screen {
                 : drawLines(graphics, lines(knowledge));
         graphics.disableScissor();
         scroll = Math.clamp(scroll, 0, Math.max(0, contentSize - contentHeight()));
+        drawFluxWarning(graphics);
+    }
+
+    /** A band above the book when the player stands where Flux has reached stagnation (requirements §5). */
+    private void drawFluxWarning(GuiGraphicsExtractor graphics) {
+        ClientFlux.get().filter(reading -> reading.stage() != FluxStage.NONE).ifPresent(reading -> {
+            Component warning = FluxStageText.styled("codex.thaumory.flux_warning", reading.stage());
+            int bandTop = top - 16;
+            graphics.fill(left, bandTop, left + WIDTH, top - 2, 0xE0301828);
+            graphics.fill(left, top - 3, left + WIDTH, top - 2, FluxStageText.color(reading.stage()));
+            graphics.text(font, warning, left + (WIDTH - font.width(warning)) / 2, bandTop + 3, WHITE, true);
+        });
     }
 
     @Override

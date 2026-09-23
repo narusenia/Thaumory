@@ -57,6 +57,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.flux.stage.erosion", "Erosion");
             builder.add("hud.thaumory.flux.stage.manifestation", "Manifestation");
             builder.add("hud.thaumory.flux.stage.overload", "Overload");
+            builder.add("codex.thaumory.flux_warning.stagnation", "The air here is stagnant with Flux");
+            builder.add("codex.thaumory.flux_warning.erosion", "Flux is eating away at the land here");
+            builder.add("codex.thaumory.flux_warning.manifestation", "Flux is taking shape here");
+            builder.add("codex.thaumory.flux_warning.overload", "Flux overflows here; circles may burst");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "Arcane Codex");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "Blank Rune");
@@ -164,6 +168,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.flux.stage.erosion", "侵食");
             builder.add("hud.thaumory.flux.stage.manifestation", "顕現");
             builder.add("hud.thaumory.flux.stage.overload", "暴走");
+            builder.add("codex.thaumory.flux_warning.stagnation", "この辺りは Flux で淀んでいる");
+            builder.add("codex.thaumory.flux_warning.erosion", "この辺りの地が Flux に蝕まれている");
+            builder.add("codex.thaumory.flux_warning.manifestation", "この辺りで Flux が形を得はじめている");
+            builder.add("codex.thaumory.flux_warning.overload", "Flux があふれている。陣が暴発しかねない");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "魔術の書");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "空のルーン");
