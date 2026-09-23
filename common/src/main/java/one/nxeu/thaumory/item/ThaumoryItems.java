@@ -8,13 +8,16 @@ import java.util.function.Function;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 
 public final class ThaumoryItems {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Thaumory.MOD_ID, Registries.ITEM);
+    private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Thaumory.MOD_ID, Registries.CREATIVE_MODE_TAB);
 
     public static final RegistrySupplier<ArcaneLoupeItem> ARCANE_LOUPE =
             register("arcane_loupe", ArcaneLoupeItem::new, new Item.Properties().stacksTo(1));
@@ -32,15 +35,19 @@ public final class ThaumoryItems {
 
     private ThaumoryItems() {}
 
+    /** Every Thaumory item, in the order the creative tab shows them. */
+    private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
+            ARCANE_LOUPE, ARCANE_CODEX, CRUCIBLE, BLANK_RUNE,
+            CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK);
+
+    public static final RegistrySupplier<CreativeModeTab> TAB = TABS.register("thaumory", () -> CreativeTabRegistry.create(builder -> builder
+            .title(Component.translatable("itemGroup.thaumory"))
+            .icon(() -> new ItemStack(ARCANE_CODEX.get()))
+            .displayItems((parameters, output) -> TAB_ORDER.forEach(item -> output.accept(item.get())))));
+
     public static void register() {
         ITEMS.register();
-        CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.TOOLS_AND_UTILITIES), ARCANE_LOUPE);
-        CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.TOOLS_AND_UTILITIES), ARCANE_CODEX);
-        for (RegistrySupplier<Item> item : List.of(CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK)) {
-            CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.TOOLS_AND_UTILITIES), item);
-        }
-        CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.INGREDIENTS), BLANK_RUNE);
-        CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.FUNCTIONAL_BLOCKS), CRUCIBLE);
+        TABS.register();
     }
 
     /** Draws lines for magic circles (M1-17); each block drawn costs one durability. */

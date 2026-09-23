@@ -44,6 +44,7 @@
   "item.thaumory.economizing_chalk": "Economizing Chalk",
   "item.thaumory.extending_chalk": "Extending Chalk",
   "item.thaumory.stabilizing_chalk": "Stabilizing Chalk",
+  "itemGroup.thaumory": "Thaumory",
   "message.thaumory.scan.already": "%s is already scanned",
   "message.thaumory.scan.no_aspects": "Scanned %s: no aspects",
   "message.thaumory.scan.nothing": "Nothing to scan",

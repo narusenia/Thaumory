@@ -44,6 +44,7 @@
   "item.thaumory.economizing_chalk": "節約のチョーク",
   "item.thaumory.extending_chalk": "延長のチョーク",
   "item.thaumory.stabilizing_chalk": "安定のチョーク",
+  "itemGroup.thaumory": "Thaumory",
   "message.thaumory.scan.already": "%s はスキャン済み",
   "message.thaumory.scan.no_aspects": "%s をスキャンした: アスペクトなし",
   "message.thaumory.scan.nothing": "スキャンできるものがない",

@@ -37,6 +37,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.aspects", "Aspects:");
             builder.add(AspectText.UNKNOWN_KEY, "?");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "Arcane Loupe");
+            builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "Arcane Codex");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "Blank Rune");
             builder.add(ThaumoryItems.CHALK.get(), "Chalk");
@@ -80,6 +81,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.aspects", "アスペクト:");
             builder.add(AspectText.UNKNOWN_KEY, "？");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "魔術のルーペ");
+            builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "魔術の書");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "空のルーン");
             builder.add(ThaumoryItems.CHALK.get(), "チョーク");
