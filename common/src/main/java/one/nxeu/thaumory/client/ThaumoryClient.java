@@ -7,12 +7,15 @@ import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.transformers.SplitPacketTransformer;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
+import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
+import one.nxeu.thaumory.item.ArcaneCodexItem;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
@@ -40,6 +43,7 @@ public final class ThaumoryClient {
             ClientKnowledge.clear();
         });
         ClientGuiEvent.RENDER_HUD.register(CrucibleHud::render);
+        ArcaneCodexItem.setScreenOpener(() -> Minecraft.getInstance().gui.setScreen(new ArcaneCodexScreen()));
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> appendAspects(stack.getItem(), lines));
     }
 

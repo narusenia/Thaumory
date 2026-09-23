@@ -17,6 +17,8 @@ public final class ThaumoryItems {
 
     public static final RegistrySupplier<ArcaneLoupeItem> ARCANE_LOUPE =
             register("arcane_loupe", ArcaneLoupeItem::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<ArcaneCodexItem> ARCANE_CODEX =
+            register("arcane_codex", ArcaneCodexItem::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<BlockItem> CRUCIBLE =
             register("crucible", properties -> new BlockItem(ThaumoryBlocks.CRUCIBLE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
@@ -26,6 +28,7 @@ public final class ThaumoryItems {
     public static void register() {
         ITEMS.register();
         CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.TOOLS_AND_UTILITIES), ARCANE_LOUPE);
+        CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.TOOLS_AND_UTILITIES), ARCANE_CODEX);
         CreativeTabRegistry.append(CreativeTabRegistry.defer(CreativeModeTabs.FUNCTIONAL_BLOCKS), CRUCIBLE);
     }
 

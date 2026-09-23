@@ -33,6 +33,11 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .define('S', Items.STICK)
                         .unlockedBy(getHasName(Items.GLASS_PANE), has(Items.GLASS_PANE))
                         .save(output);
+                shapeless(RecipeCategory.MISC, ThaumoryItems.ARCANE_CODEX.get())
+                        .requires(Items.BOOK)
+                        .requires(ThaumoryItems.ARCANE_LOUPE.get())
+                        .unlockedBy(getHasName(ThaumoryItems.ARCANE_LOUPE.get()), has(ThaumoryItems.ARCANE_LOUPE.get()))
+                        .save(output);
                 shapeless(RecipeCategory.BREWING, ThaumoryItems.CRUCIBLE.get())
                         .requires(Items.CAULDRON)
                         .requires(Items.GOLD_INGOT)
