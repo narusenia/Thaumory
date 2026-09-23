@@ -20,7 +20,7 @@ public final class FluxManager implements ChunkFlux {
         return settings;
     }
 
-    void updateSettings(FluxSettings newSettings) {
+    public void updateSettings(FluxSettings newSettings) {
         settings = newSettings;
     }
 
