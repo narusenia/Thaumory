@@ -128,6 +128,7 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.itemModelOutput.accept(rune, ItemModelUtils.tintedModel(runeModel,
                 ItemModelUtils.constantTint(-1), new RuneTint(0xFFFFFF)));
         generators.generateFlatItem(ThaumoryItems.LABEL.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.TRANSCRIPT.get(), ModelTemplates.FLAT_ITEM);
         for (var chalk : List.of(ThaumoryItems.CHALK, ThaumoryItems.AMPLIFYING_CHALK, ThaumoryItems.EXTENDING_CHALK,
                 ThaumoryItems.ECONOMIZING_CHALK, ThaumoryItems.STABILIZING_CHALK)) {
             generators.generateFlatItem(chalk.get(), ModelTemplates.FLAT_HANDHELD_ITEM);

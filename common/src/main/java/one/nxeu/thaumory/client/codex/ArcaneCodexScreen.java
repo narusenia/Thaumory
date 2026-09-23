@@ -1,5 +1,6 @@
 package one.nxeu.thaumory.client.codex;
 
+import dev.architectury.networking.NetworkManager;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +26,12 @@ import one.nxeu.thaumory.client.ClientFlux;
 import one.nxeu.thaumory.client.ClientKnowledge;
 import one.nxeu.thaumory.client.ClientResearch;
 import one.nxeu.thaumory.client.FluxStageText;
+import one.nxeu.thaumory.client.CircleText;
 import one.nxeu.thaumory.knowledge.CircleCombination;
+import one.nxeu.thaumory.knowledge.Transcript;
+import one.nxeu.thaumory.knowledge.Transcript.AspectTranscript;
+import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
+import one.nxeu.thaumory.network.TranscribePayload;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
 import one.nxeu.thaumory.research.Chapter;
@@ -64,6 +70,8 @@ public final class ArcaneCodexScreen extends Screen {
     private static final int UNMET_FAIL = 0xFF8A2E2E;
     private static final int UNLOCK = 0xFF5A3A8A;
 
+    private static final Component TRANSCRIBE = Component.translatable("codex.thaumory.transcribe");
+
     private static final Identifier COVER = Thaumory.id("codex/cover");
     private static final Identifier PAGE_LEFT = Thaumory.id("codex/page_left");
     private static final Identifier PAGE_RIGHT = Thaumory.id("codex/page_right");
@@ -81,6 +89,8 @@ public final class ArcaneCodexScreen extends Screen {
     private int chapterPage;
     private int left;
     private int top;
+    /** What the "transcribe" button would copy: a known aspect or a working circle picked in its tab. */
+    private Optional<Transcript> picked = Optional.empty();
 
     private enum Tab {
         CHAPTERS(0xFFB0453A), ASPECTS(0xFF4A7AB0), SCANNED(0xFF5A9A4A), CIRCLES(0xFF8A5AB0), HINTS(0xFFC09A3A);
@@ -114,6 +124,7 @@ public final class ArcaneCodexScreen extends Screen {
     private void select(Tab selected) {
         tab = lastTab = selected;
         spread = 0;
+        picked = Optional.empty();
     }
 
     private void choose(Identifier id) {
@@ -192,8 +203,10 @@ public final class ArcaneCodexScreen extends Screen {
             case CHAPTERS -> drawChapters(graphics, ClientResearch.get(), mouseX, mouseY);
             case SCANNED -> drawScanned(graphics, knowledge, mouseX, mouseY);
             case ASPECTS -> drawAspects(graphics, knowledge, mouseX, mouseY);
-            default -> drawPages(graphics, wrap(lines(knowledge)));
+            case CIRCLES -> drawCircles(graphics, knowledge, mouseX, mouseY);
+            case HINTS -> drawPages(graphics, wrap(hintLines(knowledge)));
         }
+        drawTranscribeButton(graphics, knowledge, mouseX, mouseY);
         drawFluxWarning(graphics);
     }
 
@@ -330,14 +343,6 @@ public final class ArcaneCodexScreen extends Screen {
 
     // Other tabs
 
-    private List<Component> lines(PlayerKnowledge knowledge) {
-        return switch (tab) {
-            case CIRCLES -> circleLines(knowledge);
-            case HINTS -> hintLines(knowledge);
-            case CHAPTERS, SCANNED, ASPECTS -> List.of();
-        };
-    }
-
     private static List<Component> hintLines(PlayerKnowledge knowledge) {
         if (knowledge.hints().isEmpty()) {
             return List.of(Component.translatable("codex.thaumory.hints.empty").withColor(FADED));
@@ -372,8 +377,9 @@ public final class ArcaneCodexScreen extends Screen {
                 int x = textX(side) + (i % columns) * ASPECT_CELL + (ASPECT_CELL - ASPECT_ICON) / 2;
                 int y = gridTop + (i / columns) * ASPECT_CELL;
                 boolean hovered = mouseX >= x && mouseX < x + ASPECT_ICON && mouseY >= y && mouseY < y + ASPECT_ICON;
-                if (hovered) {
-                    graphics.fill(x - 2, y - 2, x + ASPECT_ICON + 2, y + ASPECT_ICON + 2, 0x30806040);
+                boolean isPicked = picked.equals(Optional.of(new AspectTranscript(aspect.id())));
+                if (isPicked || hovered) {
+                    graphics.fill(x - 2, y - 2, x + ASPECT_ICON + 2, y + ASPECT_ICON + 2, isPicked ? 0x60806040 : 0x30806040);
                 }
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, AspectText.iconSprite(aspect, knows), x, y, ASPECT_ICON, ASPECT_ICON,
                         0xFF000000 | aspect.color());
@@ -404,33 +410,117 @@ public final class ArcaneCodexScreen extends Screen {
         return lines;
     }
 
-    private static List<Component> circleLines(PlayerKnowledge knowledge) {
+    /** One wrapped line of the circles tab, with the combination it shows if that one can be copied. */
+    private record CircleRow(FormattedCharSequence text, Optional<CircleCombination> copyable) {}
+
+    private List<CircleRow> circleRows(PlayerKnowledge knowledge) {
         if (knowledge.circles().isEmpty()) {
-            return List.of(Component.translatable("codex.thaumory.circles.empty").withColor(FADED));
+            return List.of(new CircleRow(Component.translatable("codex.thaumory.circles.empty").withColor(FADED).getVisualOrderText(),
+                    Optional.empty()));
         }
-        List<Component> lines = new ArrayList<>();
+        List<CircleRow> rows = new ArrayList<>();
         knowledge.circles().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(CircleCombination::toString)))
                 .forEach(entry -> {
-                    CircleCombination combination = entry.getKey();
-                    MutableComponent line = aspectName(combination.first(), knowledge)
-                            .append(Component.literal(" + ").withColor(FADED))
-                            .append(aspectName(combination.second(), knowledge));
-                    combination.parameter().ifPresent(parameter -> line
-                            .append(Component.literal(" / ").withColor(FADED))
-                            .append(aspectName(parameter, knowledge)));
                     boolean success = entry.getValue() == CircleOutcome.SUCCESS;
-                    line.append(Component.literal("  "))
+                    MutableComponent line = CircleText.combination(entry.getKey(), knowledge, FADED)
+                            .append(Component.literal("  "))
                             .append(Component.translatable(success ? "codex.thaumory.circles.success" : "codex.thaumory.circles.failure")
                                     .withColor(success ? MET : UNMET_FAIL));
-                    lines.add(line);
+                    Optional<CircleCombination> copyable = success ? Optional.of(entry.getKey()) : Optional.empty();
+                    font.split(line, TEXT_WIDTH).forEach(text -> rows.add(new CircleRow(text, copyable)));
                 });
-        return lines;
+        return rows;
     }
 
-    private static MutableComponent aspectName(Identifier id, PlayerKnowledge knowledge) {
-        Optional<Aspect> aspect = ThaumoryApi.aspects().get(id);
-        return aspect.map(a -> AspectText.name(a, knowledge.knowsAspect(id))).orElseGet(() -> Component.literal(id.toString()));
+    /** Tried combinations flowing across the pages like text; a working one can be picked to copy. */
+    private void drawCircles(GuiGraphicsExtractor graphics, PlayerKnowledge knowledge, int mouseX, int mouseY) {
+        List<CircleRow> rows = circleRows(knowledge);
+        int pages = Math.max(1, (rows.size() + LINES_PER_PAGE - 1) / LINES_PER_PAGE);
+        spread = Math.clamp(spread, 0, (pages - 1) / 2);
+        Optional<CircleCombination> hovered = circleAt(rows, mouseX, mouseY);
+        for (int side = 0; side < 2; side++) {
+            int page = spread * 2 + side;
+            for (int row = 0; row < LINES_PER_PAGE; row++) {
+                int index = page * LINES_PER_PAGE + row;
+                if (index >= rows.size()) {
+                    break;
+                }
+                CircleRow each = rows.get(index);
+                int y = textY() + row * LINE;
+                boolean isPicked = each.copyable().map(CircleTranscript::new).filter(t -> picked.equals(Optional.of(t))).isPresent();
+                if (isPicked || (each.copyable().isPresent() && each.copyable().equals(hovered))) {
+                    graphics.fill(textX(side) - 2, y - 1, textX(side) + TEXT_WIDTH, y + LINE - 1, isPicked ? 0x40806040 : 0x20806040);
+                }
+                graphics.text(font, each.text(), textX(side), y, INK, false);
+            }
+        }
+        drawArrows(graphics, spread > 0, spread * 2 + 2 < pages);
+    }
+
+    /** The copyable combination on the line under the cursor. */
+    private Optional<CircleCombination> circleAt(List<CircleRow> rows, double x, double y) {
+        int row = (int) Math.floor((y - textY() + 1) / LINE);
+        if (row < 0 || row >= LINES_PER_PAGE) {
+            return Optional.empty();
+        }
+        for (int side = 0; side < 2; side++) {
+            if (x >= textX(side) - 2 && x < textX(side) + TEXT_WIDTH) {
+                int index = (spread * 2 + side) * LINES_PER_PAGE + row;
+                return index < rows.size() ? rows.get(index).copyable() : Optional.empty();
+            }
+        }
+        return Optional.empty();
+    }
+
+    /** The known aspect under the cursor in the aspects tab. */
+    private Optional<Aspect> aspectAt(PlayerKnowledge knowledge, double mouseX, double mouseY) {
+        List<Aspect> all = List.copyOf(ThaumoryApi.aspects().all());
+        int columns = TEXT_WIDTH / ASPECT_CELL;
+        int rows = (PAGE_HEIGHT - PAD * 2 - LINE * 2) / ASPECT_CELL;
+        int perPage = columns * rows;
+        int gridTop = textY() + LINE + 2;
+        for (int side = 0; side < 2; side++) {
+            int start = (spread * 2 + side) * perPage;
+            for (int i = 0; i < perPage && start + i < all.size(); i++) {
+                int x = textX(side) + (i % columns) * ASPECT_CELL + (ASPECT_CELL - ASPECT_ICON) / 2;
+                int y = gridTop + (i / columns) * ASPECT_CELL;
+                if (mouseX >= x && mouseX < x + ASPECT_ICON && mouseY >= y && mouseY < y + ASPECT_ICON) {
+                    Aspect aspect = all.get(start + i);
+                    return knowledge.knowsAspect(aspect.id()) ? Optional.of(aspect) : Optional.empty();
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    // Transcribing
+
+    private int transcribeX() {
+        return textX(1);
+    }
+
+    private int transcribeWidth() {
+        return font.width(TRANSCRIBE) + 4;
+    }
+
+    private boolean onTranscribe(double x, double y) {
+        return picked.isPresent() && x >= transcribeX() - 2 && x < transcribeX() + transcribeWidth()
+                && y >= arrowY() - 2 && y < arrowY() + 10;
+    }
+
+    /** Shown at the foot of the right page while something copyable is picked. */
+    private void drawTranscribeButton(GuiGraphicsExtractor graphics, PlayerKnowledge knowledge, int mouseX, int mouseY) {
+        if (picked.isEmpty() || !picked.get().knownBy(knowledge)) {
+            picked = Optional.empty();
+            return;
+        }
+        boolean hovered = onTranscribe(mouseX, mouseY);
+        if (hovered) {
+            graphics.fill(transcribeX() - 2, arrowY() - 2, transcribeX() + transcribeWidth(), arrowY() + 10, 0x30806040);
+            graphics.setTooltipForNextFrame(font, Component.translatable("codex.thaumory.transcribe.cost"), mouseX, mouseY);
+        }
+        graphics.text(font, TRANSCRIBE, transcribeX(), arrowY(), hovered ? GOLD : UNLOCK, false);
     }
 
     /** Scanned items as a grid of icons across both pages, with their tooltip on hover. */
@@ -498,14 +588,28 @@ public final class ArcaneCodexScreen extends Screen {
                 chapterPage++;
                 return true;
             }
+        } else if (onTranscribe(x, y)) {
+            NetworkManager.sendToServer(new TranscribePayload(picked.get()));
+            return true;
         } else if (onLeftArrow) {
             spread--;
+            return true;
+        } else if (tab == Tab.ASPECTS && aspectAt(ClientKnowledge.get(), x, y).isPresent()) {
+            pick(new AspectTranscript(aspectAt(ClientKnowledge.get(), x, y).get().id()));
+            return true;
+        } else if (tab == Tab.CIRCLES && circleAt(circleRows(ClientKnowledge.get()), x, y).isPresent()) {
+            pick(new CircleTranscript(circleAt(circleRows(ClientKnowledge.get()), x, y).get()));
             return true;
         } else if (onRightArrow) {
             spread++;
             return true;
         }
         return super.mouseClicked(event, doubleClick);
+    }
+
+    /** Picking what is already picked lets it go. */
+    private void pick(Transcript transcript) {
+        picked = picked.equals(Optional.of(transcript)) ? Optional.empty() : Optional.of(transcript);
     }
 
     @Override

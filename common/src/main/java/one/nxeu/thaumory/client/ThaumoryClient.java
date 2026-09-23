@@ -23,6 +23,9 @@ import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
 import one.nxeu.thaumory.item.ArcaneCodexItem;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.item.TranscriptItem;
+import one.nxeu.thaumory.knowledge.Transcript.AspectTranscript;
+import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
@@ -73,6 +76,7 @@ public final class ThaumoryClient {
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
             appendJarContents(stack, lines);
             appendRuneAspect(stack, lines);
+            appendTranscript(stack, lines);
             appendAspects(stack.getItem(), lines);
         });
     }
@@ -87,6 +91,14 @@ public final class ThaumoryClient {
     private static void appendRuneAspect(ItemStack stack, List<Component> lines) {
         RuneItem.aspect(stack).ifPresent(aspect -> lines.add(Component.translatable("tooltip.thaumory.rune.aspect",
                 AspectText.name(aspect, ClientKnowledge.get().knowsAspect(aspect.id()))).withColor(0xAAAAAA)));
+    }
+
+    /** What a transcript holds, as far as the one holding it knows; a circle's effect stays unnamed. */
+    private static void appendTranscript(ItemStack stack, List<Component> lines) {
+        TranscriptItem.transcript(stack).ifPresent(transcript -> lines.add(switch (transcript) {
+            case AspectTranscript(var aspect) -> CircleText.aspectName(aspect, ClientKnowledge.get());
+            case CircleTranscript(var combination) -> CircleText.combination(combination, ClientKnowledge.get(), 0xFFAAAAAA);
+        }));
     }
 
     /** Aspects of scanned items only; aspects the player has not worked out show as "?". */

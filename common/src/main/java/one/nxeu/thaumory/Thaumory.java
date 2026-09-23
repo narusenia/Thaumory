@@ -31,6 +31,7 @@ import one.nxeu.thaumory.flux.pollution.PollutionRules;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
+import one.nxeu.thaumory.item.TranscriptItem;
 import one.nxeu.thaumory.jar.JarSettings;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.research.ResearchData;
@@ -87,6 +88,7 @@ public final class Thaumory {
         research.register(knowledge);
         PlayerEvent.PLAYER_QUIT.register(research::forget);
         ItemScanner.register();
+        TranscriptItem.register();
         FluxReadings.register();
         new FluxWorldEffects(flux).register();
     }

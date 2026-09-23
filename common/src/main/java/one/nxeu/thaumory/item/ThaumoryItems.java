@@ -28,6 +28,9 @@ public final class ThaumoryItems {
             register("wand", WandItem::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<ArcaneCodexItem> ARCANE_CODEX =
             register("arcane_codex", ArcaneCodexItem::new, new Item.Properties().stacksTo(1));
+    /** Made from the book only, so it is not in the creative tab. */
+    public static final RegistrySupplier<TranscriptItem> TRANSCRIPT =
+            register("transcript", TranscriptItem::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<Item> BLANK_RUNE = register("blank_rune", Item::new, new Item.Properties());
     public static final RegistrySupplier<RuneItem> RUNE = register("rune", RuneItem::new, new Item.Properties());
     public static final RegistrySupplier<ChalkItem> CHALK = chalk("chalk", () -> ThaumoryBlocks.CHALK_LINE.get());

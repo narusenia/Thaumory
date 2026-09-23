@@ -8,6 +8,7 @@ import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.jar.JarContents;
+import one.nxeu.thaumory.knowledge.Transcript;
 
 public final class ThaumoryComponents {
     private static final DeferredRegister<DataComponentType<?>> COMPONENTS =
@@ -28,6 +29,13 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<Identifier>builder()
                     .persistent(Identifier.CODEC)
                     .networkSynchronized(Identifier.STREAM_CODEC)
+                    .build());
+
+    /** What a transcript teaches whoever reads it. */
+    public static final RegistrySupplier<DataComponentType<Transcript>> TRANSCRIPT = COMPONENTS.register("transcript",
+            () -> DataComponentType.<Transcript>builder()
+                    .persistent(Transcript.CODEC)
+                    .networkSynchronized(Transcript.STREAM_CODEC)
                     .build());
 
     private ThaumoryComponents() {}
