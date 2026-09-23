@@ -457,6 +457,13 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 - ラベルなしの瓶で正反対のアスペクトが混ざると Flux。パイプを壊すと中身が Flux として漏れる
 - ネットワーク（繋がっているパイプの集合）単位で計算し、変化したときにだけ再構築する
 - Fabric Transfer API（`Storage<EssentiaVariant>`）で実装し、他Modと接続できるようにする
+- Essentia の Storage（M2-1）
+  - 口は Loader に依存しない `EssentiaContainer`（`thaumory-api`）。Fabric では `Storage<EssentiaVariant>` に包み、BlockApiLookup `thaumory:essentia`（面ごと）で公開する。NeoForge は M4 で同じ口を capability に包む
+  - 量は Essentia 1 = 1。出し入れはトランザクションが確定したときに反映する
+  - Crucible: どのアスペクトも取り出せる。入れるのは容量まで（溢れさせず、Flux も出さない）。入った後の打ち消しはいつもどおり（沸騰している間）
+  - 瓶: ラベル付きはそのアスペクトだけ出し入れできる。ラベルなしはどれでも。どちらも容量まで。ラベルなしの瓶で正反対が混ざると、確定したときに打ち消し合い、減った分がそのチャンクの Flux になる
+  - Core: 挿した Rune のアスペクトだけ、アスペクトごとに容量まで入る。取り出せない
+  - どの面からでも同じ
 
 ### 8.3 無線（M5）
 
