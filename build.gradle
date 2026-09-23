@@ -50,6 +50,19 @@ subprojects {
         it.options.release = 25
     }
 
+    // Pure logic lives in api and common, so only they carry unit tests.
+    if (project.name in ['api', 'common']) {
+        dependencies {
+            testImplementation platform("org.junit:junit-bom:$rootProject.junit_version")
+            testImplementation 'org.junit.jupiter:junit-jupiter'
+            testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+        }
+
+        tasks.named('test') {
+            useJUnitPlatform()
+        }
+    }
+
     // Configure Maven publishing.
     publishing {
         publications {
