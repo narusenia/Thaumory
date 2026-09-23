@@ -4,23 +4,40 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.function.UnaryOperator;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ChunkPos;
+import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.flux.FluxManager;
+import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
 
 /** Debug commands under {@code /thaumory}. Operators only. */
 public final class ThaumoryCommands {
+    private static final DynamicCommandExceptionType UNKNOWN_ASPECT =
+            new DynamicCommandExceptionType(id -> Component.literal("Unknown aspect: " + id));
+
     private ThaumoryCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, FluxManager flux) {
@@ -39,7 +56,51 @@ public final class ThaumoryCommands {
                         .then(Commands.literal("set").then(atChunk(amountArgument(), (c, chunk) -> {
                             flux.set(c.getSource().getLevel(), chunk, DoubleArgumentType.getDouble(c, "amount"));
                             return showFlux(c, flux, chunk);
-                        })))));
+                        }))))
+                .then(Commands.literal("knowledge")
+                        .then(Commands.literal("show").then(Commands.argument("player", EntityArgument.player())
+                                .executes(ThaumoryCommands::showKnowledge)))
+                        .then(Commands.literal("scan").then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("item", ItemArgument.item(context)).executes(c -> {
+                                    Identifier item = BuiltInRegistries.ITEM.getKey(ItemArgument.getItem(c, "item").item().value());
+                                    return changeKnowledge(c, k -> k.withScanned(PlayerKnowledge.ITEMS, item));
+                                }))))
+                        .then(Commands.literal("reveal").then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("aspect", IdentifierArgument.id())
+                                        .suggests((c, builder) -> SharedSuggestionProvider.suggestResource(
+                                                ThaumoryApi.aspects().all().stream().map(Aspect::id), builder))
+                                        .executes(c -> {
+                                            Identifier aspect = aspect(c);
+                                            return changeKnowledge(c, k -> k.withAspect(aspect));
+                                        }))))
+                        .then(Commands.literal("reset").then(Commands.argument("player", EntityArgument.player())
+                                .executes(c -> changeKnowledge(c, k -> PlayerKnowledge.EMPTY))))));
+    }
+
+    private static Identifier aspect(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Identifier id = IdentifierArgument.getId(context, "aspect");
+        if (ThaumoryApi.aspects().get(id).isEmpty()) {
+            throw UNKNOWN_ASPECT.create(id);
+        }
+        return id;
+    }
+
+    private static int changeKnowledge(CommandContext<CommandSourceStack> context, UnaryOperator<PlayerKnowledge> change)
+            throws CommandSyntaxException {
+        Thaumory.knowledge().update(EntityArgument.getPlayer(context, "player"), change);
+        return showKnowledge(context);
+    }
+
+    private static int showKnowledge(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = EntityArgument.getPlayer(context, "player");
+        PlayerKnowledge knowledge = Thaumory.knowledge().get(player);
+        long successes = knowledge.circles().values().stream().filter(outcome -> outcome == CircleOutcome.SUCCESS).count();
+        String text = String.format(Locale.ROOT, "%s: %d scanned items, aspects %s, %d circles (%d succeeded), %d chapters, %d hints",
+                player.getScoreboardName(), knowledge.scanned(PlayerKnowledge.ITEMS).size(),
+                knowledge.aspects().stream().sorted().toList(), knowledge.circles().size(), successes,
+                knowledge.chapters().size(), knowledge.hints().size());
+        context.getSource().sendSuccess(() -> Component.literal(text), false);
+        return knowledge.scanned(PlayerKnowledge.ITEMS).size();
     }
 
     private interface ChunkCommand {

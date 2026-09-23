@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
+import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
 import org.slf4j.Logger;
@@ -27,7 +28,11 @@ public final class ThaumoryClient {
                     LOGGER.info("Received aspects for {} items", payload.items().size());
                 }));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, KnowledgeSyncPayload.TYPE, KnowledgeSyncPayload.STREAM_CODEC,
-                (payload, context) -> context.queue(() -> ClientKnowledge.replace(payload.knowledge())));
+                (payload, context) -> context.queue(() -> {
+                    ClientKnowledge.replace(payload.knowledge());
+                    LOGGER.info("Received knowledge: {} scanned items, {} aspects",
+                            payload.knowledge().scanned(PlayerKnowledge.ITEMS).size(), payload.knowledge().aspects().size());
+                }));
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register(player -> {
             ClientItemAspects.clear();
             ClientKnowledge.clear();
