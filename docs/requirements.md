@@ -285,7 +285,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
   - 汚染爆発: Core を中心に、ブロックを壊さない爆発（音と粒子、半径 4 の生き物に 4 ダメージとノックバック）が起き、半径 4 の変質できるブロックがすべて汚染ブロックになる。陣そのものは残る
   - 杖で発動・起動したときに暴発すると、アクションバーに暴発を知らせる（震え（強））
 - 数値は `flux.json` の `effects` に書く。書かれていない値は初期値
-  - 形式: `{"effects": {"particles": [2, 4, 6, 10], "pollution_interval": 200, "pollution_attempts": [1, 2, 3], "spawn_interval": 600, "spawn_chance": 0.5, "spawn_cap": 3, "manifestation_instability": 3, "misfire_chance": 0.25, "explosion_radius": 4, "explosion_damage": 4}}`（配列は段階の順。`particles` は淀みから、`pollution_attempts` は侵食から）
+  - 形式: `{"effects": {"particles": [2, 4, 6, 10], "pollution_interval": 200, "pollution_attempts": [1, 2, 3], "polluted_block_flux": 0.02, "spawn_interval": 600, "spawn_chance": 0.5, "spawn_cap": 3, "manifestation_instability": 3, "misfire_chance": 0.25, "explosion_radius": 4, "explosion_damage": 4}}`（配列は段階の順。`particles` は淀みから、`pollution_attempts` は侵食から）
 
 ### 5.2 汚染ブロック
 
@@ -293,6 +293,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 - 変質の対応は `data/<namespace>/thaumory/pollution/*.json` に 1 ファイル 1 種類で書く。上位の datapack の同じパスのファイルが丸ごと置き換える
   - 形式: `{"polluted": "thaumory:polluted_soil", "from": ["#minecraft:dirt", "#minecraft:grass_blocks", "minecraft:farmland"], "restore": "minecraft:dirt"}`（`from` はブロックかブロックタグ）
 - 浄化の陣: 1 秒ごとに、範囲内の汚染ブロックを最大「2 × 強度（切り上げ）」個、`restore` のブロックに戻す（`restore_per_second`）
+- 汚染ブロックは Flux を出す: 汚染の間隔（初期 10 秒）ごとに、プレイヤーの近くのチャンクの Flux が「そのチャンクの汚染ブロックの数 × 0.02」増える（`polluted_block_flux`）。ただし侵食の閾値の手前までしか増やさない（汚染ブロックだけでは侵食以上に進まない）。1 つなら自然減衰と釣り合って淀みに留まり、浄化しないと淀みが消えない
 
 ### 5.3 虚空の残滓（Void Remnant）
 
