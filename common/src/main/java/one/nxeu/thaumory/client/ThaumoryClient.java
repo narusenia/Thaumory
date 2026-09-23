@@ -6,11 +6,12 @@ import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.transformers.SplitPacketTransformer;
 import java.util.List;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.TooltipFlag;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
+import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
@@ -37,23 +38,22 @@ public final class ThaumoryClient {
             ClientItemAspects.clear();
             ClientKnowledge.clear();
         });
-        ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> appendAspects(stack.getItem(), lines, flag));
+        ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> appendAspects(stack.getItem(), lines));
     }
 
-    // Debug view until scanning decides what players may see (M1-8): advanced tooltips only.
-    private static void appendAspects(Item item, List<Component> lines, TooltipFlag flag) {
-        if (!flag.isAdvanced()) {
+    /** Aspects of scanned items only; aspects the player has not worked out show as "?". */
+    private static void appendAspects(Item item, List<Component> lines) {
+        PlayerKnowledge knowledge = ClientKnowledge.get();
+        if (!knowledge.hasScanned(PlayerKnowledge.ITEMS, BuiltInRegistries.ITEM.getKey(item))) {
             return;
         }
         AspectList aspects = ClientItemAspects.get(item);
         if (aspects.isEmpty()) {
             return;
         }
-        lines.add(Component.translatable("tooltip.thaumory.aspects"));
+        lines.add(Component.translatable("tooltip.thaumory.aspects").withColor(0xAAAAAA));
         for (AspectStack stack : aspects.sortedByAmount()) {
-            lines.add(Component.literal("  ")
-                    .append(Component.translatable(stack.aspect().translationKey()).withColor(stack.aspect().color()))
-                    .append(" x" + stack.amount()));
+            lines.add(Component.literal("  ").append(AspectText.stack(stack, knowledge.knowsAspect(stack.aspect().id()))));
         }
     }
 }

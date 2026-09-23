@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "N": "minecraft:gold_nugget",
+    "P": "minecraft:glass_pane",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "NP",
+    "SN"
+  ],
+  "result": {
+    "id": "thaumory:arcane_loupe"
+  }
+}

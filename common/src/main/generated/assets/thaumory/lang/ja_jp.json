@@ -14,8 +14,15 @@
   "aspect.thaumory.tempestas": "Tempestas",
   "aspect.thaumory.terra": "Terra",
   "aspect.thaumory.umbra": "Umbra",
+  "aspect.thaumory.unknown": "？",
   "aspect.thaumory.venenum": "Venenum",
   "aspect.thaumory.vinculum": "Vinculum",
   "aspect.thaumory.vita": "Vita",
+  "item.thaumory.arcane_loupe": "魔術のルーペ",
+  "message.thaumory.scan.already": "%s はスキャン済み",
+  "message.thaumory.scan.no_aspects": "%s をスキャンした: アスペクトなし",
+  "message.thaumory.scan.nothing": "スキャンできるものがない",
+  "message.thaumory.scan.result": "%s をスキャンした: %s",
+  "message.thaumory.scan.revealed": "新しいアスペクトが判明した: %s",
   "tooltip.thaumory.aspects": "アスペクト:"
 }

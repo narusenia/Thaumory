@@ -18,7 +18,6 @@ import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +31,7 @@ import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
+import one.nxeu.thaumory.scan.ItemScanner;
 
 /** Debug commands under {@code /thaumory}. Operators only. */
 public final class ThaumoryCommands {
@@ -62,8 +62,8 @@ public final class ThaumoryCommands {
                                 .executes(ThaumoryCommands::showKnowledge)))
                         .then(Commands.literal("scan").then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.argument("item", ItemArgument.item(context)).executes(c -> {
-                                    Identifier item = BuiltInRegistries.ITEM.getKey(ItemArgument.getItem(c, "item").item().value());
-                                    return changeKnowledge(c, k -> k.withScanned(PlayerKnowledge.ITEMS, item));
+                                    ItemScanner.scan(EntityArgument.getPlayer(c, "player"), ItemArgument.getItem(c, "item").item().value());
+                                    return showKnowledge(c);
                                 }))))
                         .then(Commands.literal("reveal").then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.argument("aspect", IdentifierArgument.id())

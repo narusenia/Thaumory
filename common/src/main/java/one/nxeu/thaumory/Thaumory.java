@@ -14,8 +14,11 @@ import one.nxeu.thaumory.command.ThaumoryCommands;
 import one.nxeu.thaumory.data.SettingsFileReloadListener;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxSettings;
+import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.network.AspectSync;
+import one.nxeu.thaumory.scan.ItemScanner;
+import one.nxeu.thaumory.scan.ScanSettings;
 
 public final class Thaumory {
     public static final String MOD_ID = ThaumoryApi.MOD_ID;
@@ -29,15 +32,19 @@ public final class Thaumory {
         FluxManager flux = new FluxManager(platform.fluxStorage());
         ThaumoryApi.provideFlux(flux);
         knowledge = new KnowledgeManager(platform.knowledgeStorage());
+        ThaumoryItems.register();
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/flux.json"), FluxSettings.CODEC, FluxSettings.DEFAULT, flux::updateSettings), id("flux"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
+                id("thaumory/scanning.json"), ScanSettings.CODEC, ScanSettings.DEFAULT, ItemScanner::updateSettings), id("scanning"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();
         AspectSync.register();
         knowledge.registerEvents();
+        ItemScanner.register();
     }
 
     /** Every player's knowledge. Available once {@link #init} has run. */

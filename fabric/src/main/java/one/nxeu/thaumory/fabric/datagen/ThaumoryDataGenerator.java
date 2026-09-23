@@ -14,6 +14,9 @@ public final class ThaumoryDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ThaumoryLanguageProvider.Japanese::new);
         pack.addProvider(ItemAspectProvider::new);
         pack.addProvider(FluxSettingsProvider::new);
+        pack.addProvider(ScanSettingsProvider::new);
+        pack.addProvider(ThaumoryRecipeProvider::new);
+        pack.addProvider(ThaumoryModelProvider::new);
     }
 
     /**

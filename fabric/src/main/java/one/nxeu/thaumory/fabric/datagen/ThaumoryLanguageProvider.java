@@ -5,7 +5,9 @@ import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import one.nxeu.thaumory.api.aspect.Aspect;
+import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
+import one.nxeu.thaumory.item.ThaumoryItems;
 
 /** Every user-facing string, in English and Japanese. Aspect names stay Latin in both. */
 abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
@@ -32,6 +34,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
         @Override
         protected void translations(TranslationBuilder builder) {
             builder.add("tooltip.thaumory.aspects", "Aspects:");
+            builder.add(AspectText.UNKNOWN_KEY, "?");
+            builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "Arcane Loupe");
+            builder.add("message.thaumory.scan.nothing", "Nothing to scan");
+            builder.add("message.thaumory.scan.already", "%s is already scanned");
+            builder.add("message.thaumory.scan.result", "Scanned %s: %s");
+            builder.add("message.thaumory.scan.no_aspects", "Scanned %s: no aspects");
+            builder.add("message.thaumory.scan.revealed", "Worked out a new aspect: %s");
         }
     }
 
@@ -43,6 +52,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
         @Override
         protected void translations(TranslationBuilder builder) {
             builder.add("tooltip.thaumory.aspects", "アスペクト:");
+            builder.add(AspectText.UNKNOWN_KEY, "？");
+            builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "魔術のルーペ");
+            builder.add("message.thaumory.scan.nothing", "スキャンできるものがない");
+            builder.add("message.thaumory.scan.already", "%s はスキャン済み");
+            builder.add("message.thaumory.scan.result", "%s をスキャンした: %s");
+            builder.add("message.thaumory.scan.no_aspects", "%s をスキャンした: アスペクトなし");
+            builder.add("message.thaumory.scan.revealed", "新しいアスペクトが判明した: %s");
         }
     }
 }

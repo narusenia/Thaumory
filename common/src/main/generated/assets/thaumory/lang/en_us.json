@@ -14,8 +14,15 @@
   "aspect.thaumory.tempestas": "Tempestas",
   "aspect.thaumory.terra": "Terra",
   "aspect.thaumory.umbra": "Umbra",
+  "aspect.thaumory.unknown": "?",
   "aspect.thaumory.venenum": "Venenum",
   "aspect.thaumory.vinculum": "Vinculum",
   "aspect.thaumory.vita": "Vita",
+  "item.thaumory.arcane_loupe": "Arcane Loupe",
+  "message.thaumory.scan.already": "%s is already scanned",
+  "message.thaumory.scan.no_aspects": "Scanned %s: no aspects",
+  "message.thaumory.scan.nothing": "Nothing to scan",
+  "message.thaumory.scan.result": "Scanned %s: %s",
+  "message.thaumory.scan.revealed": "Worked out a new aspect: %s",
   "tooltip.thaumory.aspects": "Aspects:"
 }
