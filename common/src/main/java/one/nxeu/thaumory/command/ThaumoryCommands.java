@@ -2,6 +2,7 @@ package one.nxeu.thaumory.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import java.util.Locale;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -27,7 +28,8 @@ public final class ThaumoryCommands {
         Item item = ItemArgument.getItem(context, "item").item().value();
         AspectList aspects = ItemAspects.get(item);
         String text = aspects.isEmpty() ? "none" : aspects.sortedByAmount().toString();
-        context.getSource().sendSuccess(() -> Component.literal(item + ": " + text), false);
+        String source = ItemAspects.source(item).name().toLowerCase(Locale.ROOT);
+        context.getSource().sendSuccess(() -> Component.literal(item + ": " + text + " (" + source + ")"), false);
         return aspects.size();
     }
 }

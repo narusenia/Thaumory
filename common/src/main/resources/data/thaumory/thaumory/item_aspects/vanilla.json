@@ -1,11 +1,12 @@
 {
   "values": [
-    { "target": "#minecraft:logs", "aspects": { "thaumory:herba": 4, "thaumory:terra": 1 } },
-    { "target": "minecraft:oak_log", "aspects": { "thaumory:herba": 4, "thaumory:terra": 2 } },
-    { "target": "#minecraft:wool", "aspects": { "thaumory:bestia": 2, "thaumory:aer": 1 } },
-    { "target": "minecraft:dirt", "aspects": { "thaumory:terra": 1 } },
-    { "target": "minecraft:stone", "aspects": { "thaumory:terra": 2 } },
-    { "target": "minecraft:iron_ingot", "aspects": { "thaumory:metallum": 4 } },
+    { "target": "#minecraft:logs", "aspects": { "thaumory:herba": 16, "thaumory:terra": 4 } },
+    { "target": "minecraft:oak_log", "aspects": { "thaumory:herba": 16, "thaumory:terra": 8 } },
+    { "target": "#minecraft:wool", "aspects": { "thaumory:bestia": 8, "thaumory:aer": 4 } },
+    { "target": "minecraft:dirt", "aspects": { "thaumory:terra": 4 } },
+    { "target": "minecraft:stone", "aspects": { "thaumory:terra": 8 } },
+    { "target": "minecraft:cobblestone", "aspects": { "thaumory:terra": 8, "thaumory:chaos": 2 } },
+    { "target": "minecraft:raw_iron", "aspects": { "thaumory:metallum": 16, "thaumory:terra": 4 } },
     { "target": "minecraft:barrier", "aspects": {} }
   ]
 }

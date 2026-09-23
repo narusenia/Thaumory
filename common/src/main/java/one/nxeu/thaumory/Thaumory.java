@@ -7,6 +7,8 @@ import net.minecraft.server.packs.PackType;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.aspect.data.ItemAspectReloadListener;
+import one.nxeu.thaumory.aspect.estimate.AspectEstimation;
+import one.nxeu.thaumory.aspect.estimate.VanillaRecipeAdapters;
 import one.nxeu.thaumory.command.ThaumoryCommands;
 
 public final class Thaumory {
@@ -14,10 +16,12 @@ public final class Thaumory {
 
     public static void init() {
         ThaumoryAspects.register(ThaumoryApi.aspects());
+        VanillaRecipeAdapters.register(ThaumoryApi.recipeAdapters());
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context));
+        AspectEstimation.registerEvents();
     }
 
     public static Identifier id(String path) {

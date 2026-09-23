@@ -3,9 +3,13 @@
   "package": "one.nxeu.thaumory.mixin",
   "compatibilityLevel": "JAVA_25",
   "minVersion": "0.8",
-  "client": [
-  ],
+  "client": [],
   "mixins": [
+    "ShapedRecipeAccessor",
+    "ShapelessRecipeAccessor",
+    "SingleItemRecipeAccessor",
+    "SmithingTransformRecipeAccessor",
+    "TransmuteRecipeAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
