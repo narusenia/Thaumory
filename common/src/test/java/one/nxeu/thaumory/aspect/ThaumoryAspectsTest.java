@@ -2,6 +2,7 @@ package one.nxeu.thaumory.aspect;
 
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -78,6 +79,16 @@ class ThaumoryAspectsTest {
         assertTrue(VENENUM.vector().isCloseTo(TERRA.vector(), 1e-9));
         assertTrue(METALLUM.vector().isCloseTo(MORS.vector(), 1e-9));
         assertTrue(CHAOS.vector().isCloseTo(IGNIS.vector(), 1e-9));
+    }
+
+    @Test
+    void cancellationFollowsPrimalBreakdown() {
+        assertTrue(registry.cancels(IGNIS, AQUA));
+        assertTrue(registry.cancels(LUX, AQUA)); // Lux carries Ignis
+        assertTrue(registry.cancels(HERBA, BELLUM)); // Vita/Mors and Aqua/Ignis
+        assertTrue(registry.cancels(ARCANUM, TERRA)); // Aer/Terra
+        assertFalse(registry.cancels(IGNIS, AER));
+        assertFalse(registry.cancels(LUX, ARCANUM)); // Ignis, Aer, Vita never oppose
     }
 
     @Test

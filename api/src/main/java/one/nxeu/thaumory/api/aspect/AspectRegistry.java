@@ -113,6 +113,21 @@ public final class AspectRegistry {
         return opposite(first).map(second::equals).orElse(false);
     }
 
+    /**
+     * True if the two aspects cancel each other out when mixed: some primal in one's breakdown is
+     * the opposite of some primal in the other's. For example Lux (Ignis + Aer) cancels with Aqua.
+     */
+    public boolean cancels(Aspect first, Aspect second) {
+        for (Aspect a : first.primalBreakdown()) {
+            for (Aspect b : second.primalBreakdown()) {
+                if (areOpposite(a, b)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void freeze() {
         frozen = true;
     }
