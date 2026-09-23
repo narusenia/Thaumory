@@ -33,6 +33,7 @@ import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.flux.FluxManager;
+import one.nxeu.thaumory.flux.FluxWorldEffects;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
@@ -61,6 +62,14 @@ public final class ThaumoryCommands {
                         .then(Commands.literal("set").then(atChunk(amountArgument(), (c, chunk) -> {
                             flux.set(c.getSource().getLevel(), chunk, DoubleArgumentType.getDouble(c, "amount"));
                             return showFlux(c, flux, chunk);
+                        })))
+                        .then(Commands.literal("pollute").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(c -> {
+                            BlockPos pos = BlockPosArgument.getLoadedBlockPos(c, "pos");
+                            String before = c.getSource().getLevel().getBlockState(pos).toString();
+                            boolean polluted = FluxWorldEffects.pollute(c.getSource().getLevel(), pos);
+                            c.getSource().sendSuccess(() -> Component.literal("pollute " + pos.toShortString() + " (" + before + "): "
+                                    + (polluted ? "polluted" : "no rule")), false);
+                            return polluted ? 1 : 0;
                         }))))
                 .then(Commands.literal("circle").then(Commands.argument("pos", BlockPosArgument.blockPos())
                         .executes(ThaumoryCommands::showCircle)
