@@ -9,5 +9,6 @@ pluginManagement {
 
 rootProject.name = 'thaumory'
 
+include 'api'
 include 'common'
 include 'fabric'

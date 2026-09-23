@@ -1,0 +1,9 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+jar {
+    // Published as the plain `thaumory-api` artifact addons depend on.
+    archiveClassifier = null
+    from(rootProject.file('LICENSE-API.txt'))
+}

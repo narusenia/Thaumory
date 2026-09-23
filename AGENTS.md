@@ -30,7 +30,7 @@ fabric/   Fabric entrypoints and Fabric-specific implementations.
 docs/     requirements.md, plan.md
 ```
 
-`api/` is added by task M0-3. Until then, treat it as planned.
+`common` exposes `api` transitively; `fabric` bundles both into the mod jar.
 
 ## Architecture rules
 

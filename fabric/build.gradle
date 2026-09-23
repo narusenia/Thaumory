@@ -31,7 +31,9 @@ dependencies {
 
     implementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
 
+    common(project(':api')) { transitive false }
     common(project(':common')) { transitive false }
+    shadowBundle project(path: ':api', configuration: 'transformProductionFabric')
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
 
