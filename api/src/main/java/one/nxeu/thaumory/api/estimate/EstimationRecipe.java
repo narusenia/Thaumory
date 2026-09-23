@@ -15,7 +15,7 @@ import one.nxeu.thaumory.api.aspect.AspectList;
  * @param slots one entry per consumed item; each entry lists the items that can fill that slot
  * @param result the item produced
  * @param count how many of {@code result} one craft produces
- * @param bonus aspects added per result item after decay, e.g. Ignis for cooking
+ * @param bonus aspects added per result item, e.g. Ignis for cooking
  */
 @Experimental
 public record EstimationRecipe(Identifier id, List<List<Identifier>> slots, Identifier result, int count, AspectList bonus) {
@@ -30,6 +30,11 @@ public record EstimationRecipe(Identifier id, List<List<Identifier>> slots, Iden
         if (slots.isEmpty() || slots.stream().anyMatch(List::isEmpty)) {
             throw new IllegalArgumentException(id + ": every slot needs at least one item");
         }
+    }
+
+    /** One item turning into another in the world, such as copper oxidizing. */
+    public static EstimationRecipe worldChange(Identifier id, Identifier from, Identifier to, AspectList bonus) {
+        return new EstimationRecipe(id, List.of(List.of(from)), to, 1, bonus);
     }
 
     /** The item ids an ingredient accepts. */

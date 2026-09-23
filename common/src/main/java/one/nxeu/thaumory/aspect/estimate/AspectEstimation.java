@@ -28,6 +28,8 @@ public final class AspectEstimation {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static volatile MinecraftServer server;
+    private static volatile List<EstimationRecipe> lastRecipes = List.of();
+    private static volatile Map<Identifier, AspectEstimator.Fall> lastFell = Map.of();
 
     private AspectEstimation() {}
 
@@ -70,19 +72,37 @@ public final class AspectEstimation {
             }
         }
 
+        try {
+            recipes.addAll(ThaumoryApi.recipeAdapters().sourceRecipes());
+        } catch (RuntimeException e) {
+            LOGGER.warn("An aspect estimation source failed", e);
+        }
+
         AspectEstimator.Result result = AspectEstimator.estimate(manual, recipes, AspectEstimation::remainder);
+        lastRecipes = List.copyOf(recipes);
+        lastFell = result.fell();
         ItemAspects.updateEstimated(result.estimated());
         AspectSync.sendToAll(server);
 
-        LOGGER.info("Estimated aspects for {} items from {} recipes in {} rounds ({} ms); {} items stayed unresolved, {} recipes failed",
-                result.estimated().size(), recipes.size(), result.rounds(),
+        LOGGER.info("Estimated aspects for {} items from {} recipes in {} rounds, {} lowered by cheaper routes ({} ms); {} items stayed unresolved, {} recipes failed",
+                result.estimated().size(), recipes.size(), result.rounds(), result.lowered(),
                 (System.nanoTime() - start) / 1_000_000, result.unresolved().size(), skipped);
         if (!result.unresolved().isEmpty()) {
             LOGGER.debug("Unresolved items: {}", result.unresolved());
         }
     }
 
-    private static Optional<Identifier> remainder(Identifier item) {
+    /** Every recipe and world change the last run read. */
+    public static List<EstimationRecipe> lastRecipes() {
+        return lastRecipes;
+    }
+
+    /** Items whose value fell below half of what they first settled at, as of the last run. */
+    public static Map<Identifier, AspectEstimator.Fall> lastFell() {
+        return lastFell;
+    }
+
+    public static Optional<Identifier> remainder(Identifier item) {
         ItemStackTemplate remainder = BuiltInRegistries.ITEM.getValue(item).getCraftingRemainder();
         return Optional.ofNullable(remainder).map(template -> BuiltInRegistries.ITEM.getKey(template.item().value()));
     }

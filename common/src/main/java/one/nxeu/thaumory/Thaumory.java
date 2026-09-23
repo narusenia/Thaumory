@@ -9,6 +9,7 @@ import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.aspect.data.ItemAspectReloadListener;
 import one.nxeu.thaumory.aspect.estimate.AspectEstimation;
 import one.nxeu.thaumory.aspect.estimate.VanillaRecipeAdapters;
+import one.nxeu.thaumory.aspect.estimate.VanillaWorldChanges;
 import one.nxeu.thaumory.command.ThaumoryCommands;
 import one.nxeu.thaumory.network.AspectSync;
 
@@ -18,6 +19,7 @@ public final class Thaumory {
     public static void init() {
         ThaumoryAspects.register(ThaumoryApi.aspects());
         VanillaRecipeAdapters.register(ThaumoryApi.recipeAdapters());
+        VanillaWorldChanges.register(ThaumoryApi.recipeAdapters());
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
         CommandRegistrationEvent.EVENT.register(
