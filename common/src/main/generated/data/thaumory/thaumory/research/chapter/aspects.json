@@ -1,0 +1,13 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "count": 1
+    }
+  ],
+  "icon": "thaumory:arcane_loupe",
+  "order": 1,
+  "requires": [
+    "thaumory:beginning"
+  ]
+}

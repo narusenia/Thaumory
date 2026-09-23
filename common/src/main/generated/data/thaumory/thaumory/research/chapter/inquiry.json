@@ -1,0 +1,13 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "count": 12
+    }
+  ],
+  "icon": "thaumory:wand",
+  "order": 6,
+  "requires": [
+    "thaumory:aspects"
+  ]
+}

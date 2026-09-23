@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:circles",
+      "outcome": "success"
+    }
+  ],
+  "icon": "thaumory:core",
+  "order": 4,
+  "requires": [
+    "thaumory:runes"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/amplifying_chalk",
+    "thaumory:alchemy/extending_chalk",
+    "thaumory:alchemy/economizing_chalk",
+    "thaumory:alchemy/stabilizing_chalk"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:circles",
+      "outcome": "failure"
+    }
+  ],
+  "icon": "thaumory:polluted_soil",
+  "order": 5,
+  "requires": [
+    "thaumory:circles"
+  ]
+}

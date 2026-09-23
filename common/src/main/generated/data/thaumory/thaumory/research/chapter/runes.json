@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "count": 3
+    }
+  ],
+  "icon": "thaumory:blank_rune",
+  "order": 3,
+  "requires": [
+    "thaumory:aspects",
+    "thaumory:crucible"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/blank_rune",
+    "thaumory:alchemy/chalk"
+  ]
+}

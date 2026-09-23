@@ -1,0 +1,13 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "thaumory:crucible"
+    }
+  ],
+  "icon": "thaumory:crucible",
+  "order": 2,
+  "requires": [
+    "thaumory:beginning"
+  ]
+}
