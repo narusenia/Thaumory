@@ -2,43 +2,134 @@
   "values": [
     {
       "aspects": {
-        "thaumory:herba": 16,
-        "thaumory:terra": 4
-      },
-      "target": "#minecraft:logs"
-    },
-    {
-      "aspects": {
-        "thaumory:herba": 16,
         "thaumory:terra": 8
-      },
-      "target": "minecraft:oak_log"
-    },
-    {
-      "aspects": {
-        "thaumory:aer": 4,
-        "thaumory:bestia": 8
-      },
-      "target": "#minecraft:wool"
-    },
-    {
-      "aspects": {
-        "thaumory:terra": 4
       },
       "target": "minecraft:dirt"
     },
     {
       "aspects": {
+        "thaumory:herba": 2,
         "thaumory:terra": 8
       },
-      "target": "minecraft:stone"
+      "target": "minecraft:grass_block"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:podzol"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 2,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 2
+      },
+      "target": "minecraft:mycelium"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:rooted_dirt"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:terra": 3
+      },
+      "target": "minecraft:clay_ball"
+    },
+    {
+      "aspects": {
+        "thaumory:chaos": 2,
+        "thaumory:terra": 6
+      },
+      "target": "minecraft:sand"
+    },
+    {
+      "aspects": {
+        "thaumory:chaos": 2,
+        "thaumory:ignis": 1,
+        "thaumory:terra": 6
+      },
+      "target": "minecraft:red_sand"
     },
     {
       "aspects": {
         "thaumory:chaos": 2,
         "thaumory:terra": 8
       },
+      "target": "minecraft:gravel"
+    },
+    {
+      "aspects": {
+        "thaumory:bellum": 4,
+        "thaumory:ignis": 2,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:flint"
+    },
+    {
+      "aspects": {
+        "thaumory:chaos": 1,
+        "thaumory:terra": 8
+      },
       "target": "minecraft:cobblestone"
+    },
+    {
+      "aspects": {
+        "thaumory:terra": 8,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:cobbled_deepslate"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 2,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:tuff"
+    },
+    {
+      "aspects": {
+        "thaumory:ordo": 4,
+        "thaumory:terra": 6
+      },
+      "target": "minecraft:calcite"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:pointed_dripstone"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 8,
+        "thaumory:ordo": 8,
+        "thaumory:terra": 16
+      },
+      "target": "minecraft:obsidian"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:arcanum": 8,
+        "thaumory:ignis": 8,
+        "thaumory:terra": 16
+      },
+      "target": "minecraft:crying_obsidian"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 12,
+        "thaumory:mors": 4
+      },
+      "target": "minecraft:coal"
     },
     {
       "aspects": {
@@ -48,8 +139,2868 @@
       "target": "minecraft:raw_iron"
     },
     {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:metallum": 16
+      },
+      "target": "minecraft:raw_gold"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 12,
+        "thaumory:tempestas": 4
+      },
+      "target": "minecraft:raw_copper"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:ordo": 24,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:diamond"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:ordo": 16,
+        "thaumory:vita": 12
+      },
+      "target": "minecraft:emerald"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:arcanum": 6
+      },
+      "target": "minecraft:lapis_lazuli"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:tempestas": 6
+      },
+      "target": "minecraft:redstone"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 2,
+        "thaumory:lux": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:quartz"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:lux": 4,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:amethyst_shard"
+    },
+    {
+      "aspects": {
+        "thaumory:bellum": 12,
+        "thaumory:ignis": 16,
+        "thaumory:metallum": 32
+      },
+      "target": "minecraft:ancient_debris"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 12,
+        "thaumory:mors": 4,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:coal_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 12,
+        "thaumory:mors": 4,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:deepslate_coal_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 16,
+        "thaumory:terra": 12
+      },
+      "target": "minecraft:iron_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 16,
+        "thaumory:terra": 12,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:deepslate_iron_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:metallum": 16,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:gold_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:metallum": 16,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:deepslate_gold_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 12,
+        "thaumory:tempestas": 4,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:copper_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 12,
+        "thaumory:tempestas": 4,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:deepslate_copper_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:ordo": 24,
+        "thaumory:terra": 16
+      },
+      "target": "minecraft:diamond_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:ordo": 24,
+        "thaumory:terra": 16,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:deepslate_diamond_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 8,
+        "thaumory:vita": 12
+      },
+      "target": "minecraft:emerald_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 8,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 3,
+        "thaumory:vita": 12
+      },
+      "target": "minecraft:deepslate_emerald_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 16,
+        "thaumory:arcanum": 24,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:lapis_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 16,
+        "thaumory:arcanum": 24,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:deepslate_lapis_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 16,
+        "thaumory:tempestas": 24,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:redstone_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 16,
+        "thaumory:tempestas": 24,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 3
+      },
+      "target": "minecraft:deepslate_redstone_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 6,
+        "thaumory:lux": 3,
+        "thaumory:ordo": 3
+      },
+      "target": "minecraft:large_amethyst_bud"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:lux": 2,
+        "thaumory:ordo": 2
+      },
+      "target": "minecraft:medium_amethyst_bud"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:lux": 1,
+        "thaumory:ordo": 1
+      },
+      "target": "minecraft:small_amethyst_bud"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:lux": 4,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:amethyst_cluster"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 2,
+        "thaumory:terra": 8,
+        "thaumory:venenum": 4
+      },
+      "target": "minecraft:cinnabar"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 4,
+        "thaumory:venenum": 4
+      },
+      "target": "minecraft:sulfur_spike"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 4,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:netherrack"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 2,
+        "thaumory:ignis": 6,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:crimson_nylium"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:herba": 2,
+        "thaumory:ignis": 4,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:warped_nylium"
+    },
+    {
+      "aspects": {
+        "thaumory:mors": 6,
+        "thaumory:terra": 4,
+        "thaumory:umbra": 2
+      },
+      "target": "minecraft:soul_sand"
+    },
+    {
+      "aspects": {
+        "thaumory:mors": 6,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:soul_soil"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 4,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:basalt"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 2,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 2
+      },
+      "target": "minecraft:blackstone"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 2,
+        "thaumory:lux": 3,
+        "thaumory:metallum": 6,
+        "thaumory:terra": 8,
+        "thaumory:umbra": 2
+      },
+      "target": "minecraft:gilded_blackstone"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 4,
+        "thaumory:lux": 8,
+        "thaumory:metallum": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:nether_gold_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 6,
+        "thaumory:lux": 4,
+        "thaumory:ordo": 8,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:nether_quartz_ore"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 2,
+        "thaumory:lux": 4
+      },
+      "target": "minecraft:glowstone_dust"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:ignis": 4,
+        "thaumory:lux": 8
+      },
+      "target": "minecraft:shroomlight"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:ignis": 2
+      },
+      "target": "minecraft:crimson_fungus"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:warped_fungus"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:ignis": 1
+      },
+      "target": "minecraft:crimson_roots"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 1,
+        "thaumory:herba": 3
+      },
+      "target": "minecraft:warped_roots"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 1,
+        "thaumory:herba": 2
+      },
+      "target": "minecraft:nether_sprouts"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:ignis": 2,
+        "thaumory:vinculum": 2
+      },
+      "target": "minecraft:weeping_vines"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:herba": 4,
+        "thaumory:vinculum": 2
+      },
+      "target": "minecraft:twisting_vines"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:herba": 8
+      },
+      "target": "minecraft:warped_wart_block"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:herba": 4,
+        "thaumory:mors": 2
+      },
+      "target": "minecraft:nether_wart"
+    },
+    {
+      "aspects": {
+        "thaumory:chaos": 4,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:end_stone"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:chaos": 4,
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:chorus_fruit"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:chaos": 6,
+        "thaumory:herba": 6
+      },
+      "target": "minecraft:chorus_flower"
+    },
+    {
+      "aspects": {
+        "thaumory:chaos": 4,
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:chorus_plant"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:chaos": 8,
+        "thaumory:vinculum": 16
+      },
+      "target": "minecraft:shulker_shell"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 16,
+        "thaumory:chaos": 8,
+        "thaumory:ignis": 8
+      },
+      "target": "minecraft:dragon_breath"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:ice"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 1,
+        "thaumory:aqua": 2
+      },
+      "target": "minecraft:snowball"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:ordo": 2
+      },
+      "target": "minecraft:prismarine_shard"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 3,
+        "thaumory:lux": 3
+      },
+      "target": "minecraft:prismarine_crystals"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 3,
+        "thaumory:herba": 3
+      },
+      "target": "minecraft:seagrass"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:kelp"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:lux": 4
+      },
+      "target": "minecraft:sea_pickle"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:lily_pad"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 12,
+        "thaumory:bestia": 8,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:wet_sponge"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:tube_coral"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:tube_coral_fan"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:bestia": 4,
+        "thaumory:terra": 2,
+        "thaumory:vita": 6
+      },
+      "target": "minecraft:tube_coral_block"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:brain_coral"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:brain_coral_fan"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:bestia": 4,
+        "thaumory:terra": 2,
+        "thaumory:vita": 6
+      },
+      "target": "minecraft:brain_coral_block"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:bubble_coral"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:bubble_coral_fan"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:bestia": 4,
+        "thaumory:terra": 2,
+        "thaumory:vita": 6
+      },
+      "target": "minecraft:bubble_coral_block"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:fire_coral"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:fire_coral_fan"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:bestia": 4,
+        "thaumory:terra": 2,
+        "thaumory:vita": 6
+      },
+      "target": "minecraft:fire_coral_block"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:horn_coral"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:horn_coral_fan"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:bestia": 4,
+        "thaumory:terra": 2,
+        "thaumory:vita": 6
+      },
+      "target": "minecraft:horn_coral_block"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:mors": 2,
+        "thaumory:umbra": 4
+      },
+      "target": "minecraft:sculk"
+    },
+    {
+      "aspects": {
+        "thaumory:mors": 1,
+        "thaumory:umbra": 1
+      },
+      "target": "minecraft:sculk_vein"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:mors": 16,
+        "thaumory:umbra": 16
+      },
+      "target": "minecraft:sculk_catalyst"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:tempestas": 8,
+        "thaumory:umbra": 8
+      },
+      "target": "minecraft:sculk_sensor"
+    },
+    {
+      "aspects": {
+        "thaumory:mors": 8,
+        "thaumory:tempestas": 8,
+        "thaumory:umbra": 12
+      },
+      "target": "minecraft:sculk_shrieker"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 16,
+        "thaumory:tempestas": 8,
+        "thaumory:umbra": 24
+      },
+      "target": "minecraft:echo_shard"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:dandelion"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:poppy"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:blue_orchid"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:allium"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:azure_bluet"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:red_tulip"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:orange_tulip"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:white_tulip"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:pink_tulip"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:oxeye_daisy"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:cornflower"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 5,
+        "thaumory:lux": 1,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:lily_of_the_valley"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 16,
+        "thaumory:terra": 4
+      },
+      "target": "#minecraft:logs"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:vita": 4
+      },
+      "target": "#minecraft:saplings"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 2,
+        "thaumory:herba": 6
+      },
+      "target": "#minecraft:leaves"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:lux": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:sunflower"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:lux": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:lilac"
+    },
+    {
+      "aspects": {
+        "thaumory:bellum": 2,
+        "thaumory:herba": 8,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:rose_bush"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:lux": 2,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:peony"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:herba": 8,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:pitcher_plant"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:mors": 8,
+        "thaumory:venenum": 4
+      },
+      "target": "minecraft:wither_rose"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 6,
+        "thaumory:ignis": 2,
+        "thaumory:lux": 4
+      },
+      "target": "minecraft:torchflower"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:lux": 2,
+        "thaumory:umbra": 2
+      },
+      "target": "minecraft:open_eyeblossom"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:umbra": 4
+      },
+      "target": "minecraft:closed_eyeblossom"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:pink_petals"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:wildflowers"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 1,
+        "thaumory:herba": 3
+      },
+      "target": "minecraft:short_grass"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 2,
+        "thaumory:herba": 6
+      },
+      "target": "minecraft:tall_grass"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:umbra": 1
+      },
+      "target": "minecraft:fern"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 6,
+        "thaumory:umbra": 2
+      },
+      "target": "minecraft:large_fern"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 1,
+        "thaumory:ignis": 1,
+        "thaumory:mors": 3
+      },
+      "target": "minecraft:dead_bush"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 2,
+        "thaumory:ignis": 1
+      },
+      "target": "minecraft:short_dry_grass"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:ignis": 2
+      },
+      "target": "minecraft:tall_dry_grass"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:bush"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 6,
+        "thaumory:lux": 4
+      },
+      "target": "minecraft:firefly_bush"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:vinculum": 2
+      },
+      "target": "minecraft:vine"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 2,
+        "thaumory:lux": 4
+      },
+      "target": "minecraft:glow_lichen"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:terra": 2
+      },
+      "target": "minecraft:hanging_roots"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 6,
+        "thaumory:terra": 2
+      },
+      "target": "minecraft:moss_block"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 6,
+        "thaumory:umbra": 2
+      },
+      "target": "minecraft:pale_moss_block"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:umbra": 1
+      },
+      "target": "minecraft:pale_hanging_moss"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:herba": 6
+      },
+      "target": "minecraft:big_dripleaf"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:small_dripleaf"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 4,
+        "thaumory:herba": 6,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:spore_blossom"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:azalea"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:flowering_azalea"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:bellum": 2,
+        "thaumory:herba": 6
+      },
+      "target": "minecraft:cactus"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:lux": 2
+      },
+      "target": "minecraft:cactus_flower"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:herba": 6
+      },
+      "target": "minecraft:sugar_cane"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 2,
+        "thaumory:herba": 4
+      },
+      "target": "minecraft:bamboo"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 12,
+        "thaumory:herba": 24
+      },
+      "target": "minecraft:stripped_bamboo_block"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 2,
+        "thaumory:vinculum": 8
+      },
+      "target": "minecraft:cobweb"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:herba": 6,
+        "thaumory:terra": 2
+      },
+      "target": "minecraft:mangrove_roots"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:umbra": 4
+      },
+      "target": "minecraft:brown_mushroom"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:umbra": 4
+      },
+      "target": "minecraft:red_mushroom"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:umbra": 6
+      },
+      "target": "minecraft:brown_mushroom_block"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:umbra": 6
+      },
+      "target": "minecraft:red_mushroom_block"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:umbra": 4
+      },
+      "target": "minecraft:mushroom_stem"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 6,
+        "thaumory:umbra": 4
+      },
+      "target": "minecraft:shelf_mushroom"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:ignis": 1
+      },
+      "target": "minecraft:red_shrub"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 2,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:wheat_seeds"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 6,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:wheat"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:lux": 1,
+        "thaumory:vita": 3
+      },
+      "target": "minecraft:carrot"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:terra": 1,
+        "thaumory:vita": 3
+      },
+      "target": "minecraft:potato"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:venenum": 4
+      },
+      "target": "minecraft:poisonous_potato"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:vita": 3
+      },
+      "target": "minecraft:beetroot"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 2,
+        "thaumory:vita": 1
+      },
+      "target": "minecraft:beetroot_seeds"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:herba": 2,
+        "thaumory:vita": 1
+      },
+      "target": "minecraft:melon_slice"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 8,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:pumpkin"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:apple"
+    },
+    {
+      "aspects": {
+        "thaumory:bellum": 1,
+        "thaumory:herba": 3,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:sweet_berries"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:lux": 2,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:glow_berries"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:cocoa_beans"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 3,
+        "thaumory:lux": 2
+      },
+      "target": "minecraft:torchflower_seeds"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:herba": 3
+      },
+      "target": "minecraft:pitcher_pod"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 8,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:beef"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 8,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:porkchop"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 6,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:mutton"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 1,
+        "thaumory:bestia": 4,
+        "thaumory:vita": 3
+      },
+      "target": "minecraft:chicken"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:vita": 3
+      },
+      "target": "minecraft:rabbit"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 4
+      },
+      "target": "minecraft:cod"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 4,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:salmon"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 3,
+        "thaumory:bestia": 3,
+        "thaumory:lux": 2
+      },
+      "target": "minecraft:tropical_fish"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 3,
+        "thaumory:bestia": 3,
+        "thaumory:venenum": 6
+      },
+      "target": "minecraft:pufferfish"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:mors": 6
+      },
+      "target": "minecraft:rotten_flesh"
+    },
+    {
+      "aspects": {
+        "thaumory:mors": 8,
+        "thaumory:ordo": 2
+      },
+      "target": "minecraft:bone"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 2,
+        "thaumory:vinculum": 4
+      },
+      "target": "minecraft:string"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 2,
+        "thaumory:venenum": 6
+      },
+      "target": "minecraft:spider_eye"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 6,
+        "thaumory:bestia": 2
+      },
+      "target": "minecraft:feather"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:vinculum": 2
+      },
+      "target": "minecraft:rabbit_hide"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:bestia": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:rabbit_foot"
+    },
+    {
+      "aspects": {
+        "thaumory:bellum": 6,
+        "thaumory:chaos": 2,
+        "thaumory:ignis": 8
+      },
+      "target": "minecraft:gunpowder"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 16,
+        "thaumory:chaos": 12
+      },
+      "target": "minecraft:ender_pearl"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:ignis": 24
+      },
+      "target": "minecraft:blaze_rod"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 24,
+        "thaumory:arcanum": 4,
+        "thaumory:tempestas": 12
+      },
+      "target": "minecraft:breeze_rod"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 12,
+        "thaumory:mors": 8,
+        "thaumory:vita": 12
+      },
+      "target": "minecraft:ghast_tear"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 12,
+        "thaumory:mors": 8,
+        "thaumory:umbra": 4
+      },
+      "target": "minecraft:phantom_membrane"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:umbra": 6
+      },
+      "target": "minecraft:ink_sac"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:lux": 8
+      },
+      "target": "minecraft:glow_ink_sac"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:bestia": 8,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:turtle_scute"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 8,
+        "thaumory:ordo": 4,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:armadillo_scute"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 12,
+        "thaumory:bestia": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:nautilus_shell"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 2,
+        "thaumory:herba": 4,
+        "thaumory:ordo": 2
+      },
+      "target": "minecraft:honeycomb"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 2,
+        "thaumory:herba": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:honey_bottle"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 8,
+        "thaumory:herba": 12,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:bee_nest"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:vinculum": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:slime_ball"
+    },
+    {
+      "aspects": {
+        "thaumory:herba": 4,
+        "thaumory:umbra": 2,
+        "thaumory:vinculum": 4
+      },
+      "target": "minecraft:resin_clump"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:ignis": 2,
+        "thaumory:lux": 12
+      },
+      "target": "minecraft:ochre_froglight"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:herba": 2,
+        "thaumory:lux": 12
+      },
+      "target": "minecraft:verdant_froglight"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:bestia": 4,
+        "thaumory:lux": 12
+      },
+      "target": "minecraft:pearlescent_froglight"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:egg"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:brown_egg"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:blue_egg"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 8,
+        "thaumory:vita": 8
+      },
+      "target": "minecraft:turtle_egg"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 16,
+        "thaumory:terra": 8,
+        "thaumory:vita": 16
+      },
+      "target": "minecraft:sniffer_egg"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:bestia": 8,
+        "thaumory:tempestas": 4
+      },
+      "target": "minecraft:goat_horn"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:mors": 24
+      },
+      "target": "minecraft:skeleton_skull"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 8,
+        "thaumory:mors": 16
+      },
+      "target": "minecraft:zombie_head"
+    },
+    {
+      "aspects": {
+        "thaumory:bellum": 16,
+        "thaumory:herba": 4,
+        "thaumory:ignis": 8
+      },
+      "target": "minecraft:creeper_head"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 12,
+        "thaumory:metallum": 4,
+        "thaumory:mors": 8
+      },
+      "target": "minecraft:piglin_head"
+    },
+    {
+      "aspects": {
+        "thaumory:bellum": 8,
+        "thaumory:mors": 32,
+        "thaumory:umbra": 16
+      },
+      "target": "minecraft:wither_skeleton_skull"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 48,
+        "thaumory:lux": 32,
+        "thaumory:mors": 32,
+        "thaumory:ordo": 16
+      },
+      "target": "minecraft:nether_star"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 64,
+        "thaumory:bestia": 32,
+        "thaumory:vita": 32
+      },
+      "target": "minecraft:dragon_egg"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 32,
+        "thaumory:bestia": 32,
+        "thaumory:ignis": 16
+      },
+      "target": "minecraft:dragon_head"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 64,
+        "thaumory:arcanum": 32,
+        "thaumory:bestia": 16
+      },
+      "target": "minecraft:elytra"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 48,
+        "thaumory:tempestas": 16,
+        "thaumory:vinculum": 16
+      },
+      "target": "minecraft:heavy_core"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 32,
+        "thaumory:arcanum": 16,
+        "thaumory:lux": 8
+      },
+      "target": "minecraft:heart_of_the_sea"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 24,
+        "thaumory:ordo": 16,
+        "thaumory:vita": 48
+      },
+      "target": "minecraft:totem_of_undying"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 32,
+        "thaumory:lux": 16,
+        "thaumory:metallum": 8,
+        "thaumory:vita": 64
+      },
+      "target": "minecraft:enchanted_golden_apple"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 24,
+        "thaumory:bellum": 16,
+        "thaumory:metallum": 16
+      },
+      "target": "minecraft:trident"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:experience_bottle"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 2,
+        "thaumory:ordo": 4,
+        "thaumory:terra": 8
+      },
+      "target": "#minecraft:decorated_pot_sherds"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 2,
+        "thaumory:arcanum": 1,
+        "thaumory:ordo": 2
+      },
+      "target": "minecraft:disc_fragment_5"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:metallum": 24
+      },
+      "target": "minecraft:iron_horse_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:lux": 8,
+        "thaumory:metallum": 24
+      },
+      "target": "minecraft:golden_horse_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:lux": 8,
+        "thaumory:ordo": 32
+      },
+      "target": "minecraft:diamond_horse_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:bestia": 4,
+        "thaumory:metallum": 18,
+        "thaumory:tempestas": 6
+      },
+      "target": "minecraft:copper_horse_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:metallum": 24
+      },
+      "target": "minecraft:iron_nautilus_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:lux": 8,
+        "thaumory:metallum": 24
+      },
+      "target": "minecraft:golden_nautilus_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:lux": 8,
+        "thaumory:ordo": 32
+      },
+      "target": "minecraft:diamond_nautilus_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:metallum": 18,
+        "thaumory:tempestas": 6
+      },
+      "target": "minecraft:copper_nautilus_armor"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 15,
+        "thaumory:vinculum": 5
+      },
+      "target": "minecraft:chainmail_helmet"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 24,
+        "thaumory:vinculum": 8
+      },
+      "target": "minecraft:chainmail_chestplate"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 21,
+        "thaumory:vinculum": 7
+      },
+      "target": "minecraft:chainmail_leggings"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 12,
+        "thaumory:vinculum": 4
+      },
+      "target": "minecraft:chainmail_boots"
+    },
+    {
+      "aspects": {
+        "thaumory:lux": 4,
+        "thaumory:metallum": 16,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:bell"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:metallum": 4,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:trial_key"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:chaos": 8,
+        "thaumory:metallum": 4,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:ominous_trial_key"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:bellum": 4,
+        "thaumory:chaos": 8
+      },
+      "target": "minecraft:ominous_bottle"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 8,
+        "thaumory:metallum": 16,
+        "thaumory:ordo": 4
+      },
+      "target": "minecraft:copper_golem_statue"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_13"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_cat"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_blocks"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_bounce"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_chirp"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_creator"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_creator_music_box"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_far"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_lava_chicken"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_mall"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_mellohi"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_stal"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_strad"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_ward"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_11"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_wait"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_otherside"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_relic"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_5"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_pigstep"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_precipice"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 8,
+        "thaumory:arcanum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:music_disc_tears"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:herba": 2,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:globe_banner_pattern"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:herba": 2,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:piglin_banner_pattern"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:herba": 2,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:flow_banner_pattern"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 4,
+        "thaumory:herba": 2,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:guster_banner_pattern"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ignis": 16,
+        "thaumory:metallum": 16,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:netherite_upgrade_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:sentry_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:dune_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:coast_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:wild_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:ward_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:eye_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:vex_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:tide_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:snout_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:rib_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:spire_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:wayfinder_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:shaper_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:silence_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:raiser_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:host_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:flow_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:arcanum": 12,
+        "thaumory:ordo": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:bolt_armor_trim_smithing_template"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8
+      },
+      "target": "minecraft:water_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:ignis": 16,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:lava_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 2,
+        "thaumory:bestia": 4,
+        "thaumory:vita": 6
+      },
+      "target": "minecraft:milk_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aer": 4,
+        "thaumory:aqua": 6,
+        "thaumory:ordo": 2
+      },
+      "target": "minecraft:powder_snow_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 12,
+        "thaumory:bestia": 4
+      },
+      "target": "minecraft:cod_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 12,
+        "thaumory:bestia": 4,
+        "thaumory:vita": 2
+      },
+      "target": "minecraft:salmon_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 11,
+        "thaumory:bestia": 3,
+        "thaumory:lux": 2
+      },
+      "target": "minecraft:tropical_fish_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 11,
+        "thaumory:bestia": 3,
+        "thaumory:venenum": 6
+      },
+      "target": "minecraft:pufferfish_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 12,
+        "thaumory:bestia": 12,
+        "thaumory:vita": 8
+      },
+      "target": "minecraft:axolotl_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 8,
+        "thaumory:bestia": 4,
+        "thaumory:vita": 4
+      },
+      "target": "minecraft:tadpole_bucket"
+    },
+    {
+      "aspects": {
+        "thaumory:aqua": 4,
+        "thaumory:bestia": 8,
+        "thaumory:venenum": 8
+      },
+      "target": "minecraft:sulfur_cube_bucket"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:air"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:bedrock"
+    },
+    {
       "aspects": {},
       "target": "minecraft:barrier"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:light"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:structure_void"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:structure_block"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:jigsaw"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:command_block"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:chain_command_block"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:repeating_command_block"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:command_block_minecart"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:debug_stick"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:knowledge_book"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:test_block"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:test_instance_block"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:spawner"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:trial_spawner"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:vault"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:end_portal_frame"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:reinforced_deepslate"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:budding_amethyst"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:farmland"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:dirt_path"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:petrified_oak_slab"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:frogspawn"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:suspicious_sand"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:suspicious_gravel"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:player_head"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:infested_stone"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:infested_cobblestone"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:infested_stone_bricks"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:infested_mossy_stone_bricks"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:infested_cracked_stone_bricks"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:infested_chiseled_stone_bricks"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:infested_deepslate"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:potion"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:splash_potion"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:lingering_potion"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:tipped_arrow"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:enchanted_book"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:written_book"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:filled_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:firework_star"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:filled_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:ocean_monument_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:woodland_mansion_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:buried_trial_chambers_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:jungle_pyramid_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:swamp_hut_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:desert_village_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:plains_village_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:savanna_village_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:snowy_village_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:taiga_village_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:buried_treasure_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:buried_ancient_city_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:buried_mineshaft_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:desert_pyramid_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:abandoned_camp_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:warm_ocean_ruins_map"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:chicken_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:cow_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:pig_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:sheep_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:camel_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:donkey_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:horse_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:mule_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:cat_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:parrot_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:wolf_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:armadillo_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:bat_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:bee_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:fox_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:goat_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:llama_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:ocelot_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:panda_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:polar_bear_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:rabbit_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:axolotl_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:cod_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:dolphin_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:frog_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:glow_squid_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:nautilus_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:pufferfish_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:salmon_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:squid_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:tadpole_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:tropical_fish_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:turtle_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:allay_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:mooshroom_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:sniffer_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:sulfur_cube_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:copper_golem_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:iron_golem_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:snow_golem_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:trader_llama_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:villager_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:wandering_trader_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:bogged_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:camel_husk_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:drowned_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:husk_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:parched_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:skeleton_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:skeleton_horse_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:stray_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:wither_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:wither_skeleton_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:zombie_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:zombie_horse_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:zombie_nautilus_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:zombie_villager_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:cave_spider_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:spider_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:breeze_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:creaking_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:creeper_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:elder_guardian_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:guardian_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:phantom_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:silverfish_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:slime_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:warden_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:witch_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:evoker_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:pillager_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:ravager_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:vindicator_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:vex_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:blaze_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:ghast_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:happy_ghast_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:hoglin_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:magma_cube_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:piglin_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:piglin_brute_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:strider_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:zoglin_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:zombified_piglin_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:ender_dragon_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:enderman_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:endermite_spawn_egg"
+    },
+    {
+      "aspects": {},
+      "target": "minecraft:shulker_spawn_egg"
     }
   ]
 }
