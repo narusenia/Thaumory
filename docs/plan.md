@@ -13,7 +13,7 @@
 
 | M | 内容 | 完了 / 全体 | 状態 |
 |---|---|---|---|
-| M0 | 開発基盤 | 6 / 7 | 作業中 |
+| M0 | 開発基盤 | 7 / 7 | 完了 |
 | M1 | MVP：核ループ | 29 / 29 | 完了 |
 | M2 | 工学と成果物 | 0 / 13 | 未着手 |
 | M3 | ポーション調合 | 0 / 8 | 未着手 |
@@ -33,7 +33,7 @@
 | [x] | M0-4 | JUnit を `common` と `api` に導入する | サンプルのテストが `./gradlew test` で通る | M0-3 |
 | [x] | M0-5 | Fabric GameTest の実行環境を整える | GameTest が `runGameTest` で通る。M1-13 の打ち消しと M1-21 の効果 8 種の GameTest も足す | - |
 | [x] | M0-6 | datagen（言語・モデル・タグ・レシピ）の土台を作る | `runDatagen` で `ja_jp` / `en_us` が生成される | - |
-| [ ] | M0-7 | `fabric.mod.json` のメタデータを埋める | description・authors・contact が埋まり、不要な `suggests` が消えている | - |
+| [x] | M0-7 | `fabric.mod.json` のメタデータを埋める | description・authors・contact が埋まり、不要な `suggests` が消えている | - |
 
 ## M1 MVP：核ループ
 
