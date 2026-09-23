@@ -121,4 +121,27 @@ class EssentiaTransferTest {
         var json = JarContents.codec(registry).encodeStart(JsonOps.INSTANCE, contents).getOrThrow();
         assertEquals(contents, JarContents.codec(registry).parse(JsonOps.INSTANCE, json).getOrThrow());
     }
+
+    @Test
+    void labeledJarOnlyTakesItsLabelUpToCapacity() {
+        AspectList held = AspectList.of(IGNIS, 60);
+
+        assertEquals(4, EssentiaTransfer.jarSpace(held, Optional.of(IGNIS), CAPACITY, IGNIS));
+        assertEquals(0, EssentiaTransfer.jarSpace(held, Optional.of(IGNIS), CAPACITY, AQUA));
+        assertEquals(4, EssentiaTransfer.jarSpace(held, Optional.empty(), CAPACITY, AQUA));
+        assertEquals(0, EssentiaTransfer.jarSpace(AspectList.of(IGNIS, 70), Optional.empty(), CAPACITY, AQUA));
+    }
+
+    @Test
+    void unlabeledJarSettlesOppositesIntoFlux() {
+        AspectList mixed = AspectList.of(new AspectStack(IGNIS, 10), new AspectStack(AQUA, 4));
+
+        var settled = EssentiaTransfer.settleJar(mixed, Optional.empty(), registry);
+        assertEquals(AspectList.of(IGNIS, 6), settled.remaining());
+        assertEquals(8, settled.removed());
+
+        var labeled = EssentiaTransfer.settleJar(AspectList.of(IGNIS, 10), Optional.of(IGNIS), registry);
+        assertEquals(AspectList.of(IGNIS, 10), labeled.remaining());
+        assertEquals(0, labeled.removed());
+    }
 }

@@ -98,6 +98,19 @@ public final class EssentiaTransfer {
         return new Result(from.minus(movedList), to.plus(movedList), 0);
     }
 
+    /** How much more of {@code aspect} a jar holding {@code contents} takes: only its label's, up to its capacity. */
+    public static int jarSpace(AspectList contents, Optional<Aspect> label, int capacity, Aspect aspect) {
+        if (label.isPresent() && !label.get().equals(aspect)) {
+            return 0;
+        }
+        return Math.max(0, capacity - contents.total());
+    }
+
+    /** What a jar holding {@code contents} settles into, and the Flux that leaves it. */
+    public static AspectCancellation.Result settleJar(AspectList contents, Optional<Aspect> label, AspectRegistry registry) {
+        return label.isPresent() ? new AspectCancellation.Result(contents, 0) : AspectCancellation.full(contents, registry);
+    }
+
     /** Unlabeled jars cancel opposites the moment they mix; a labeled jar only ever holds one aspect. */
     private static Result settle(AspectList from, AspectList to, Optional<Aspect> label, int flux, AspectRegistry registry) {
         if (label.isPresent()) {
