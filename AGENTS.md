@@ -24,7 +24,7 @@ If requirements change during implementation, update `docs/requirements.md` firs
 ## Layout
 
 ```
-api/      thaumory-api: public extension points (MIT). Stable API only.
+api/      thaumory-api: public extension points (MIT). Nothing internal.
 common/   Loader-agnostic mod logic.
 fabric/   Fabric entrypoints and Fabric-specific implementations.
 docs/     requirements.md, plan.md
