@@ -1,0 +1,10 @@
+package one.nxeu.thaumory.fabric.client;
+
+import net.fabricmc.api.ClientModInitializer;
+
+public final class ThaumoryFabricClient implements ClientModInitializer {
+    @Override
+    public void onInitializeClient() {
+        // This entrypoint is suitable for setting up client-specific logic, such as rendering.
+    }
+}

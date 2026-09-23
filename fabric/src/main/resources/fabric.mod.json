@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "thaumory",
+  "version": "${version}",
+  "name": "Thaumory",
+  "description": "",
+  "authors": [
+    ""
+  ],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "MIT",
+  "icon": "assets/thaumory/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "one.nxeu.thaumory.fabric.ThaumoryFabric"
+    ],
+    "client": [
+      "one.nxeu.thaumory.fabric.client.ThaumoryFabricClient"
+    ]
+  },
+  "mixins": [
+    "thaumory.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "architectury": ">=22.0.2",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
