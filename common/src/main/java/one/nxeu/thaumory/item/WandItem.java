@@ -41,6 +41,7 @@ public final class WandItem extends Item {
         TRIGGERED("triggered", SoundEvents.EVOKER_CAST_SPELL),
         NO_RINGS("no_rings", SoundEvents.FIRE_EXTINGUISH),
         NO_RESPONSE("no_response", SoundEvents.FIRE_EXTINGUISH),
+        MISFIRED("misfired", SoundEvents.FIRE_EXTINGUISH),
         NO_TARGET("no_target", SoundEvents.FIRE_EXTINGUISH),
         NO_ESSENTIA("no_essentia", SoundEvents.FIRE_EXTINGUISH);
 
@@ -63,11 +64,13 @@ public final class WandItem extends Item {
             case STARTED, ALREADY_RUNNING -> Outcome.STARTED;
             case NO_RINGS -> Outcome.NO_RINGS;
             case UNDEFINED -> Outcome.NO_RESPONSE;
+            case MISFIRED -> Outcome.MISFIRED;
             case NO_ESSENTIA -> Outcome.NO_ESSENTIA;
             case TRIGGERED_ONLY -> switch (core.trigger(Optional.of(player))) {
                 case TRIGGERED -> Outcome.TRIGGERED;
                 case NO_RINGS -> Outcome.NO_RINGS;
                 case UNDEFINED, SUSTAINED_ONLY -> Outcome.NO_RESPONSE;
+                case MISFIRED -> Outcome.MISFIRED;
                 case NO_TARGET -> Outcome.NO_TARGET;
                 case NO_ESSENTIA -> Outcome.NO_ESSENTIA;
             };

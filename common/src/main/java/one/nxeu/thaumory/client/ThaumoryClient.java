@@ -25,6 +25,7 @@ import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
+import one.nxeu.thaumory.network.FluxReadingPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
 import org.slf4j.Logger;
 
@@ -45,9 +46,12 @@ public final class ThaumoryClient {
                     LOGGER.info("Received knowledge: {} scanned items, {} aspects",
                             payload.knowledge().scanned(PlayerKnowledge.ITEMS).size(), payload.knowledge().aspects().size());
                 }));
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, FluxReadingPayload.TYPE, FluxReadingPayload.STREAM_CODEC,
+                (payload, context) -> context.queue(() -> ClientFlux.replace(payload)));
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register(player -> {
             ClientItemAspects.clear();
             ClientKnowledge.clear();
+            ClientFlux.clear();
         });
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);

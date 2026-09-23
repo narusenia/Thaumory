@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -19,6 +20,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
@@ -56,6 +59,9 @@ import one.nxeu.thaumory.knowledge.PlayerKnowledge;
  *
  * <p>A sustained circle, once started, pays its upkeep on its interval and works once a second
  * until it is stopped, runs dry, or its circle breaks.
+ *
+ * <p>Trying an undefined combination releases Flux and records the failure; every payment of an
+ * unstable circle may release Flux too.
  */
 public final class CoreBlockEntity extends BlockEntity {
     public static final int SLOTS = 3;
@@ -89,9 +95,10 @@ public final class CoreBlockEntity extends BlockEntity {
         ).apply(i, Upkeep::new));
     }
 
-    public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, TRIGGERED_ONLY, NO_ESSENTIA }
+    /** {@code UNDEFINED}: fewer than two runes, so not a circle yet. {@code MISFIRED}: the combination is undefined. */
+    public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, TRIGGERED_ONLY, NO_ESSENTIA }
 
-    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA }
+    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA }
 
     private List<Identifier> runes = List.of();
     private AspectList essentia = AspectList.empty();
@@ -311,6 +318,37 @@ public final class CoreBlockEntity extends BlockEntity {
         }
     }
 
+    /**
+     * Tried with runes that make no defined combination: Flux leaks out, and the one who tried
+     * learns it fails. False when there are not yet two runes, which is not a combination at all.
+     */
+    private boolean misfire(ServerLevel server, Optional<Entity> activator) {
+        Optional<CircleCombination> combination = combination();
+        if (combination.isEmpty()) {
+            return false;
+        }
+        if (activator.orElse(null) instanceof ServerPlayer player) {
+            Thaumory.knowledge().update(player, k -> k.withCircle(combination.get(), PlayerKnowledge.CircleOutcome.FAILURE));
+        }
+        releaseFlux(server, settings.undefinedFlux());
+        return true;
+    }
+
+    /** Each payment of a circle over its instability threshold may leak Flux. */
+    private void rollInstability(ServerLevel server) {
+        releaseFlux(server, settings.instabilityFlux(instability, server.getRandom().nextDouble()));
+    }
+
+    private void releaseFlux(ServerLevel server, double amount) {
+        if (amount <= 0) {
+            return;
+        }
+        ThaumoryApi.flux().add(server, ChunkPos.containing(worldPosition), amount);
+        server.sendParticles(ParticleTypes.WITCH, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5,
+                12, 0.6, 0.2, 0.6, 0);
+        server.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.3f, 1.4f);
+    }
+
     public boolean isRunning() {
         return running.isPresent();
     }
@@ -327,7 +365,7 @@ public final class CoreBlockEntity extends BlockEntity {
         }
         Optional<Circle> circle = circle();
         if (circle.isEmpty()) {
-            return StartResult.UNDEFINED;
+            return misfire(server, activator) ? StartResult.MISFIRED : StartResult.UNDEFINED;
         }
         CircleDefinitions.Definition definition = circle.get().definition();
         if (definition.mode() != CircleMode.SUSTAINED) {
@@ -338,6 +376,7 @@ public final class CoreBlockEntity extends BlockEntity {
             return StartResult.NO_ESSENTIA;
         }
         setEssentia(paid.get());
+        rollInstability(server);
         running = Optional.of(definition.id());
         runningEffect = definition.effect();
         runningRunes = runes;
@@ -380,7 +419,7 @@ public final class CoreBlockEntity extends BlockEntity {
         }
         Optional<Circle> circle = circle();
         if (circle.isEmpty()) {
-            return TriggerResult.UNDEFINED;
+            return misfire(server, activator) ? TriggerResult.MISFIRED : TriggerResult.UNDEFINED;
         }
         CircleDefinitions.Definition definition = circle.get().definition();
         if (definition.mode() != CircleMode.TRIGGERED) {
@@ -397,6 +436,7 @@ public final class CoreBlockEntity extends BlockEntity {
             return TriggerResult.NO_ESSENTIA;
         }
         setEssentia(paid.get());
+        rollInstability(server);
         effect.get().apply(context);
         recordSuccess(activator);
         return TriggerResult.TRIGGERED;
@@ -416,6 +456,7 @@ public final class CoreBlockEntity extends BlockEntity {
                 return;
             }
             setEssentia(paid.get());
+            rollInstability(server);
             nextPayment = time + CircleUpkeep.sustainedInterval(definition.interval(), circle.get().multipliers().cost());
             setChanged();
         }

@@ -46,6 +46,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_response", "The circle does not answer");
             builder.add("message.thaumory.wand.no_essentia", "The Core lacks Essentia");
             builder.add("message.thaumory.wand.no_target", "The circle finds nothing to act on");
+            builder.add("message.thaumory.wand.misfired", "The circle misfires and Flux leaks out");
+            builder.add("hud.thaumory.flux.amount", "Flux here: %s");
+            builder.add("hud.thaumory.flux.stage.none", "Calm");
+            builder.add("hud.thaumory.flux.stage.stagnation", "Stagnation");
+            builder.add("hud.thaumory.flux.stage.erosion", "Erosion");
+            builder.add("hud.thaumory.flux.stage.manifestation", "Manifestation");
+            builder.add("hud.thaumory.flux.stage.overload", "Overload");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "Arcane Codex");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "Blank Rune");
@@ -140,6 +147,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_response", "陣は応えなかった");
             builder.add("message.thaumory.wand.no_essentia", "Core の Essentia が足りない");
             builder.add("message.thaumory.wand.no_target", "陣が働きかける先が見つからない");
+            builder.add("message.thaumory.wand.misfired", "陣が乱れ、Flux が漏れ出した");
+            builder.add("hud.thaumory.flux.amount", "この辺りの Flux: %s");
+            builder.add("hud.thaumory.flux.stage.none", "平穏");
+            builder.add("hud.thaumory.flux.stage.stagnation", "淀み");
+            builder.add("hud.thaumory.flux.stage.erosion", "侵食");
+            builder.add("hud.thaumory.flux.stage.manifestation", "顕現");
+            builder.add("hud.thaumory.flux.stage.overload", "暴走");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "魔術の書");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "空のルーン");

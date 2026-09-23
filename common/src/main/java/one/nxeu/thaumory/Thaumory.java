@@ -22,6 +22,7 @@ import one.nxeu.thaumory.command.ThaumoryCommands;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.data.SettingsFileReloadListener;
 import one.nxeu.thaumory.flux.FluxManager;
+import one.nxeu.thaumory.flux.FluxReadings;
 import one.nxeu.thaumory.flux.FluxSettings;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
@@ -72,6 +73,7 @@ public final class Thaumory {
         AspectSync.register();
         knowledge.registerEvents();
         ItemScanner.register();
+        FluxReadings.register();
     }
 
     /** Every player's knowledge. Available once {@link #init} has run. */

@@ -18,6 +18,7 @@ import net.minecraft.world.phys.HitResult;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectStack;
+import one.nxeu.thaumory.api.flux.FluxStage;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
@@ -26,12 +27,12 @@ import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.circle.CircleMode;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.crucible.CrucibleTank;
-import one.nxeu.thaumory.item.ThaumoryItems;
+import one.nxeu.thaumory.item.ArcaneLoupeItem;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 
 /**
- * Shows what a Crucible or a jar holds, or how a circle's Core reads, beside the crosshair while the
- * player holds the Arcane Loupe and looks at it.
+ * While the player holds the Arcane Loupe: the Flux of the chunk they stand in at the top right,
+ * and what a Crucible or a jar holds, or how a circle's Core reads, beside the crosshair.
  */
 final class LoupeHud {
     private static final int GRAY = 0xFFAAAAAA;
@@ -42,9 +43,10 @@ final class LoupeHud {
     static void render(GuiGraphicsExtractor graphics, DeltaTracker delta) {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if (player == null || minecraft.level == null || !holdsLoupe(player)) {
+        if (player == null || minecraft.level == null || !ArcaneLoupeItem.isHeldBy(player)) {
             return;
         }
+        renderFlux(graphics, minecraft);
         if (!(minecraft.hitResult instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
@@ -61,6 +63,28 @@ final class LoupeHud {
             graphics.text(minecraft.font, line, x, y, WHITE, true);
             y += 10;
         }
+    }
+
+    /** The last reading, right-aligned in the top right corner: the amount, then the stage in its color. */
+    private static void renderFlux(GuiGraphicsExtractor graphics, Minecraft minecraft) {
+        ClientFlux.get().ifPresent(reading -> {
+            Component amount = Component.translatable("hud.thaumory.flux.amount", (int) Math.floor(reading.amount())).withColor(WHITE);
+            Component stage = Component.translatable("hud.thaumory.flux.stage." + reading.stage().name().toLowerCase(Locale.ROOT))
+                    .withColor(stageColor(reading.stage()));
+            int right = graphics.guiWidth() - 6;
+            graphics.text(minecraft.font, amount, right - minecraft.font.width(amount), 6, WHITE, true);
+            graphics.text(minecraft.font, stage, right - minecraft.font.width(stage), 16, WHITE, true);
+        });
+    }
+
+    private static int stageColor(FluxStage stage) {
+        return switch (stage) {
+            case NONE -> GRAY;
+            case STAGNATION -> 0xFFD7A6FF;
+            case EROSION -> 0xFFB266FF;
+            case MANIFESTATION -> 0xFFE0409A;
+            case OVERLOAD -> 0xFFFF4040;
+        };
     }
 
     private static List<Component> jarLines(JarBlockEntity jar) {
@@ -164,9 +188,5 @@ final class LoupeHud {
             }
         }
         return lines;
-    }
-
-    private static boolean holdsLoupe(Player player) {
-        return player.getMainHandItem().is(ThaumoryItems.ARCANE_LOUPE.get()) || player.getOffhandItem().is(ThaumoryItems.ARCANE_LOUPE.get());
     }
 }
