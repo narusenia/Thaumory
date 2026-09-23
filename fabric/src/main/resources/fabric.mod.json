@@ -19,6 +19,9 @@
     ],
     "client": [
       "one.nxeu.thaumory.fabric.client.ThaumoryFabricClient"
+    ],
+    "fabric-datagen": [
+      "one.nxeu.thaumory.fabric.datagen.ThaumoryDataGenerator"
     ]
   },
   "mixins": [

@@ -13,7 +13,7 @@
 
 | M | 内容 | 完了 / 全体 | 状態 |
 |---|---|---|---|
-| M0 | 開発基盤 | 4 / 7 | 作業中 |
+| M0 | 開発基盤 | 5 / 7 | 作業中 |
 | M1 | MVP：核ループ | 5 / 24 | 作業中 |
 | M2 | 工学と成果物 | 0 / 12 | 未着手 |
 | M3 | ポーション調合 | 0 / 8 | 未着手 |
@@ -32,7 +32,7 @@
 | [x] | M0-3 | `api` サブプロジェクトを追加する | `common` と `fabric` が `api` に依存してビルドできる。`thaumory-api` として publish できる。jar に `LICENSE-API.txt` が入る | M0-1 |
 | [x] | M0-4 | JUnit を `common` と `api` に導入する | サンプルのテストが `./gradlew test` で通る | M0-3 |
 | [ ] | M0-5 | Fabric GameTest の実行環境を整える | 空の GameTest が `runGametest` で通る | - |
-| [ ] | M0-6 | datagen（言語・モデル・タグ・レシピ）の土台を作る | `runDatagen` で `ja_jp` / `en_us` が生成される | - |
+| [x] | M0-6 | datagen（言語・モデル・タグ・レシピ）の土台を作る | `runDatagen` で `ja_jp` / `en_us` が生成される | - |
 | [ ] | M0-7 | `fabric.mod.json` のメタデータを埋める | description・authors・contact が埋まり、不要な `suggests` が消えている | - |
 
 ## M1 MVP：核ループ

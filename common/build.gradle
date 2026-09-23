@@ -12,3 +12,12 @@ dependencies {
 
     api project(':api')
 }
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/main/generated'
+            exclude '.cache'
+        }
+    }
+}

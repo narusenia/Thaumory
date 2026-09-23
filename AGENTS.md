@@ -52,9 +52,10 @@ Every user-facing string needs both `en_us` and `ja_jp` entries. Generate lang f
 ./gradlew test           # unit tests
 ./gradlew :fabric:runClient
 ./gradlew :fabric:runServer
+./gradlew :fabric:runDatagen   # regenerate common/src/main/generated
 ```
 
-GameTest and datagen tasks are set up in M0-5 and M0-6.
+Files under `common/src/main/generated/` come from datagen (`fabric/src/main/java/.../fabric/datagen/`). Never edit them by hand; change the provider and rerun `runDatagen`, then commit both. GameTest is set up in M0-5.
 
 ### Manual checks on a dev server
 

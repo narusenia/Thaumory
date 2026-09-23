@@ -22,3 +22,6 @@ run
 
 # Logs written by unit tests that touch Minecraft logging
 logs/
+
+# Datagen bookkeeping
+common/src/main/generated/.cache/
