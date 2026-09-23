@@ -1,0 +1,44 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "thaumory:block/stabilizing_pattern_mark"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/stabilizing_pattern_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/stabilizing_pattern_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/stabilizing_pattern_arm",
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/stabilizing_pattern_arm",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    }
+  ]
+}

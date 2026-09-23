@@ -1,0 +1,6 @@
+{
+  "parent": "thaumory:block/template_chalk_pattern",
+  "textures": {
+    "pattern": "thaumory:block/extending_pattern_arm"
+  }
+}

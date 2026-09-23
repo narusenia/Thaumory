@@ -53,6 +53,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "Extending Chalk");
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "Economizing Chalk");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "Stabilizing Chalk");
+            builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
+            builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
+            builder.add(ThaumoryBlocks.EXTENDING_PATTERN.get(), "Extending Pattern");
+            builder.add(ThaumoryBlocks.ECONOMIZING_PATTERN.get(), "Economizing Pattern");
+            builder.add(ThaumoryBlocks.STABILIZING_PATTERN.get(), "Stabilizing Pattern");
             builder.add("codex.thaumory.tab.chapters", "Chapters");
             builder.add("codex.thaumory.tab.aspects", "Aspects");
             builder.add("codex.thaumory.tab.scanned", "Scanned");
@@ -105,6 +110,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "延長のチョーク");
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "節約のチョーク");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "安定のチョーク");
+            builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
+            builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
+            builder.add(ThaumoryBlocks.EXTENDING_PATTERN.get(), "延長の紋様");
+            builder.add(ThaumoryBlocks.ECONOMIZING_PATTERN.get(), "節約の紋様");
+            builder.add(ThaumoryBlocks.STABILIZING_PATTERN.get(), "安定の紋様");
             builder.add("codex.thaumory.tab.chapters", "章");
             builder.add("codex.thaumory.tab.aspects", "アスペクト");
             builder.add("codex.thaumory.tab.scanned", "スキャン済み");

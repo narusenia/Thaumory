@@ -4,6 +4,9 @@ import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.ConditionBuilder;
+import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
@@ -14,8 +17,10 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.client.RuneTint;
@@ -36,6 +41,10 @@ final class ThaumoryModelProvider extends FabricModelProvider {
             Optional.empty(), TextureSlot.SIDE, TextureSlot.BOTTOM, LID);
     private static final ModelTemplate JAR_LABELED = new ModelTemplate(Optional.of(Thaumory.id("block/template_jar_labeled")),
             Optional.empty(), TextureSlot.SIDE, TextureSlot.BOTTOM, LID, LABEL);
+
+    private static final TextureSlot PATTERN = TextureSlot.create("pattern");
+    private static final ModelTemplate CHALK_PATTERN = new ModelTemplate(Optional.of(Thaumory.id("block/template_chalk_pattern")),
+            Optional.empty(), PATTERN);
 
     /** Cauldron shapes with Thaumory's own textures. Water is a plain texture, so it needs no tint. */
     @Override
@@ -73,6 +82,26 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                 .select(false, BlockModelGenerators.plainVariant(plain))
                 .select(true, BlockModelGenerators.plainVariant(labeled))));
         generators.registerSimpleItemModel(jar, plain);
+
+        for (var pattern : List.of(ThaumoryBlocks.CHALK_LINE, ThaumoryBlocks.AMPLIFYING_PATTERN, ThaumoryBlocks.EXTENDING_PATTERN,
+                ThaumoryBlocks.ECONOMIZING_PATTERN, ThaumoryBlocks.STABILIZING_PATTERN)) {
+            chalkPattern(generators, pattern.get());
+        }
+    }
+
+    /** A mark in the middle, and an arm towards each joined neighbor (the arm texture points north). */
+    private static void chalkPattern(BlockModelGenerators generators, ChalkPatternBlock pattern) {
+        Identifier mark = CHALK_PATTERN.createWithSuffix(pattern, "_mark",
+                new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(pattern, "_mark")), generators.modelOutput);
+        Identifier arm = CHALK_PATTERN.createWithSuffix(pattern, "_arm",
+                new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(pattern, "_arm")), generators.modelOutput);
+        MultiVariant armVariant = BlockModelGenerators.plainVariant(arm);
+        generators.blockStateOutput.accept(MultiPartGenerator.multiPart(pattern)
+                .with(BlockModelGenerators.plainVariant(mark))
+                .with(new ConditionBuilder().term(BlockStateProperties.NORTH, true), armVariant)
+                .with(new ConditionBuilder().term(BlockStateProperties.EAST, true), armVariant.with(BlockModelGenerators.Y_ROT_90))
+                .with(new ConditionBuilder().term(BlockStateProperties.SOUTH, true), armVariant.with(BlockModelGenerators.Y_ROT_180))
+                .with(new ConditionBuilder().term(BlockStateProperties.WEST, true), armVariant.with(BlockModelGenerators.Y_ROT_270)));
     }
 
     @Override

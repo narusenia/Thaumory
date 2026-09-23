@@ -4,18 +4,23 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
+import one.nxeu.thaumory.item.ThaumoryItems;
 
 /** Blocks and their block entities. Block items are registered in {@link one.nxeu.thaumory.item.ThaumoryItems}. */
 public final class ThaumoryBlocks {
@@ -30,6 +35,12 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<JarBlock> JAR = register("jar", JarBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
 
+    public static final RegistrySupplier<ChalkPatternBlock> CHALK_LINE = pattern("chalk_line", ThaumoryItems.CHALK);
+    public static final RegistrySupplier<ChalkPatternBlock> AMPLIFYING_PATTERN = pattern("amplifying_pattern", ThaumoryItems.AMPLIFYING_CHALK);
+    public static final RegistrySupplier<ChalkPatternBlock> EXTENDING_PATTERN = pattern("extending_pattern", ThaumoryItems.EXTENDING_CHALK);
+    public static final RegistrySupplier<ChalkPatternBlock> ECONOMIZING_PATTERN = pattern("economizing_pattern", ThaumoryItems.ECONOMIZING_CHALK);
+    public static final RegistrySupplier<ChalkPatternBlock> STABILIZING_PATTERN = pattern("stabilizing_pattern", ThaumoryItems.STABILIZING_CHALK);
+
     public static final RegistrySupplier<BlockEntityType<JarBlockEntity>> JAR_ENTITY = BLOCK_ENTITIES.register(
             "jar", () -> new BlockEntityType<>(JarBlockEntity::new, Set.of(JAR.get())));
 
@@ -41,6 +52,13 @@ public final class ThaumoryBlocks {
     public static void register() {
         BLOCKS.register();
         BLOCK_ENTITIES.register();
+    }
+
+    /** Chalk patterns drop nothing and wash away like redstone dust. */
+    private static RegistrySupplier<ChalkPatternBlock> pattern(String name, Supplier<? extends Item> chalk) {
+        return register(name, properties -> new ChalkPatternBlock(chalk, properties), BlockBehaviour.Properties.of()
+                .mapColor(MapColor.NONE).noCollision().instabreak().noLootTable().sound(SoundType.CALCITE)
+                .pushReaction(PushReaction.POPPED));
     }
 
     private static <B extends Block> RegistrySupplier<B> register(String name, Function<BlockBehaviour.Properties, B> factory,
