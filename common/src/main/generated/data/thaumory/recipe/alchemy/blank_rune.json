@@ -1,0 +1,11 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:aqua": 4,
+    "thaumory:arcanum": 4
+  },
+  "catalyst": "minecraft:stone",
+  "result": {
+    "id": "thaumory:blank_rune"
+  }
+}

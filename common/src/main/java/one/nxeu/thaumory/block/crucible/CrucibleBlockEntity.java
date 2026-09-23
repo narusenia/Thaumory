@@ -1,7 +1,9 @@
 package one.nxeu.thaumory.block.crucible;
 
 import com.mojang.serialization.Codec;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,6 +19,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -27,6 +30,9 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.alchemy.AlchemyInput;
+import one.nxeu.thaumory.alchemy.AlchemyRecipe;
+import one.nxeu.thaumory.alchemy.AlchemySelection;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.AspectCodecs;
@@ -110,12 +116,20 @@ public final class CrucibleBlockEntity extends BlockEntity {
         level.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.15f, 1.6f);
     }
 
-    /** Melts one item from the first stack inside that has aspects. */
+    /**
+     * Takes one item from the first stack inside that can be used: as the catalyst of an alchemy
+     * recipe the contents can pay for, or else melted if it has aspects.
+     */
     private void meltOne(ServerLevel level, CrucibleSettings current) {
         AABB inside = CrucibleBlock.INSIDE.bounds().move(worldPosition);
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, inside, ItemEntity::isAlive);
         for (ItemEntity entity : items) {
             ItemStack stack = entity.getItem();
+            Optional<AlchemyRecipe> alchemy = alchemyFor(level, stack);
+            if (alchemy.isPresent()) {
+                transmute(level, entity, alchemy.get());
+                return;
+            }
             AspectList aspects = ItemAspects.get(stack);
             if (aspects.isEmpty()) {
                 continue;
@@ -146,7 +160,36 @@ public final class CrucibleBlockEntity extends BlockEntity {
         }
     }
 
-    /** Throws a container (the bucket from a lava bucket) over the rim so it does not melt too. */
+    private Optional<AlchemyRecipe> alchemyFor(ServerLevel level, ItemStack catalyst) {
+        AlchemyInput input = new AlchemyInput(catalyst, tank.contents());
+        List<AlchemySelection.Candidate<AlchemyRecipe>> candidates = new ArrayList<>();
+        for (RecipeHolder<?> holder : level.getServer().getRecipeManager().getRecipes()) {
+            if (holder.value() instanceof AlchemyRecipe recipe && recipe.catalyst().test(catalyst)) {
+                candidates.add(new AlchemySelection.Candidate<>(holder.id().identifier(), recipe.aspects(), recipe));
+            }
+        }
+        return AlchemySelection.choose(candidates, input.contents()).map(AlchemySelection.Candidate::recipe);
+    }
+
+    /** Uses up the recipe's aspects and one catalyst, and throws the result out. */
+    private void transmute(ServerLevel level, ItemEntity catalyst, AlchemyRecipe recipe) {
+        ItemStack stack = catalyst.getItem();
+        ItemStack result = recipe.assemble(new AlchemyInput(stack, tank.contents()));
+        stack.shrink(1);
+        if (stack.isEmpty()) {
+            catalyst.discard();
+        } else {
+            catalyst.setItem(stack);
+        }
+        setTank(new CrucibleTank(tank.contents().minus(recipe.aspects()), tank.water(), tank.essentiaSinceWaterDrop()));
+        popOut(level, result);
+
+        level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 0.8f, 1.2f);
+        level.sendParticles(ParticleTypes.ENCHANT, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
+                20, 0.3, 0.3, 0.3, 0.5);
+    }
+
+    /** Throws an item (an alchemy result, the bucket from a lava bucket) over the rim so it does not melt. */
     private void popOut(ServerLevel level, ItemStack stack) {
         if (stack.isEmpty()) {
             return;

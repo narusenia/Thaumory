@@ -4,6 +4,7 @@ import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
+import one.nxeu.thaumory.alchemy.ThaumoryRecipes;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.aspect.data.ItemAspectReloadListener;
@@ -32,11 +33,13 @@ public final class Thaumory {
         ThaumoryAspects.register(ThaumoryApi.aspects());
         VanillaRecipeAdapters.register(ThaumoryApi.recipeAdapters());
         VanillaWorldChanges.register(ThaumoryApi.recipeAdapters());
+        ThaumoryRecipes.registerAdapters(ThaumoryApi.recipeAdapters());
         FluxManager flux = new FluxManager(platform.fluxStorage());
         ThaumoryApi.provideFlux(flux);
         knowledge = new KnowledgeManager(platform.knowledgeStorage());
         ThaumoryBlocks.register();
         ThaumoryItems.register();
+        ThaumoryRecipes.register();
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(

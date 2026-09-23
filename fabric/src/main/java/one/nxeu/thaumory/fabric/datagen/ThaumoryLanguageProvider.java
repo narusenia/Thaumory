@@ -38,6 +38,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(AspectText.UNKNOWN_KEY, "?");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "Arcane Loupe");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "Arcane Codex");
+            builder.add(ThaumoryItems.BLANK_RUNE.get(), "Blank Rune");
+            builder.add(ThaumoryItems.CHALK.get(), "Chalk");
+            builder.add(ThaumoryItems.AMPLIFYING_CHALK.get(), "Amplifying Chalk");
+            builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "Extending Chalk");
+            builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "Economizing Chalk");
+            builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "Stabilizing Chalk");
             builder.add("codex.thaumory.tab.chapters", "Chapters");
             builder.add("codex.thaumory.tab.aspects", "Aspects");
             builder.add("codex.thaumory.tab.scanned", "Scanned");
@@ -75,6 +81,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(AspectText.UNKNOWN_KEY, "？");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "魔術のルーペ");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "魔術の書");
+            builder.add(ThaumoryItems.BLANK_RUNE.get(), "空のルーン");
+            builder.add(ThaumoryItems.CHALK.get(), "チョーク");
+            builder.add(ThaumoryItems.AMPLIFYING_CHALK.get(), "増幅のチョーク");
+            builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "延長のチョーク");
+            builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "節約のチョーク");
+            builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "安定のチョーク");
             builder.add("codex.thaumory.tab.chapters", "章");
             builder.add("codex.thaumory.tab.aspects", "アスペクト");
             builder.add("codex.thaumory.tab.scanned", "スキャン済み");

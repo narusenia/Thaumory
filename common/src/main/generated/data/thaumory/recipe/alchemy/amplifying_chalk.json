@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:ignis": 8
+  },
+  "catalyst": "thaumory:chalk",
+  "result": {
+    "id": "thaumory:amplifying_chalk"
+  }
+}

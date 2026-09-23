@@ -105,10 +105,11 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 - 錬金術: 必要なアスペクトが揃った状態で触媒を投げ入れると、アスペクトを消費してアイテムが完成する（Rune の素材、チョーク、装備の素材など）
   - レシピは `data/<namespace>/recipe/*.json` に `"type": "thaumory:alchemy"` で書く。形式: `{"type": "thaumory:alchemy", "catalyst": "minecraft:stone", "aspects": {"thaumory:terra": 8}, "result": {"id": "thaumory:blank_rune"}}`（`catalyst` はバニラの材料と同じ書き方で、タグも使える）
   - 沸騰している間、溶かす順番が来た触媒 1 個について判定する。成立すれば、溶かす代わりにアスペクトと触媒 1 個を消費し、完成品を Crucible の外へ飛ばす。足りなければ普通に溶ける
+  - 1 つのレシピが打ち消し合うアスペクトを同時に要求してはいけない（集めている間に減ってしまう）。組み込みのレシピは datagen で検査する
   - 同じ触媒で複数のレシピが成立するときは、必要なアスペクトの合計が多いほうを使う（同じならレシピ ID 順）
   - 錬金術レシピもアスペクトの推定に使う（触媒 + 必要なアスペクト）
   - 章による開放（§6.2）は M1-10 で入れる。それまではすべてのレシピが使える
-  - 初期レシピ: 空の Rune（石 + Terra 8・Arcanum 4）、基本のチョーク（粘土玉 + Terra 4・Arcanum 2）、増幅（基本のチョーク + Ignis 8）、延長（+ Aer 8）、節約（+ Vinculum 4）、安定（+ Ordo 4）
+  - 初期レシピ: 空の Rune（石 + Arcanum 4・Aqua 4）、基本のチョーク（粘土玉 + Arcanum 2・Aqua 4）、増幅（基本のチョーク + Ignis 8）、延長（+ Aer 8）、節約（+ Vinculum 4）、安定（+ Ordo 4）
 - 調合モード: ポーション調合（M3、§9）もこの装置で行う
 
 ## 4. 魔法陣

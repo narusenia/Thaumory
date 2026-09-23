@@ -1,6 +1,7 @@
 package one.nxeu.thaumory.aspect;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.resources.Identifier;
@@ -22,12 +23,34 @@ public final class AspectCodecs {
                     amounts.forEach((id, amount) -> registry.get(id).ifPresent(aspect -> list.add(aspect, amount)));
                     return list.build();
                 },
-                list -> {
-                    Map<Identifier, Integer> amounts = new LinkedHashMap<>();
-                    for (AspectStack stack : list.stacks()) {
-                        amounts.put(stack.aspect().id(), stack.amount());
+                AspectCodecs::amounts);
+    }
+
+    /**
+     * Like {@link #aspectList} but fails on aspects the registry does not know, for data where
+     * dropping one would silently change its meaning (a recipe getting cheaper).
+     */
+    public static Codec<AspectList> strictAspectList(AspectRegistry registry) {
+        return Codec.unboundedMap(Identifier.CODEC, Codec.intRange(1, Integer.MAX_VALUE)).comapFlatMap(
+                amounts -> {
+                    AspectList.Builder list = AspectList.builder();
+                    for (Map.Entry<Identifier, Integer> entry : amounts.entrySet()) {
+                        var aspect = registry.get(entry.getKey());
+                        if (aspect.isEmpty()) {
+                            return DataResult.error(() -> "Unknown aspect: " + entry.getKey());
+                        }
+                        list.add(aspect.get(), entry.getValue());
                     }
-                    return amounts;
-                });
+                    return DataResult.success(list.build());
+                },
+                AspectCodecs::amounts);
+    }
+
+    private static Map<Identifier, Integer> amounts(AspectList list) {
+        Map<Identifier, Integer> amounts = new LinkedHashMap<>();
+        for (AspectStack stack : list.stacks()) {
+            amounts.put(stack.aspect().id(), stack.amount());
+        }
+        return amounts;
     }
 }

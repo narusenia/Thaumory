@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:aer": 8
+  },
+  "catalyst": "thaumory:chalk",
+  "result": {
+    "id": "thaumory:extending_chalk"
+  }
+}

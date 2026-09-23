@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:vinculum": 4
+  },
+  "catalyst": "thaumory:chalk",
+  "result": {
+    "id": "thaumory:economizing_chalk"
+  }
+}

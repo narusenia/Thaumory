@@ -1,0 +1,11 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:aqua": 4,
+    "thaumory:arcanum": 2
+  },
+  "catalyst": "minecraft:clay_ball",
+  "result": {
+    "id": "thaumory:chalk"
+  }
+}

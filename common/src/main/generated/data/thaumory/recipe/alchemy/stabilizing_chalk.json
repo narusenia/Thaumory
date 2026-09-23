@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:ordo": 4
+  },
+  "catalyst": "thaumory:chalk",
+  "result": {
+    "id": "thaumory:stabilizing_chalk"
+  }
+}
