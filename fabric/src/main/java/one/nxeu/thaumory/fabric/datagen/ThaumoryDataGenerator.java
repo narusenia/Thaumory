@@ -2,12 +2,14 @@ package one.nxeu.thaumory.fabric.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import one.nxeu.thaumory.client.RuneTint;
 
 /** Run with {@code ./gradlew :fabric:runDatagen}; output lands in {@code common/src/main/generated}. */
 public final class ThaumoryDataGenerator implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator generator) {
         exitWhenMainThreadEnds();
+        RuneTint.register();
 
         FabricDataGenerator.Pack pack = generator.createPack();
         pack.addProvider(ThaumoryLanguageProvider.English::new);
@@ -17,6 +19,7 @@ public final class ThaumoryDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ScanSettingsProvider::new);
         pack.addProvider(CrucibleSettingsProvider::new);
         pack.addProvider(JarSettingsProvider::new);
+        pack.addProvider(RuneSettingsProvider::new);
         pack.addProvider(ThaumoryBlockTagProvider::new);
         pack.addProvider(ThaumoryBlockLootProvider::new);
         pack.addProvider(ThaumoryRecipeProvider::new);

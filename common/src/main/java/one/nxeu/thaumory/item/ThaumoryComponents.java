@@ -4,6 +4,7 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.jar.JarContents;
@@ -17,6 +18,16 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<JarContents>builder()
                     .persistent(JarContents.codec(ThaumoryApi.aspects()))
                     .networkSynchronized(JarContents.streamCodec(ThaumoryApi.aspects()))
+                    .build());
+
+    /**
+     * A rune's aspect. Kept as an id so a rune whose aspect's addon was removed keeps it, as
+     * knowledge does.
+     */
+    public static final RegistrySupplier<DataComponentType<Identifier>> RUNE_ASPECT = COMPONENTS.register("rune_aspect",
+            () -> DataComponentType.<Identifier>builder()
+                    .persistent(Identifier.CODEC)
+                    .networkSynchronized(Identifier.STREAM_CODEC)
                     .build());
 
     private ThaumoryComponents() {}

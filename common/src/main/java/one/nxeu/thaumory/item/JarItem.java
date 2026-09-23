@@ -2,14 +2,19 @@ package one.nxeu.thaumory.item;
 
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Prediction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import one.nxeu.thaumory.api.ThaumoryApi;
@@ -19,10 +24,12 @@ import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.jar.EssentiaTransfer;
 import one.nxeu.thaumory.jar.JarContents;
+import one.nxeu.thaumory.rune.RuneInfusion;
 
 /**
  * A jar in hand. Right-clicking a Crucible or a placed jar draws Essentia into it; sneaking pours
- * it out. Anywhere else it places the jar, contents and all.
+ * it out. Sneaking with a blank rune in the off hand pours into the rune instead, in the air or at
+ * any other block. Anywhere else it places the jar, contents and all.
  */
 public final class JarItem extends BlockItem {
     public JarItem(Block block, Properties properties) {
@@ -33,11 +40,53 @@ public final class JarItem extends BlockItem {
     public InteractionResult useOn(UseOnContext context) {
         BlockEntity target = context.getLevel().getBlockEntity(context.getClickedPos());
         if (!(target instanceof CrucibleBlockEntity) && !(target instanceof JarBlockEntity)) {
+            Player player = context.getPlayer();
+            if (player != null && pouringIntoRune(player, context.getHand())) {
+                return infuseRune(context.getLevel(), player, context.getItemInHand());
+            }
             return super.useOn(context);
         }
         if (context.getLevel() instanceof ServerLevel level) {
             transfer(level, context.getClickedPos(), target, context.getItemInHand(), context.isSecondaryUseActive());
         }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        if (pouringIntoRune(player, hand)) {
+            return infuseRune(level, player, player.getItemInHand(hand));
+        }
+        return super.use(level, player, hand);
+    }
+
+    private static boolean pouringIntoRune(Player player, InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND && player.isSecondaryUseActive()
+                && player.getOffhandItem().is(ThaumoryItems.BLANK_RUNE.get());
+    }
+
+    /** Turns one blank rune in the off hand into a rune of the aspect the jar would give. */
+    private static InteractionResult infuseRune(Level level, Player player, ItemStack jar) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return InteractionResult.SUCCESS;
+        }
+        JarContents held = jar.getOrDefault(ThaumoryComponents.JAR_CONTENTS.get(), JarContents.EMPTY);
+        int cost = RuneItem.cost();
+        Optional<RuneInfusion.Result> result = RuneInfusion.infuse(held.aspects(), held.label(), cost);
+        if (result.isEmpty()) {
+            player.sendOverlayMessage(Component.translatable("message.thaumory.rune.not_enough", cost));
+            return InteractionResult.FAIL;
+        }
+        JarContents updated = held.withAspects(result.get().remaining());
+        if (updated.isEmpty()) {
+            jar.remove(ThaumoryComponents.JAR_CONTENTS.get());
+        } else {
+            jar.set(ThaumoryComponents.JAR_CONTENTS.get(), updated);
+        }
+        player.getOffhandItem().consume(1, player);
+        player.getInventory().placeItemBackInInventory(RuneItem.of(result.get().aspect()), Prediction.SERVER_ONLY);
+        serverLevel.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0f, 1.0f);
+        serverLevel.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0f, 1.0f);
         return InteractionResult.SUCCESS;
     }
 

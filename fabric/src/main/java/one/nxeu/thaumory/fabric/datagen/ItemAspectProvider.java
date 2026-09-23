@@ -9,8 +9,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.aspect.data.ItemAspectFile;
+import one.nxeu.thaumory.item.ThaumoryItems;
 
-/** Writes {@code data/thaumory/thaumory/item_aspects/vanilla.json}. */
+/** Writes {@code data/thaumory/thaumory/item_aspects/vanilla.json} and {@code thaumory.json} (Thaumory's own items). */
 final class ItemAspectProvider extends FabricCodecDataProvider<ItemAspectFile> {
     ItemAspectProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, PackOutput.Target.DATA_PACK, "thaumory/item_aspects", ItemAspectFile.CODEC);
@@ -19,6 +20,8 @@ final class ItemAspectProvider extends FabricCodecDataProvider<ItemAspectFile> {
     @Override
     protected void configure(BiConsumer<Identifier, ItemAspectFile> output, HolderLookup.Provider registries) {
         output.accept(Thaumory.id("vanilla"), VanillaItemAspects.build());
+        // A rune's aspect lives in a component, so the item itself has none (requirements §4.2).
+        output.accept(Thaumory.id("thaumory"), new ItemAspectFileBuilder().none(ThaumoryItems.RUNE.get()).build());
     }
 
     @Override

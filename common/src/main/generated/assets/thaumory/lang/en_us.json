@@ -45,9 +45,11 @@
   "item.thaumory.economizing_chalk": "Economizing Chalk",
   "item.thaumory.extending_chalk": "Extending Chalk",
   "item.thaumory.label": "Label",
+  "item.thaumory.rune": "Rune",
   "item.thaumory.stabilizing_chalk": "Stabilizing Chalk",
   "itemGroup.thaumory": "Thaumory",
   "message.thaumory.jar.cannot_label": "A label only goes on a jar holding exactly one aspect",
+  "message.thaumory.rune.not_enough": "A rune takes %s Essentia of one aspect",
   "message.thaumory.scan.already": "%s is already scanned",
   "message.thaumory.scan.no_aspects": "Scanned %s: no aspects",
   "message.thaumory.scan.nothing": "Nothing to scan",
@@ -55,5 +57,6 @@
   "message.thaumory.scan.revealed": "Worked out a new aspect: %s",
   "tooltip.thaumory.aspects": "Aspects:",
   "tooltip.thaumory.jar.essentia": "Essentia %s",
-  "tooltip.thaumory.jar.label": "Label: %s"
+  "tooltip.thaumory.jar.label": "Label: %s",
+  "tooltip.thaumory.rune.aspect": "Aspect: %s"
 }

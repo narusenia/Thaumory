@@ -20,6 +20,7 @@ import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
 import one.nxeu.thaumory.item.ArcaneCodexItem;
+import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
@@ -50,9 +51,11 @@ public final class ThaumoryClient {
         });
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
+        RuneTint.register();
         ArcaneCodexItem.setScreenOpener(() -> Minecraft.getInstance().gui.setScreen(new ArcaneCodexScreen()));
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
             appendJarContents(stack, lines);
+            appendRuneAspect(stack, lines);
             appendAspects(stack.getItem(), lines);
         });
     }
@@ -62,6 +65,11 @@ public final class ThaumoryClient {
         if (contents != null) {
             lines.addAll(JarText.describe(contents, OptionalInt.empty(), ClientKnowledge.get()));
         }
+    }
+
+    private static void appendRuneAspect(ItemStack stack, List<Component> lines) {
+        RuneItem.aspect(stack).ifPresent(aspect -> lines.add(Component.translatable("tooltip.thaumory.rune.aspect",
+                AspectText.name(aspect, ClientKnowledge.get().knowsAspect(aspect.id()))).withColor(0xAAAAAA)));
     }
 
     /** Aspects of scanned items only; aspects the player has not worked out show as "?". */

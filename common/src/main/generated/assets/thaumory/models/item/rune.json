@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "thaumory:item/blank_rune",
+    "layer1": "thaumory:item/rune_glyph"
+  }
+}

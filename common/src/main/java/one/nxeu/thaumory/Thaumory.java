@@ -19,11 +19,13 @@ import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.data.SettingsFileReloadListener;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxSettings;
+import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.jar.JarSettings;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.network.AspectSync;
+import one.nxeu.thaumory.rune.RuneSettings;
 import one.nxeu.thaumory.scan.ItemScanner;
 import one.nxeu.thaumory.scan.ScanSettings;
 
@@ -54,6 +56,8 @@ public final class Thaumory {
                 id("thaumory/crucible.json"), CrucibleSettings.CODEC, CrucibleSettings.DEFAULT, CrucibleBlockEntity::updateSettings), id("crucible"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/jar.json"), JarSettings.CODEC, JarSettings.DEFAULT, JarBlockEntity::updateSettings), id("jar"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
+                id("thaumory/rune.json"), RuneSettings.CODEC, RuneSettings.DEFAULT, RuneItem::updateSettings), id("rune"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();

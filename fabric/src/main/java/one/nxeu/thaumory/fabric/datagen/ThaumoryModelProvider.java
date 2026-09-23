@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
@@ -17,6 +18,8 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
+import one.nxeu.thaumory.client.RuneTint;
+import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 final class ThaumoryModelProvider extends FabricModelProvider {
@@ -77,6 +80,13 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.ARCANE_LOUPE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CODEX.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_RUNE.get(), ModelTemplates.FLAT_ITEM);
+        // The blank rune with a glyph over it in the rune's aspect color.
+        RuneItem rune = ThaumoryItems.RUNE.get();
+        Identifier runeModel = ModelTemplates.TWO_LAYERED_ITEM.create(rune, TextureMapping.layered(
+                TextureMapping.getItemTexture(ThaumoryItems.BLANK_RUNE.get()), TextureMapping.getItemTexture(rune, "_glyph")),
+                generators.modelOutput);
+        generators.itemModelOutput.accept(rune, ItemModelUtils.tintedModel(runeModel,
+                ItemModelUtils.constantTint(-1), new RuneTint(0xFFFFFF)));
         generators.generateFlatItem(ThaumoryItems.LABEL.get(), ModelTemplates.FLAT_ITEM);
         for (var chalk : List.of(ThaumoryItems.CHALK, ThaumoryItems.AMPLIFYING_CHALK, ThaumoryItems.EXTENDING_CHALK,
                 ThaumoryItems.ECONOMIZING_CHALK, ThaumoryItems.STABILIZING_CHALK)) {

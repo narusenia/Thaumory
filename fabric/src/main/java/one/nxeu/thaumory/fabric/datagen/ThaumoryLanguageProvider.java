@@ -40,6 +40,9 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "Arcane Codex");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "Blank Rune");
+            builder.add(ThaumoryItems.RUNE.get(), "Rune");
+            builder.add("tooltip.thaumory.rune.aspect", "Aspect: %s");
+            builder.add("message.thaumory.rune.not_enough", "A rune takes %s Essentia of one aspect");
             builder.add(ThaumoryBlocks.JAR.get(), "Jar");
             builder.add(ThaumoryItems.LABEL.get(), "Label");
             builder.add("message.thaumory.jar.cannot_label", "A label only goes on a jar holding exactly one aspect");
@@ -89,6 +92,9 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "魔術の書");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "空のルーン");
+            builder.add(ThaumoryItems.RUNE.get(), "ルーン");
+            builder.add("tooltip.thaumory.rune.aspect", "アスペクト: %s");
+            builder.add("message.thaumory.rune.not_enough", "ルーンには 1 種類のアスペクトの Essentia が %s 必要");
             builder.add(ThaumoryBlocks.JAR.get(), "瓶");
             builder.add(ThaumoryItems.LABEL.get(), "ラベル");
             builder.add("message.thaumory.jar.cannot_label", "ラベルは中身が 1 種類の瓶にしか貼れない");
