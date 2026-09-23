@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.estimate.EstimationRecipe;
@@ -52,6 +53,18 @@ public final class AspectEstimator {
     public record Fall(int first, int last) {}
 
     private AspectEstimator() {}
+
+    /**
+     * Adds {@code bonus} to every recipe whose result passes {@code results}, on top of any bonus
+     * it already has. Used for Lux on blocks that give off light.
+     */
+    public static List<EstimationRecipe> withBonus(Collection<EstimationRecipe> recipes, Predicate<Identifier> results, AspectList bonus) {
+        return recipes.stream()
+                .map(recipe -> results.test(recipe.result())
+                        ? new EstimationRecipe(recipe.id(), recipe.slots(), recipe.result(), recipe.count(), recipe.bonus().plus(bonus))
+                        : recipe)
+                .toList();
+    }
 
     /**
      * @param manual hand-written aspects; these items are never estimated

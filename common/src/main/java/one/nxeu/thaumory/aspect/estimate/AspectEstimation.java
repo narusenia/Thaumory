@@ -10,12 +10,14 @@ import java.util.Optional;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.estimate.EstimationRecipe;
+import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.network.AspectSync;
 import org.slf4j.Logger;
@@ -26,6 +28,7 @@ import org.slf4j.Logger;
  */
 public final class AspectEstimation {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final AspectList LIGHT_BONUS = AspectList.of(ThaumoryAspects.LUX, 1);
 
     private static volatile MinecraftServer server;
     private static volatile List<EstimationRecipe> lastRecipes = List.of();
@@ -78,6 +81,7 @@ public final class AspectEstimation {
             LOGGER.warn("An aspect estimation source failed", e);
         }
 
+        recipes = new ArrayList<>(AspectEstimator.withBonus(recipes, AspectEstimation::givesOffLight, LIGHT_BONUS));
         AspectEstimator.Result result = AspectEstimator.estimate(manual, recipes, AspectEstimation::remainder);
         lastRecipes = List.copyOf(recipes);
         lastFell = result.fell();
@@ -100,6 +104,12 @@ public final class AspectEstimation {
     /** Items whose value fell below half of what they first settled at, as of the last run. */
     public static Map<Identifier, AspectEstimator.Fall> lastFell() {
         return lastFell;
+    }
+
+    /** A block item whose block, placed as it comes, gives off light. */
+    private static boolean givesOffLight(Identifier item) {
+        return BuiltInRegistries.ITEM.getValue(item) instanceof BlockItem block
+                && block.getBlock().defaultBlockState().getLightEmission() > 0;
     }
 
     public static Optional<Identifier> remainder(Identifier item) {

@@ -56,6 +56,24 @@ class AspectEstimatorTest {
     }
 
     @Test
+    void lightSourcesGainLuxOnTopOfOtherBonuses() {
+        manual.put(id("coal"), AspectList.of(new AspectStack(IGNIS, 12), new AspectStack(MORS, 4)));
+        manual.put(id("stick"), AspectList.of(HERBA, 2));
+        manual.put(id("sand"), AspectList.of(TERRA, 4));
+        List<EstimationRecipe> recipes = AspectEstimator.withBonus(List.of(
+                recipe("torch", "torch", 4, slot("coal"), slot("stick")),
+                new EstimationRecipe(id("glass"), List.of(slot("sand")), id("glass"), 1, AspectList.of(IGNIS, 1)),
+                new EstimationRecipe(id("lamp"), List.of(slot("sand")), id("lamp"), 1, AspectList.of(IGNIS, 1))),
+                Set.of(id("torch"), id("lamp"))::contains, AspectList.of(LUX, 1));
+
+        Map<Identifier, AspectList> estimated = AspectEstimator.estimate(manual, recipes, item -> Optional.empty()).estimated();
+
+        assertEquals(AspectList.of(new AspectStack(IGNIS, 3), new AspectStack(MORS, 1), new AspectStack(LUX, 1)), estimated.get(id("torch")));
+        assertEquals(AspectList.of(new AspectStack(TERRA, 4), new AspectStack(IGNIS, 1)), estimated.get(id("glass")));
+        assertEquals(AspectList.of(new AspectStack(TERRA, 4), new AspectStack(IGNIS, 1), new AspectStack(LUX, 1)), estimated.get(id("lamp")));
+    }
+
+    @Test
     void worldChangesAddWhatTheWorldContributed() {
         manual.put(id("copper_block"), AspectList.of(METALLUM, 20));
         EstimationRecipe oxidizing = EstimationRecipe.worldChange(
