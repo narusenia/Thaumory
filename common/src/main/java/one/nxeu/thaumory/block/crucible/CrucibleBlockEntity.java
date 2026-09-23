@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
@@ -40,6 +41,7 @@ import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.crucible.CrucibleTank;
+import one.nxeu.thaumory.research.ResearchProgress;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 
 /**
@@ -131,7 +133,7 @@ public final class CrucibleBlockEntity extends BlockEntity {
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, inside, ItemEntity::isAlive);
         for (ItemEntity entity : items) {
             ItemStack stack = entity.getItem();
-            Optional<AlchemyRecipe> alchemy = alchemyFor(level, stack);
+            Optional<AlchemyRecipe> alchemy = alchemyFor(level, entity);
             if (alchemy.isPresent()) {
                 transmute(level, entity, alchemy.get());
                 return;
@@ -167,11 +169,15 @@ public final class CrucibleBlockEntity extends BlockEntity {
         }
     }
 
-    private Optional<AlchemyRecipe> alchemyFor(ServerLevel level, ItemStack catalyst) {
+    /** The recipe this catalyst makes, among those the one who threw it in has unlocked. */
+    private Optional<AlchemyRecipe> alchemyFor(ServerLevel level, ItemEntity entity) {
+        ItemStack catalyst = entity.getItem();
+        Optional<ServerPlayer> thrower = entity.getOwner() instanceof ServerPlayer player ? Optional.of(player) : Optional.empty();
         AlchemyInput input = new AlchemyInput(catalyst, tank.contents());
         List<AlchemySelection.Candidate<AlchemyRecipe>> candidates = new ArrayList<>();
         for (RecipeHolder<?> holder : level.getServer().getRecipeManager().getRecipes()) {
-            if (holder.value() instanceof AlchemyRecipe recipe && recipe.catalyst().test(catalyst)) {
+            if (holder.value() instanceof AlchemyRecipe recipe && recipe.catalyst().test(catalyst)
+                    && ResearchProgress.canUse(thrower, holder.id().identifier())) {
                 candidates.add(new AlchemySelection.Candidate<>(holder.id().identifier(), recipe.aspects(), recipe));
             }
         }

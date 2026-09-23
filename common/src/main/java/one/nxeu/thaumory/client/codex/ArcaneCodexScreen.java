@@ -15,6 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
@@ -22,10 +23,14 @@ import one.nxeu.thaumory.api.flux.FluxStage;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.client.ClientFlux;
 import one.nxeu.thaumory.client.ClientKnowledge;
+import one.nxeu.thaumory.client.ClientResearch;
 import one.nxeu.thaumory.client.FluxStageText;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.research.Chapter;
+import one.nxeu.thaumory.research.Hint;
+import one.nxeu.thaumory.research.ResearchView;
 
 /** The Arcane Codex: tabs on the left, a scrolling list on the right. Reads the client's copy of the player's knowledge. */
 public final class ArcaneCodexScreen extends Screen {
@@ -138,34 +143,71 @@ public final class ArcaneCodexScreen extends Screen {
         return true;
     }
 
-    /** Draws text lines and returns their total height. */
+    /** Draws text lines, wrapped to the page, and returns their total height. */
     private int drawLines(GuiGraphicsExtractor graphics, List<Component> lines) {
         int y = contentTop() - (int) scroll;
+        int top = y;
         for (Component line : lines) {
-            graphics.text(font, line, contentLeft(), y, WHITE, true);
-            y += LINE;
+            for (FormattedCharSequence wrapped : font.split(line, contentWidth())) {
+                graphics.text(font, wrapped, contentLeft(), y, WHITE, true);
+                y += LINE;
+            }
         }
-        return lines.size() * LINE;
+        return y - top;
     }
 
     private List<Component> lines(PlayerKnowledge knowledge) {
         return switch (tab) {
-            case CHAPTERS -> idLines(knowledge.chapters(), "chapter", "codex.thaumory.chapters.empty");
+            case CHAPTERS -> chapterLines(ClientResearch.get());
             case ASPECTS -> aspectLines(knowledge);
             case CIRCLES -> circleLines(knowledge);
-            case HINTS -> idLines(knowledge.hints(), "hint", "codex.thaumory.hints.empty");
+            case HINTS -> hintLines(knowledge);
             case SCANNED -> List.of();
         };
     }
 
-    /** Chapter and hint names come from translation keys; their text arrives with M1-10. */
-    private static List<Component> idLines(Set<Identifier> ids, String kind, String emptyKey) {
-        if (ids.isEmpty()) {
-            return List.of(Component.translatable(emptyKey).withColor(GRAY));
+    /** Each open or complete chapter: its title, text, conditions and what it unlocks; then how many are still closed. */
+    private static List<Component> chapterLines(ResearchView view) {
+        List<Component> lines = new ArrayList<>();
+        for (ResearchView.ChapterView chapter : view.chapters()) {
+            lines.add(Component.translatable(chapter.complete() ? "codex.thaumory.chapter.complete" : "codex.thaumory.chapter.open",
+                    Component.translatable(Chapter.titleKey(chapter.id()))).withColor(chapter.complete() ? 0xFFE8C87A : WHITE));
+            lines.add(Component.translatable(Chapter.textKey(chapter.id())).withColor(0xFFCFC6B8));
+            for (ResearchView.ConditionLine condition : chapter.conditions()) {
+                lines.add(Component.translatable(condition.met() ? "codex.thaumory.condition.met" : "codex.thaumory.condition.unmet",
+                        condition.text()).withColor(condition.met() ? 0xFF77DD77 : GRAY));
+            }
+            if (!chapter.unlocks().isEmpty()) {
+                MutableComponent items = Component.empty();
+                for (int i = 0; i < chapter.unlocks().size(); i++) {
+                    if (i > 0) {
+                        items.append(", ");
+                    }
+                    Identifier item = chapter.unlocks().get(i);
+                    items.append(BuiltInRegistries.ITEM.getOptional(item)
+                            .map(found -> found.getDefaultInstance().getHoverName())
+                            .orElseGet(() -> Component.literal(item.toString())));
+                }
+                lines.add(Component.translatable("codex.thaumory.chapter.unlocks", items).withColor(0xFFB9A4E0));
+            }
+            lines.add(Component.empty());
         }
-        return ids.stream().sorted()
-                .map(id -> (Component) Component.translatable(kind + "." + id.getNamespace() + "." + id.getPath().replace('/', '.')))
-                .toList();
+        if (view.closed() > 0) {
+            lines.add(Component.translatable("codex.thaumory.chapters.closed", view.closed()).withColor(GRAY));
+        }
+        return lines;
+    }
+
+    private static List<Component> hintLines(PlayerKnowledge knowledge) {
+        if (knowledge.hints().isEmpty()) {
+            return List.of(Component.translatable("codex.thaumory.hints.empty").withColor(GRAY));
+        }
+        List<Component> lines = new ArrayList<>();
+        knowledge.hints().stream().sorted().forEach(id -> {
+            lines.add(Component.translatable(Hint.textKey(id)).withColor(0xFFCFC6B8));
+            lines.add(Component.empty());
+        });
+        return lines;
     }
 
     private static List<Component> aspectLines(PlayerKnowledge knowledge) {

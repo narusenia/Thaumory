@@ -1,6 +1,7 @@
 package one.nxeu.thaumory;
 
 import dev.architectury.event.events.common.CommandRegistrationEvent;
+import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
@@ -32,6 +33,8 @@ import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.jar.JarSettings;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
+import one.nxeu.thaumory.research.ResearchData;
+import one.nxeu.thaumory.research.ResearchProgress;
 import one.nxeu.thaumory.network.AspectSync;
 import one.nxeu.thaumory.rune.RuneSettings;
 import one.nxeu.thaumory.scan.ItemScanner;
@@ -73,11 +76,16 @@ public final class Thaumory {
                 id("thaumory/circle.json"), CircleSettings.CODEC, CircleSettings.DEFAULT, CoreBlockEntity::updateSettings), id("circle"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new CircleDefinitionReloadListener(), id("circle_definitions"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new PollutionRules(), id("pollution"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.chapterListener(), id("research_chapters"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.hintListener(), id("research_hints"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();
         AspectSync.register();
         knowledge.registerEvents();
+        ResearchProgress research = new ResearchProgress();
+        research.register(knowledge);
+        PlayerEvent.PLAYER_QUIT.register(research::forget);
         ItemScanner.register();
         FluxReadings.register();
         new FluxWorldEffects(flux).register();
