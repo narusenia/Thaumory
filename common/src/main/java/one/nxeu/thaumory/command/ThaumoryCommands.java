@@ -8,6 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -29,6 +30,7 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.flux.FluxManager;
+import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
 import one.nxeu.thaumory.scan.ItemScanner;
@@ -66,19 +68,48 @@ public final class ThaumoryCommands {
                                     return showKnowledge(c);
                                 }))))
                         .then(Commands.literal("reveal").then(Commands.argument("player", EntityArgument.player())
-                                .then(Commands.argument("aspect", IdentifierArgument.id())
-                                        .suggests((c, builder) -> SharedSuggestionProvider.suggestResource(
-                                                ThaumoryApi.aspects().all().stream().map(Aspect::id), builder))
-                                        .executes(c -> {
-                                            Identifier aspect = aspect(c);
-                                            return changeKnowledge(c, k -> k.withAspect(aspect));
-                                        }))))
+                                .then(aspectArgument("aspect").executes(c -> {
+                                    Identifier aspect = aspect(c, "aspect");
+                                    return changeKnowledge(c, k -> k.withAspect(aspect));
+                                }))))
+                        .then(Commands.literal("chapter").then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("id", IdentifierArgument.id()).executes(c -> {
+                                    Identifier chapter = IdentifierArgument.getId(c, "id");
+                                    return changeKnowledge(c, k -> k.withChapter(chapter));
+                                }))))
+                        .then(Commands.literal("hint").then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("id", IdentifierArgument.id()).executes(c -> {
+                                    Identifier hint = IdentifierArgument.getId(c, "id");
+                                    return changeKnowledge(c, k -> k.withHint(hint));
+                                }))))
+                        .then(Commands.literal("circle").then(Commands.argument("player", EntityArgument.player())
+                                .then(circleOutcome("success", CircleOutcome.SUCCESS))
+                                .then(circleOutcome("failure", CircleOutcome.FAILURE))))
                         .then(Commands.literal("reset").then(Commands.argument("player", EntityArgument.player())
                                 .executes(c -> changeKnowledge(c, k -> PlayerKnowledge.EMPTY))))));
     }
 
-    private static Identifier aspect(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Identifier id = IdentifierArgument.getId(context, "aspect");
+    /** {@code circle <player> success|failure <first> <second> [parameter]}. */
+    private static ArgumentBuilder<CommandSourceStack, ?> circleOutcome(String name, CircleOutcome outcome) {
+        return Commands.literal(name).then(aspectArgument("first").then(aspectArgument("second")
+                .executes(c -> recordCircle(c, outcome, Optional.empty()))
+                .then(aspectArgument("parameter")
+                        .executes(c -> recordCircle(c, outcome, Optional.of(aspect(c, "parameter")))))));
+    }
+
+    private static ArgumentBuilder<CommandSourceStack, ?> aspectArgument(String name) {
+        return Commands.argument(name, IdentifierArgument.id()).suggests((c, builder) ->
+                SharedSuggestionProvider.suggestResource(ThaumoryApi.aspects().all().stream().map(Aspect::id), builder));
+    }
+
+    private static int recordCircle(CommandContext<CommandSourceStack> context, CircleOutcome outcome, Optional<Identifier> parameter)
+            throws CommandSyntaxException {
+        CircleCombination combination = new CircleCombination(aspect(context, "first"), aspect(context, "second"), parameter);
+        return changeKnowledge(context, k -> k.withCircle(combination, outcome));
+    }
+
+    private static Identifier aspect(CommandContext<CommandSourceStack> context, String argument) throws CommandSyntaxException {
+        Identifier id = IdentifierArgument.getId(context, argument);
         if (ThaumoryApi.aspects().get(id).isEmpty()) {
             throw UNKNOWN_ASPECT.create(id);
         }
