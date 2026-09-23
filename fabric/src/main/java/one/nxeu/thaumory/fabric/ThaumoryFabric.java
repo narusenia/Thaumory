@@ -1,16 +1,19 @@
 package one.nxeu.thaumory.fabric;
 
 import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.ThaumoryPlatform;
+import one.nxeu.thaumory.flux.FluxStorage;
 import net.fabricmc.api.ModInitializer;
 
 public final class ThaumoryFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        // This code runs as soon as Minecraft is in a mod-load-ready state.
-        // However, some things (like resources) may still be uninitialized.
-        // Proceed with mild caution.
-
-        // Run our common setup.
-        Thaumory.init();
+        FluxStorage fluxStorage = new FabricFluxStorage();
+        Thaumory.init(new ThaumoryPlatform() {
+            @Override
+            public FluxStorage fluxStorage() {
+                return fluxStorage;
+            }
+        });
     }
 }

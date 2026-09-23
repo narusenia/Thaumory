@@ -1,0 +1,12 @@
+{
+  "decay": {
+    "fraction": 0.1,
+    "interval": 72000
+  },
+  "stages": {
+    "erosion": 150,
+    "manifestation": 300,
+    "overload": 500,
+    "stagnation": 50
+  }
+}

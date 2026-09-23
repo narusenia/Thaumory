@@ -11,17 +11,22 @@ import one.nxeu.thaumory.aspect.estimate.AspectEstimation;
 import one.nxeu.thaumory.aspect.estimate.VanillaRecipeAdapters;
 import one.nxeu.thaumory.aspect.estimate.VanillaWorldChanges;
 import one.nxeu.thaumory.command.ThaumoryCommands;
+import one.nxeu.thaumory.flux.FluxManager;
+import one.nxeu.thaumory.flux.FluxSettingsReloadListener;
 import one.nxeu.thaumory.network.AspectSync;
 
 public final class Thaumory {
     public static final String MOD_ID = ThaumoryApi.MOD_ID;
 
-    public static void init() {
+    public static void init(ThaumoryPlatform platform) {
         ThaumoryAspects.register(ThaumoryApi.aspects());
         VanillaRecipeAdapters.register(ThaumoryApi.recipeAdapters());
         VanillaWorldChanges.register(ThaumoryApi.recipeAdapters());
+        FluxManager flux = new FluxManager(platform.fluxStorage());
+        ThaumoryApi.provideFlux(flux);
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new FluxSettingsReloadListener(flux), id("flux"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context));
         AspectEstimation.registerEvents();
