@@ -25,6 +25,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -32,12 +33,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.circle.CircleContext;
 import one.nxeu.thaumory.api.circle.CircleEffect;
+import one.nxeu.thaumory.api.flux.FluxStage;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
@@ -49,6 +53,8 @@ import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.circle.CircleSettings;
 import one.nxeu.thaumory.circle.CircleSide;
 import one.nxeu.thaumory.circle.CircleUpkeep;
+import one.nxeu.thaumory.flux.FluxSettings;
+import one.nxeu.thaumory.flux.FluxWorldEffects;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
@@ -64,7 +70,8 @@ import one.nxeu.thaumory.text.ThaumoryText;
  * until it is stopped, runs dry, or its circle breaks.
  *
  * <p>Trying an undefined combination releases Flux and records the failure; every payment of an
- * unstable circle may release Flux too.
+ * unstable circle may release Flux too. Flux around the Core makes it less stable from
+ * manifestation on, and at overload any payment may make it misfire and explode.
  */
 public final class CoreBlockEntity extends BlockEntity {
     public static final int SLOTS = 3;
@@ -99,9 +106,10 @@ public final class CoreBlockEntity extends BlockEntity {
     }
 
     /** {@code UNDEFINED}: fewer than two runes, so not a circle yet. {@code MISFIRED}: the combination is undefined. */
-    public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, TRIGGERED_ONLY, NO_ESSENTIA }
+    /** {@code OVERLOADED}: it paid, but Flux at overload made it misfire and explode. */
+    public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, TRIGGERED_ONLY, NO_ESSENTIA, OVERLOADED }
 
-    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA }
+    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA, OVERLOADED }
 
     private List<Identifier> runes = List.of();
     private AspectList essentia = AspectList.empty();
@@ -161,7 +169,8 @@ public final class CoreBlockEntity extends BlockEntity {
         CircleScan previousScan = scan;
         int previousInstability = instability;
         scan = next;
-        instability = settings.instability(scan.nodes());
+        instability = settings.instability(scan.nodes()) + (level instanceof ServerLevel server
+                ? Thaumory.flux().settings().effects().extraInstability(fluxStage(server)) : 0);
         if (!level.isClientSide()) {
             stopIfBroken();
             updateIndex();
@@ -348,6 +357,40 @@ public final class CoreBlockEntity extends BlockEntity {
         releaseFlux(server, settings.instabilityFlux(instability, server.getRandom().nextDouble()));
     }
 
+    private FluxStage fluxStage(ServerLevel server) {
+        return Thaumory.flux().stage(server, ChunkPos.containing(worldPosition));
+    }
+
+    /**
+     * At overload, a payment may misfire: the effect does not happen, the Essentia paid is lost,
+     * Flux leaks out and a blast that breaks nothing hurts what is near and pollutes the ground.
+     */
+    private boolean misfire(ServerLevel server) {
+        FluxSettings.Effects effects = Thaumory.flux().settings().effects();
+        double chance = effects.misfireChance(fluxStage(server));
+        if (chance <= 0 || server.getRandom().nextDouble() >= chance) {
+            return false;
+        }
+        releaseFlux(server, settings.undefinedFlux());
+        double radius = effects.explosionRadius();
+        Vec3 center = Vec3.atCenterOf(worldPosition);
+        server.sendParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y, center.z, 1, 0, 0, 0, 0);
+        server.sendParticles(ParticleTypes.WITCH, center.x, center.y + 0.5, center.z, 60, radius / 2, 0.5, radius / 2, 0.1);
+        server.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 0.8f);
+        for (LivingEntity entity : server.getEntitiesOfClass(LivingEntity.class, new AABB(worldPosition).inflate(radius))) {
+            Vec3 away = entity.position().subtract(center);
+            if (away.length() > radius) {
+                continue;
+            }
+            entity.hurtServer(server, server.damageSources().magic(), effects.explosionDamage());
+            Vec3 push = away.lengthSqr() < 1.0E-4 ? new Vec3(0, 1, 0) : away.normalize();
+            entity.push(push.x, 0.4, push.z);
+            entity.needsSync = true;
+        }
+        FluxWorldEffects.polluteAround(server, worldPosition, radius);
+        return true;
+    }
+
     private void releaseFlux(ServerLevel server, double amount) {
         if (amount <= 0) {
             return;
@@ -385,6 +428,9 @@ public final class CoreBlockEntity extends BlockEntity {
             return StartResult.NO_ESSENTIA;
         }
         setEssentia(paid.get());
+        if (misfire(server)) {
+            return StartResult.OVERLOADED;
+        }
         rollInstability(server);
         running = Optional.of(definition.id());
         runningEffect = definition.effect();
@@ -445,6 +491,9 @@ public final class CoreBlockEntity extends BlockEntity {
             return TriggerResult.NO_ESSENTIA;
         }
         setEssentia(paid.get());
+        if (misfire(server)) {
+            return TriggerResult.OVERLOADED;
+        }
         rollInstability(server);
         effect.get().apply(context);
         recordSuccess(activator, definition.effect());
@@ -465,6 +514,10 @@ public final class CoreBlockEntity extends BlockEntity {
                 return;
             }
             setEssentia(paid.get());
+            if (misfire(server)) {
+                stop();
+                return;
+            }
             rollInstability(server);
             nextPayment = time + CircleUpkeep.sustainedInterval(definition.interval(), circle.get().multipliers().cost());
             setChanged();

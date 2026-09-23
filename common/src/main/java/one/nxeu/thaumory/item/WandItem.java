@@ -33,7 +33,8 @@ public final class WandItem extends Item {
             Player player = context.getPlayer();
             Outcome outcome = operate(core, player);
             MutableComponent message = Component.translatable("message.thaumory.wand." + outcome.key);
-            player.sendOverlayMessage(outcome == Outcome.MISFIRED ? ThaumoryText.withEffect(message, TextEffect.SHAKE) : message);
+            boolean shaken = outcome == Outcome.MISFIRED || outcome == Outcome.OVERLOADED;
+            player.sendOverlayMessage(shaken ? ThaumoryText.withEffect(message, TextEffect.SHAKE) : message);
             level.playSound(null, context.getClickedPos(), outcome.sound, SoundSource.BLOCKS, 0.8f, 1.0f);
         }
         return InteractionResult.SUCCESS;
@@ -46,6 +47,7 @@ public final class WandItem extends Item {
         NO_RINGS("no_rings", SoundEvents.FIRE_EXTINGUISH),
         NO_RESPONSE("no_response", SoundEvents.FIRE_EXTINGUISH),
         MISFIRED("misfired", SoundEvents.FIRE_EXTINGUISH),
+        OVERLOADED("overloaded", SoundEvents.FIRE_EXTINGUISH),
         NO_TARGET("no_target", SoundEvents.FIRE_EXTINGUISH),
         NO_ESSENTIA("no_essentia", SoundEvents.FIRE_EXTINGUISH);
 
@@ -69,12 +71,14 @@ public final class WandItem extends Item {
             case NO_RINGS -> Outcome.NO_RINGS;
             case UNDEFINED -> Outcome.NO_RESPONSE;
             case MISFIRED -> Outcome.MISFIRED;
+            case OVERLOADED -> Outcome.OVERLOADED;
             case NO_ESSENTIA -> Outcome.NO_ESSENTIA;
             case TRIGGERED_ONLY -> switch (core.trigger(Optional.of(player))) {
                 case TRIGGERED -> Outcome.TRIGGERED;
                 case NO_RINGS -> Outcome.NO_RINGS;
                 case UNDEFINED, SUSTAINED_ONLY -> Outcome.NO_RESPONSE;
                 case MISFIRED -> Outcome.MISFIRED;
+                case OVERLOADED -> Outcome.OVERLOADED;
                 case NO_TARGET -> Outcome.NO_TARGET;
                 case NO_ESSENTIA -> Outcome.NO_ESSENTIA;
             };
