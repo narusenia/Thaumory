@@ -65,9 +65,31 @@ public final class PipeNetworks {
         dirty.add(pos.immutable());
     }
 
-    /** A pipe's block entity is going (broken, or its chunk unloading). */
+    /**
+     * A pipe's block entity is going. Unloading, it has just saved its share, so the share leaves
+     * the network with it; broken, {@link #breakPipe} has taken it already.
+     */
     public void removed(BlockPos pos, PipeBlockEntity pipe) {
+        Network network = byPipe.remove(pos);
+        if (network != null) {
+            network.detach(pos);
+        }
         invalidate(pos);
+    }
+
+    /**
+     * A pipe is broken: its share of what its network carries leaves the network, to become Flux.
+     * Returns that share.
+     */
+    public AspectList breakPipe(BlockPos pos, PipeBlockEntity pipe) {
+        Network network = byPipe.get(pos);
+        if (network == null) {
+            AspectList share = pipe.share();
+            pipe.setShare(AspectList.empty());
+            return share;
+        }
+        byPipe.remove(pos);
+        return network.detach(pos);
     }
 
     /** This pipe's share of what its network carries, while it is part of one. */
@@ -210,16 +232,22 @@ public final class PipeNetworks {
         private List<AspectList> shares;
 
         Network(List<BlockPos> pipes, List<Endpoint> endpoints, AspectList buffer) {
-            this.pipes = pipes;
+            this.pipes = new ArrayList<>(pipes);
             this.endpoints = endpoints;
             this.buffer = buffer;
+            reindex();
+        }
+
+        private void reindex() {
+            indices.clear();
             for (int i = 0; i < pipes.size(); i++) {
                 indices.put(pipes.get(i), i);
             }
+            shares = null;
         }
 
         BlockPos origin() {
-            return pipes.getFirst();
+            return pipes.isEmpty() ? BlockPos.ZERO : pipes.getFirst();
         }
 
         int index(BlockPos pos) {
@@ -233,8 +261,21 @@ public final class PipeNetworks {
             return shares;
         }
 
+        /** Lets go of a pipe and its share, until the network is worked out again. Returns the share. */
+        AspectList detach(BlockPos pos) {
+            Integer index = indices.get(pos);
+            if (index == null) {
+                return AspectList.empty();
+            }
+            AspectList share = shares().get(index);
+            buffer = buffer.minus(share);
+            pipes.remove((int) index);
+            reindex();
+            return share;
+        }
+
         void step() {
-            if (endpoints.isEmpty() && buffer.isEmpty()) {
+            if (pipes.isEmpty() || (endpoints.isEmpty() && buffer.isEmpty())) {
                 return;
             }
             AspectList next = PipeFlow.step(buffer, pipes.size() * settings.bufferPerPipe(), endpoints, settings);

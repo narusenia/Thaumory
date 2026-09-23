@@ -3,6 +3,7 @@ package one.nxeu.thaumory.block.pipe;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -62,6 +63,18 @@ public final class PipeBlockEntity extends BlockEntity {
             PipeNetworks.of(server).removed(worldPosition, this);
         }
         super.setRemoved();
+    }
+
+    /** Broken, not just unloaded: what this pipe carried leaks out as Flux (requirements §8.2). */
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (level instanceof ServerLevel server) {
+            int leaked = PipeNetworks.of(server).breakPipe(pos, this).total();
+            if (leaked > 0) {
+                ThaumoryApi.flux().add(server, ChunkPos.containing(pos), leaked);
+            }
+        }
+        super.preRemoveSideEffects(pos, state);
     }
 
     @Override

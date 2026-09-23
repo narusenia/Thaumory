@@ -1,17 +1,22 @@
 package one.nxeu.thaumory.fabric.gametest;
 
+import java.util.List;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
+import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
 import one.nxeu.thaumory.jar.JarContents;
+import one.nxeu.thaumory.pipe.PipeNetworks;
 
 /** Pipe networks carrying Essentia from lower to higher priority (requirements §8.2). */
 public class PipeGameTests {
@@ -102,6 +107,32 @@ public class PipeGameTests {
                 .thenExecute(() -> helper.setBlock(new BlockPos(3, 2, 2), ThaumoryBlocks.PIPE.get()))
                 .thenWaitUntil(() -> helper.assertValueEqual(to.contents().aspects(), AspectList.of(ThaumoryAspects.IGNIS, 8), "labeled jar"))
                 .thenExecute(() -> helper.assertValueEqual(from.contents().aspects(), AspectList.empty(), "unlabeled jar"))
+                .thenSucceed();
+    }
+
+    /** Kept apart from other tests, since it checks the Flux of its whole chunk. */
+    @GameTest(maxTicks = 40, padding = 24)
+    public void aBrokenPipeLeaksItsShareAsFlux(GameTestHelper helper) {
+        List<BlockPos> line = List.of(new BlockPos(2, 2, 2), new BlockPos(3, 2, 2), new BlockPos(4, 2, 2));
+        for (BlockPos pos : line) {
+            helper.setBlock(pos, ThaumoryBlocks.PIPE.get());
+            helper.getBlockEntity(pos, PipeBlockEntity.class).setShare(AspectList.of(ThaumoryAspects.IGNIS, 3));
+        }
+        ChunkPos chunk = ChunkPos.containing(helper.absolutePos(line.get(1)));
+        Thaumory.flux().set(helper.getLevel(), chunk, 0);
+        PipeNetworks networks = PipeNetworks.of(helper.getLevel());
+        helper.startSequence()
+                .thenIdle(2)
+                .thenExecute(() -> helper.destroyBlock(line.get(1)))
+                .thenExecute(() -> helper.assertValueInBetween(2.9, Thaumory.flux().get(helper.getLevel(), chunk), 3.0, "Flux"))
+                .thenIdle(2)
+                .thenExecute(() -> {
+                    int left = 0;
+                    for (BlockPos pos : List.of(line.get(0), line.get(2))) {
+                        left += networks.shareOf(helper.absolutePos(pos)).orElseThrow().total();
+                    }
+                    helper.assertValueEqual(left, 6, "Essentia left in the pipes");
+                })
                 .thenSucceed();
     }
 }
