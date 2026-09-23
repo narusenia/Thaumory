@@ -2,6 +2,7 @@ package one.nxeu.thaumory.api;
 
 import java.util.Objects;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
+import one.nxeu.thaumory.api.circle.CircleEffectRegistry;
 import one.nxeu.thaumory.api.estimate.RecipeAdapterRegistry;
 import one.nxeu.thaumory.api.flux.ChunkFlux;
 
@@ -11,12 +12,21 @@ public final class ThaumoryApi {
 
     private static final AspectRegistry ASPECTS = new AspectRegistry();
     private static final RecipeAdapterRegistry RECIPE_ADAPTERS = new RecipeAdapterRegistry();
+    private static final CircleEffectRegistry CIRCLE_EFFECTS = new CircleEffectRegistry();
     private static volatile ChunkFlux flux;
 
     private ThaumoryApi() {}
 
     public static AspectRegistry aspects() {
         return ASPECTS;
+    }
+
+    /**
+     * What magic circles do. Blocks count as circle patterns when they are in the block tag
+     * {@code thaumory:circle_patterns}; their modifier values go in {@code circle.json}.
+     */
+    public static CircleEffectRegistry circleEffects() {
+        return CIRCLE_EFFECTS;
     }
 
     /** Recipe types that aspect estimation reads. */
