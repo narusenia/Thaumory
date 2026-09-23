@@ -60,7 +60,8 @@ loom {
     runs {
         // ./gradlew :fabric:runDatagen writes into common so every loader ships the same data.
         datagen {
-            inherit server
+            // Client, so model providers can load client classes.
+            inherit client
             name = 'Data Generation'
             vmArg '-Dfabric-api.datagen'
             vmArg "-Dfabric-api.datagen.output-dir=${project(':common').file('src/main/generated')}"
