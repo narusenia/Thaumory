@@ -13,7 +13,7 @@
 
 | M | 内容 | 完了 / 全体 | 状態 |
 |---|---|---|---|
-| M0 | 開発基盤 | 1 / 7 | 作業中 |
+| M0 | 開発基盤 | 2 / 7 | 作業中 |
 | M1 | MVP：核ループ | 0 / 24 | 未着手 |
 | M2 | 工学と成果物 | 0 / 12 | 未着手 |
 | M3 | ポーション調合 | 0 / 8 | 未着手 |
@@ -27,7 +27,7 @@
 
 | 状態 | ID | タスク | 完了条件 | 依存 |
 |---|---|---|---|---|
-| [ ] | M0-1 | `enabled_platforms` を `fabric,neoforge` に直す | `./gradlew build` が通る | - |
+| [x] | M0-1 | `enabled_platforms` を `fabric,neoforge` に直す | `./gradlew build` が通る | - |
 | [x] | M0-2 | ライセンスを本体 MPL-2.0 / API MIT に切り替える | `LICENSE.txt` と `fabric.mod.json` の `license` が要件と一致する | - |
 | [ ] | M0-3 | `api` サブプロジェクトを追加する | `common` と `fabric` が `api` に依存してビルドできる。`thaumory-api` として publish できる。jar に `LICENSE-API.txt` が入る | M0-1 |
 | [ ] | M0-4 | JUnit 5 を `common` と `api` に導入する | サンプルのテストが `./gradlew test` で通る | M0-3 |
