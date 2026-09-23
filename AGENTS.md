@@ -56,6 +56,10 @@ Every user-facing string needs both `en_us` and `ja_jp` entries. Generate lang f
 
 GameTest and datagen tasks are set up in M0-5 and M0-6.
 
+### Manual checks on a dev server
+
+Until GameTest exists, verify data-driven behavior on `:fabric:runServer` (the dev EULA lives in the git-ignored `fabric/run/`). Pipe commands into the console, e.g. `thaumory aspects minecraft:oak_log`, and use `reload` after editing a test datapack under `fabric/run/world/datapacks/`. Remove test datapacks afterwards.
+
 ## Git
 
 - Conventional Commits, single line, no body: `feat: add aspect registry`, `fix: crucible overflow flux`, `docs: update plan progress`

@@ -1,8 +1,8 @@
 package one.nxeu.thaumory.aspect;
 
+import static one.nxeu.thaumory.Thaumory.id;
+
 import java.util.List;
-import net.minecraft.resources.Identifier;
-import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
 
@@ -41,9 +41,5 @@ public final class ThaumoryAspects {
 
     public static void register(AspectRegistry registry) {
         ALL.forEach(registry::register);
-    }
-
-    private static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath(Thaumory.MOD_ID, path);
     }
 }
