@@ -1,0 +1,6 @@
+{
+  "parent": "thaumory:block/template_pipe_center",
+  "textures": {
+    "pipe": "thaumory:block/pump"
+  }
+}

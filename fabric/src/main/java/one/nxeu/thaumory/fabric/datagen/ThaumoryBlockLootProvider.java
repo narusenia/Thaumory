@@ -22,6 +22,9 @@ final class ThaumoryBlockLootProvider extends FabricBlockLootSubProvider {
         dropSelf(ThaumoryBlocks.CRUCIBLE.get());
         dropSelf(ThaumoryBlocks.CORE.get());
         dropSelf(ThaumoryBlocks.PIPE.get());
+        dropSelf(ThaumoryBlocks.FILTER_PIPE.get());
+        dropSelf(ThaumoryBlocks.VALVE.get());
+        dropSelf(ThaumoryBlocks.PUMP.get());
         dropSelf(ThaumoryBlocks.POLLUTED_SOIL.get());
         dropSelf(ThaumoryBlocks.POLLUTED_STONE.get());
         // A broken jar keeps its Essentia and label.

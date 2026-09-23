@@ -70,6 +70,21 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .define('G', Items.GLASS)
                         .unlockedBy(getHasName(Items.GLASS), has(Items.GLASS))
                         .save(output);
+                shapeless(RecipeCategory.BREWING, ThaumoryItems.FILTER_PIPE.get())
+                        .requires(ThaumoryItems.PIPE.get())
+                        .requires(Items.GOLD_INGOT)
+                        .unlockedBy(getHasName(ThaumoryItems.PIPE.get()), has(ThaumoryItems.PIPE.get()))
+                        .save(output);
+                shapeless(RecipeCategory.BREWING, ThaumoryItems.VALVE.get())
+                        .requires(ThaumoryItems.PIPE.get())
+                        .requires(Items.LEVER)
+                        .unlockedBy(getHasName(ThaumoryItems.PIPE.get()), has(ThaumoryItems.PIPE.get()))
+                        .save(output);
+                shapeless(RecipeCategory.BREWING, ThaumoryItems.PUMP.get())
+                        .requires(ThaumoryItems.PIPE.get())
+                        .requires(Items.PISTON)
+                        .unlockedBy(getHasName(ThaumoryItems.PIPE.get()), has(ThaumoryItems.PIPE.get()))
+                        .save(output);
                 shaped(RecipeCategory.BREWING, ThaumoryItems.JAR.get())
                         .pattern(" W ")
                         .pattern("G G")

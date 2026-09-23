@@ -55,7 +55,18 @@
     },
     {
       "apply": {
-        "model": "thaumory:block/pipe_center"
+        "model": "thaumory:block/valve_center"
+      },
+      "when": {
+        "powered": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/valve_center_closed_center"
+      },
+      "when": {
+        "powered": "true"
       }
     }
   ]

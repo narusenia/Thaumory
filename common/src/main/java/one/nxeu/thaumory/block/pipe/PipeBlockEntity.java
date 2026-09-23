@@ -1,15 +1,24 @@
 package one.nxeu.thaumory.block.pipe;
 
 import com.mojang.serialization.Codec;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
@@ -17,12 +26,15 @@ import one.nxeu.thaumory.pipe.PipeNetworks;
 
 /**
  * Keeps this pipe's share of its network's Essentia in transit, so it survives saving. While the
- * network runs, the network holds the Essentia and this share is only what was last saved.
+ * network runs, the network holds the Essentia and this share is only what was last saved. A
+ * filter pipe also keeps its filter here, which the client gets too, for the band's color.
  */
 public final class PipeBlockEntity extends BlockEntity {
     private static final Codec<AspectList> CODEC = AspectCodecs.aspectList(ThaumoryApi.aspects());
 
     private AspectList share = AspectList.empty();
+    /** Kept as an id, so a filter whose addon was removed comes back with it. */
+    private Optional<Identifier> filter = Optional.empty();
 
     public PipeBlockEntity(BlockPos pos, BlockState state) {
         super(ThaumoryBlocks.PIPE_ENTITY.get(), pos, state);
@@ -31,6 +43,24 @@ public final class PipeBlockEntity extends BlockEntity {
     /** What this pipe holds while no network has taken it up. */
     public AspectList share() {
         return share;
+    }
+
+    /** A filter pipe's aspect; empty for any other pipe, or a filter pipe with no filter. */
+    public Optional<Aspect> filter() {
+        return filter.flatMap(ThaumoryApi.aspects()::get);
+    }
+
+    public void setFilter(Optional<Aspect> aspect) {
+        Optional<Identifier> id = aspect.map(Aspect::id);
+        if (id.equals(filter)) {
+            return;
+        }
+        filter = id;
+        setChanged();
+        if (level instanceof ServerLevel server) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            PipeNetworks.of(server).invalidate(worldPosition);
+        }
     }
 
     /** Called by the network when it lets go of this pipe. */
@@ -84,11 +114,32 @@ public final class PipeBlockEntity extends BlockEntity {
         if (!current.isEmpty()) {
             output.store("share", CODEC, current);
         }
+        filter.ifPresent(id -> output.store("filter", Identifier.CODEC, id));
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         share = input.read("share", CODEC).orElse(AspectList.empty());
+        Optional<Identifier> loaded = input.read("filter", Identifier.CODEC);
+        boolean changed = !loaded.equals(filter);
+        filter = loaded;
+        // A new filter from the server: draw the band again in its color.
+        if (changed && level != null && level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_IMMEDIATE);
+        }
+    }
+
+    /** Only the filter goes to the client; the share is the server's business. */
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        filter.ifPresent(id -> tag.putString("filter", id.toString()));
+        return tag;
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

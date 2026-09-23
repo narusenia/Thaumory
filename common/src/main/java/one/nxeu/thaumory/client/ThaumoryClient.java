@@ -68,6 +68,7 @@ public final class ThaumoryClient {
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CORE_ENTITY.get(), CoreRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
         RuneTint.register();
+        FilterPipeTint.register();
         ArcaneCodexItem.setScreenOpener(() -> {
             // The server answers with a fresh reading for the book's Flux warning.
             ClientFlux.clear();

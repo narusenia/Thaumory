@@ -69,6 +69,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.rune.not_enough", "A rune takes %s Essentia of one aspect");
             builder.add(ThaumoryBlocks.JAR.get(), "Jar");
             builder.add(ThaumoryBlocks.PIPE.get(), "Essentia Pipe");
+            builder.add(ThaumoryBlocks.FILTER_PIPE.get(), "Filtered Essentia Pipe");
+            builder.add(ThaumoryBlocks.VALVE.get(), "Essentia Valve");
+            builder.add(ThaumoryBlocks.PUMP.get(), "Essentia Pump");
+            builder.add("message.thaumory.filter_pipe.set", "Filter: %s");
+            builder.add("message.thaumory.filter_pipe.cleared", "Filter taken off");
             builder.add(ThaumoryItems.LABEL.get(), "Label");
             builder.add(ThaumoryItems.TRANSCRIPT.get(), "Transcript");
             builder.add("item.thaumory.transcript.aspect", "Aspect Transcript");
@@ -230,6 +235,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.rune.not_enough", "ルーンには 1 種類のアスペクトの Essentia が %s 必要");
             builder.add(ThaumoryBlocks.JAR.get(), "瓶");
             builder.add(ThaumoryBlocks.PIPE.get(), "Essentia のパイプ");
+            builder.add(ThaumoryBlocks.FILTER_PIPE.get(), "フィルタ付きのパイプ");
+            builder.add(ThaumoryBlocks.VALVE.get(), "Essentia のバルブ");
+            builder.add(ThaumoryBlocks.PUMP.get(), "Essentia のポンプ");
+            builder.add("message.thaumory.filter_pipe.set", "フィルタ: %s");
+            builder.add("message.thaumory.filter_pipe.cleared", "フィルタを外した");
             builder.add(ThaumoryItems.LABEL.get(), "ラベル");
             builder.add(ThaumoryItems.TRANSCRIPT.get(), "知識の写し");
             builder.add("item.thaumory.transcript.aspect", "アスペクトの写し");

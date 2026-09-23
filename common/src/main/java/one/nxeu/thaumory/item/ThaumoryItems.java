@@ -50,6 +50,16 @@ public final class ThaumoryItems {
             register("pipe", properties -> new BlockItem(ThaumoryBlocks.PIPE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
+    public static final RegistrySupplier<BlockItem> FILTER_PIPE =
+            register("filter_pipe", properties -> new BlockItem(ThaumoryBlocks.FILTER_PIPE.get(), properties),
+                    new Item.Properties().useBlockDescriptionPrefix());
+    public static final RegistrySupplier<BlockItem> VALVE =
+            register("valve", properties -> new BlockItem(ThaumoryBlocks.VALVE.get(), properties),
+                    new Item.Properties().useBlockDescriptionPrefix());
+    public static final RegistrySupplier<BlockItem> PUMP =
+            register("pump", properties -> new BlockItem(ThaumoryBlocks.PUMP.get(), properties),
+                    new Item.Properties().useBlockDescriptionPrefix());
+
     public static final RegistrySupplier<BlockItem> CORE =
             register("core", properties -> new BlockItem(ThaumoryBlocks.CORE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
@@ -65,7 +75,7 @@ public final class ThaumoryItems {
 
     /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, BLANK_RUNE, RUNE, CORE,
+            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CORE,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
 
     public static final RegistrySupplier<CreativeModeTab> TAB = TABS.register("thaumory", () -> CreativeTabRegistry.create(builder -> builder

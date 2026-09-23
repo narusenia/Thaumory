@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.AspectList;
@@ -15,6 +16,7 @@ import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
+import one.nxeu.thaumory.block.pipe.ValveBlock;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.pipe.PipeNetworks;
 
@@ -133,6 +135,72 @@ public class PipeGameTests {
                     }
                     helper.assertValueEqual(left, 6, "Essentia left in the pipes");
                 })
+                .thenSucceed();
+    }
+
+    @GameTest(maxTicks = 100)
+    public void aPumpDrawsFromACrucible(GameTestHelper helper) {
+        helper.setBlock(FROM, ThaumoryBlocks.CRUCIBLE.get());
+        CrucibleBlockEntity crucible = helper.getBlockEntity(FROM, CrucibleBlockEntity.class);
+        crucible.setContents(AspectList.of(ThaumoryAspects.IGNIS, 20));
+        JarBlockEntity to = jar(helper, TO, new JarContents(AspectList.empty(), Optional.of(ThaumoryAspects.IGNIS)));
+        helper.setBlock(FROM.east(), ThaumoryBlocks.PUMP.get());
+        for (int x = FROM.getX() + 2; x < TO.getX(); x++) {
+            helper.setBlock(new BlockPos(x, 2, 2), ThaumoryBlocks.PIPE.get());
+        }
+
+        helper.assertBlockProperty(FROM.east(), BlockStateProperties.WEST, true);
+        helper.succeedWhen(() -> {
+            helper.assertValueEqual(to.contents().aspects(), AspectList.of(ThaumoryAspects.IGNIS, 20), "jar");
+            helper.assertValueEqual(crucible.tank().contents(), AspectList.empty(), "Crucible");
+        });
+    }
+
+    @GameTest(maxTicks = 100)
+    public void aFilterPipeLetsOnlyItsAspectOut(GameTestHelper helper) {
+        JarBlockEntity jar = jar(helper, FROM, new JarContents(
+                AspectList.builder().add(ThaumoryAspects.HERBA, 10).add(ThaumoryAspects.TERRA, 10).build(), Optional.empty()));
+        helper.setBlock(TO, ThaumoryBlocks.CORE.get());
+        CoreBlockEntity core = helper.getBlockEntity(TO, CoreBlockEntity.class);
+        core.insert(ThaumoryAspects.HERBA.id());
+        core.insert(ThaumoryAspects.TERRA.id());
+        helper.setBlock(FROM.east(), ThaumoryBlocks.FILTER_PIPE.get());
+        helper.getBlockEntity(FROM.east(), PipeBlockEntity.class).setFilter(Optional.of(ThaumoryAspects.TERRA));
+        for (int x = FROM.getX() + 2; x < TO.getX(); x++) {
+            helper.setBlock(new BlockPos(x, 2, 2), ThaumoryBlocks.PIPE.get());
+        }
+
+        helper.startSequence()
+                .thenWaitUntil(() -> helper.assertValueEqual(core.essentia(), AspectList.of(ThaumoryAspects.TERRA, 10), "Core"))
+                .thenIdle(20)
+                .thenExecute(() -> {
+                    helper.assertValueEqual(core.essentia(), AspectList.of(ThaumoryAspects.TERRA, 10), "Core later");
+                    helper.assertValueEqual(jar.contents().aspects(), AspectList.of(ThaumoryAspects.HERBA, 10), "jar");
+                })
+                .thenSucceed();
+    }
+
+    @GameTest(maxTicks = 140)
+    public void aPoweredValveParts(GameTestHelper helper) {
+        JarBlockEntity from = jar(helper, FROM, new JarContents(AspectList.of(ThaumoryAspects.IGNIS, 8), Optional.empty()));
+        JarBlockEntity to = jar(helper, TO, new JarContents(AspectList.empty(), Optional.of(ThaumoryAspects.IGNIS)));
+        BlockPos valve = new BlockPos(3, 2, 2);
+        BlockPos power = valve.above();
+        helper.setBlock(power, Blocks.REDSTONE_BLOCK);
+        helper.setBlock(FROM.east(), ThaumoryBlocks.PIPE.get());
+        helper.setBlock(valve, ThaumoryBlocks.VALVE.get());
+        helper.setBlock(TO.west(), ThaumoryBlocks.PIPE.get());
+
+        helper.assertBlockProperty(valve, ValveBlock.POWERED, true);
+        helper.startSequence()
+                .thenIdle(40)
+                .thenExecute(() -> {
+                    helper.assertValueEqual(to.contents().aspects(), AspectList.empty(), "labeled jar while closed");
+                    helper.assertValueEqual(from.contents().aspects(), AspectList.of(ThaumoryAspects.IGNIS, 8), "unlabeled jar while closed");
+                })
+                .thenExecute(() -> helper.setBlock(power, Blocks.AIR))
+                .thenExecute(() -> helper.assertBlockProperty(valve, ValveBlock.POWERED, false))
+                .thenWaitUntil(() -> helper.assertValueEqual(to.contents().aspects(), AspectList.of(ThaumoryAspects.IGNIS, 8), "labeled jar"))
                 .thenSucceed();
     }
 }

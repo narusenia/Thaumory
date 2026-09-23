@@ -1,0 +1,7 @@
+{
+  "parent": "thaumory:block/template_pipe_filter_center",
+  "textures": {
+    "band": "thaumory:block/filter_pipe_band",
+    "pipe": "thaumory:block/pipe"
+  }
+}

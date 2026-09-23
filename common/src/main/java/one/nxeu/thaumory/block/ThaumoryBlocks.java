@@ -24,7 +24,10 @@ import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
+import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
+import one.nxeu.thaumory.block.pipe.PumpBlock;
+import one.nxeu.thaumory.block.pipe.ValveBlock;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 /** Blocks and their block entities. Block items are registered in {@link one.nxeu.thaumory.item.ThaumoryItems}. */
@@ -42,6 +45,13 @@ public final class ThaumoryBlocks {
 
     public static final RegistrySupplier<EssentiaPipeBlock> PIPE = register("pipe", EssentiaPipeBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
+
+    public static final RegistrySupplier<FilterPipeBlock> FILTER_PIPE = register("filter_pipe", FilterPipeBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
+    public static final RegistrySupplier<ValveBlock> VALVE = register("valve", ValveBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
+    public static final RegistrySupplier<PumpBlock> PUMP = register("pump", PumpBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.5f).sound(SoundType.METAL).noOcclusion());
 
     public static final RegistrySupplier<CoreBlock> CORE = register("core", CoreBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
@@ -69,7 +79,7 @@ public final class ThaumoryBlocks {
             "core", () -> new BlockEntityType<>(CoreBlockEntity::new, Set.of(CORE.get())));
 
     public static final RegistrySupplier<BlockEntityType<PipeBlockEntity>> PIPE_ENTITY = BLOCK_ENTITIES.register(
-            "pipe", () -> new BlockEntityType<>(PipeBlockEntity::new, Set.of(PIPE.get())));
+            "pipe", () -> new BlockEntityType<>(PipeBlockEntity::new, Set.of(PIPE.get(), FILTER_PIPE.get(), VALVE.get(), PUMP.get())));
 
     private ThaumoryBlocks() {}
 

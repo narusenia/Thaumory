@@ -16,10 +16,12 @@ import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
@@ -132,21 +134,31 @@ public final class PipeNetworks {
         }
     }
 
-    private Optional<PipeBlockEntity> pipeAt(BlockPos pos) {
+    /** A loaded pipe at {@code pos}, whether or not Essentia passes through it now. */
+    private Optional<PipeBlockEntity> pipeEntityAt(BlockPos pos) {
         if (!level.isLoaded(pos) || !(level.getBlockState(pos).getBlock() instanceof EssentiaPipeBlock)) {
             return Optional.empty();
         }
         return level.getBlockEntity(pos) instanceof PipeBlockEntity pipe && !pipe.isRemoved() ? Optional.of(pipe) : Optional.empty();
     }
 
-    /** Hands each pipe still there its share. A pipe gone takes its share with it. */
+    /** A loaded pipe at {@code pos} that Essentia passes through, so it belongs in a network. */
+    private Optional<PipeBlockEntity> pipeAt(BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof EssentiaPipeBlock pipe) || !pipe.carries(state)) {
+            return Optional.empty();
+        }
+        return pipeEntityAt(pos);
+    }
+
+    /** Hands each pipe still there its share, a valve that has just closed included. */
     private void dissolve(Network network) {
         List<AspectList> shares = network.shares();
         for (int i = 0; i < network.pipes.size(); i++) {
             BlockPos pos = network.pipes.get(i);
             byPipe.remove(pos);
             int index = i;
-            pipeAt(pos).ifPresent(pipe -> pipe.setShare(shares.get(index)));
+            pipeEntityAt(pos).ifPresent(pipe -> pipe.setShare(shares.get(index)));
         }
     }
 
@@ -154,7 +166,7 @@ public final class PipeNetworks {
         List<BlockPos> pipes = new ArrayList<>();
         Set<BlockPos> seen = new HashSet<>(List.of(start));
         ArrayDeque<BlockPos> queue = new ArrayDeque<>(List.of(start));
-        Map<BlockPos, Direction> ends = new LinkedHashMap<>();
+        Map<BlockPos, End> ends = new LinkedHashMap<>();
         while (!queue.isEmpty()) {
             BlockPos pos = queue.poll();
             pipes.add(pos);
@@ -164,8 +176,9 @@ public final class PipeNetworks {
                     if (seen.add(next)) {
                         queue.add(next);
                     }
-                } else if (!ends.containsKey(next) && EssentiaPipeBlock.joins(level, pos, side)) {
-                    ends.put(next, side.getOpposite());
+                } else if (((EssentiaPipeBlock) level.getBlockState(pos).getBlock()).joins(level, pos, side)) {
+                    Optional<Aspect> filter = pipeAt(pos).orElseThrow().filter();
+                    ends.computeIfAbsent(next, k -> new End(side.getOpposite(), new ArrayList<>())).filters().add(filter);
                 }
             }
         }
@@ -175,13 +188,19 @@ public final class PipeNetworks {
             PipeBlockEntity pipe = pipeAt(pos).orElseThrow();
             buffer = buffer.plus(pipe.share());
         }
-        List<Endpoint> endpoints = new ArrayList<>();
+        List<PipeEndpoint> endpoints = new ArrayList<>();
         ends.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(end -> Thaumory.essentia()
-                .find(level, end.getKey(), end.getValue())
-                .ifPresent(handle -> endpoints.add(new Endpoint(end.getKey(), handle))));
+                .find(level, end.getKey(), end.getValue().side())
+                .ifPresent(handle -> endpoints.add(new RestrictedEndpoint(new Endpoint(end.getKey(), handle),
+                        RestrictedEndpoint.union(end.getValue().filters()),
+                        // Only a pump reaches a Crucible, and it only draws from it.
+                        level.getBlockEntity(end.getKey()) instanceof CrucibleBlockEntity))));
         Network network = new Network(List.copyOf(pipes), List.copyOf(endpoints), buffer);
         pipes.forEach(pos -> byPipe.put(pos, network));
     }
+
+    /** A container next to the network: the face it is reached through, and the filter of each pipe touching it. */
+    private record End(Direction side, List<Optional<Aspect>> filters) {}
 
     /** A container a network touches, with its priority read afresh each step (a jar's label can change). */
     private final class Endpoint implements PipeEndpoint {
@@ -197,6 +216,7 @@ public final class PipeNetworks {
         public int priority() {
             return switch (level.getBlockEntity(pos)) {
                 case CoreBlockEntity core -> 3;
+                case CrucibleBlockEntity crucible -> 0;
                 case JarBlockEntity jar when jar.contents().label().isPresent() -> 2;
                 case null, default -> 1;
             };
@@ -227,11 +247,11 @@ public final class PipeNetworks {
         /** Sorted, so shares always go to the same pipes. */
         private final List<BlockPos> pipes;
         private final Map<BlockPos, Integer> indices = new HashMap<>();
-        private final List<Endpoint> endpoints;
+        private final List<PipeEndpoint> endpoints;
         private AspectList buffer;
         private List<AspectList> shares;
 
-        Network(List<BlockPos> pipes, List<Endpoint> endpoints, AspectList buffer) {
+        Network(List<BlockPos> pipes, List<PipeEndpoint> endpoints, AspectList buffer) {
             this.pipes = new ArrayList<>(pipes);
             this.endpoints = endpoints;
             this.buffer = buffer;

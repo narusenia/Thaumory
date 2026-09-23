@@ -28,9 +28,10 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Carries Essentia between the containers it touches (requirements §8.2). Joins every pipe next to
- * it and every block with an Essentia storage, except a Crucible, which needs a pump.
+ * it and every block with an Essentia storage, except a Crucible, which needs a pump. The filter
+ * pipe, valve and pump are pipes too.
  */
-public final class EssentiaPipeBlock extends BaseEntityBlock {
+public class EssentiaPipeBlock extends BaseEntityBlock {
     public static final Map<Direction, BooleanProperty> CONNECTIONS = Map.of(
             Direction.NORTH, BlockStateProperties.NORTH,
             Direction.EAST, BlockStateProperties.EAST,
@@ -61,19 +62,29 @@ public final class EssentiaPipeBlock extends BaseEntityBlock {
         builder.add(CONNECTIONS.values().toArray(BooleanProperty[]::new));
     }
 
-    /** Whether a pipe at {@code pos} joins what is on its {@code side}. */
-    public static boolean joins(LevelReader level, BlockPos pos, Direction side) {
+    /** Whether this pipe at {@code pos} joins what is on its {@code side}. */
+    public boolean joins(LevelReader level, BlockPos pos, Direction side) {
         BlockPos neighbor = pos.relative(side);
         if (level.getBlockState(neighbor).getBlock() instanceof EssentiaPipeBlock) {
             return true;
         }
-        if (!(level instanceof Level world) || level.getBlockEntity(neighbor) instanceof CrucibleBlockEntity) {
+        if (!(level instanceof Level world) || (level.getBlockEntity(neighbor) instanceof CrucibleBlockEntity && !joinsCrucibles())) {
             return false;
         }
         return Thaumory.essentia().find(world, neighbor, side.getOpposite()).isPresent();
     }
 
-    private BlockState connectedState(LevelReader level, BlockPos pos, BlockState state) {
+    /** Only a pump reaches into a Crucible. */
+    protected boolean joinsCrucibles() {
+        return false;
+    }
+
+    /** Whether Essentia passes through this pipe now. A closed valve is no part of any network. */
+    public boolean carries(BlockState state) {
+        return true;
+    }
+
+    protected BlockState connectedState(LevelReader level, BlockPos pos, BlockState state) {
         for (Map.Entry<Direction, BooleanProperty> connection : CONNECTIONS.entrySet()) {
             state = state.setValue(connection.getValue(), joins(level, pos, connection.getKey()));
         }
