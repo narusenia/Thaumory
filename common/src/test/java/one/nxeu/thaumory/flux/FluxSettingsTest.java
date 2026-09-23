@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import java.util.List;
 import one.nxeu.thaumory.api.flux.FluxStage;
 import org.junit.jupiter.api.Test;
 
@@ -48,9 +49,42 @@ class FluxSettingsTest {
                 { "decay": { "fraction": 0.5, "interval": 100 },
                   "stages": { "stagnation": 1, "erosion": 2, "manifestation": 3, "overload": 4 } }""").getOrThrow();
 
-        assertEquals(new FluxSettings(new FluxSettings.Decay(0.5, 100), new FluxSettings.Stages(1, 2, 3, 4)), settings);
+        assertEquals(new FluxSettings(new FluxSettings.Decay(0.5, 100), new FluxSettings.Stages(1, 2, 3, 4), FluxSettings.Effects.DEFAULT), settings);
         assertEquals(25, settings.decay(100, 200), 1e-9);
         assertEquals(FluxStage.MANIFESTATION, settings.stage(3));
+    }
+
+    @Test
+    void effectsGrowWithTheStage() {
+        FluxSettings.Effects effects = FluxSettings.Effects.DEFAULT;
+        assertEquals(0, effects.particles(FluxStage.NONE));
+        assertEquals(2, effects.particles(FluxStage.STAGNATION));
+        assertEquals(10, effects.particles(FluxStage.OVERLOAD));
+        assertEquals(0, effects.pollutionAttempts(FluxStage.STAGNATION));
+        assertEquals(1, effects.pollutionAttempts(FluxStage.EROSION));
+        assertEquals(3, effects.pollutionAttempts(FluxStage.OVERLOAD));
+        assertEquals(0, effects.extraInstability(FluxStage.EROSION));
+        assertEquals(3, effects.extraInstability(FluxStage.MANIFESTATION));
+        assertEquals(3, effects.extraInstability(FluxStage.OVERLOAD));
+        assertEquals(0, effects.misfireChance(FluxStage.MANIFESTATION), 1e-9);
+        assertEquals(0.25, effects.misfireChance(FluxStage.OVERLOAD), 1e-9);
+        assertTrue(effects.stopsCrops(FluxStage.EROSION) && !effects.stopsCrops(FluxStage.STAGNATION));
+        assertTrue(effects.spawnsRemnants(FluxStage.MANIFESTATION) && !effects.spawnsRemnants(FluxStage.EROSION));
+    }
+
+    @Test
+    void effectsFallBackPerValueAndCheckListLengths() {
+        FluxSettings settings = parse("""
+                { "decay": { "fraction": 0.1, "interval": 72000 },
+                  "stages": { "stagnation": 50, "erosion": 150, "manifestation": 300, "overload": 500 },
+                  "effects": { "pollution_attempts": [0, 5, 9], "misfire_chance": 0.5 } }""").getOrThrow();
+        assertEquals(List.of(0, 5, 9), settings.effects().pollutionAttempts());
+        assertEquals(0.5, settings.effects().misfireChance(), 1e-9);
+        assertEquals(FluxSettings.Effects.DEFAULT.particles(), settings.effects().particles());
+        assertTrue(parse("""
+                { "decay": { "fraction": 0.1, "interval": 72000 },
+                  "stages": { "stagnation": 50, "erosion": 150, "manifestation": 300, "overload": 500 },
+                  "effects": { "particles": [1, 2] } }""").isError());
     }
 
     @Test
