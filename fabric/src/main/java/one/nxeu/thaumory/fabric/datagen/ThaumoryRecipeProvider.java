@@ -62,6 +62,14 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 alchemy("extending_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.EXTENDING_CHALK.get(), new AspectStack(AER, 8));
                 alchemy("economizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.ECONOMIZING_CHALK.get(), new AspectStack(VINCULUM, 4));
                 alchemy("stabilizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.STABILIZING_CHALK.get(), new AspectStack(ORDO, 4));
+                shaped(RecipeCategory.BREWING, ThaumoryItems.PIPE.get(), 8)
+                        .pattern("NGN")
+                        .pattern("NGN")
+                        .pattern("NGN")
+                        .define('N', Items.GOLD_NUGGET)
+                        .define('G', Items.GLASS)
+                        .unlockedBy(getHasName(Items.GLASS), has(Items.GLASS))
+                        .save(output);
                 shaped(RecipeCategory.BREWING, ThaumoryItems.JAR.get())
                         .pattern(" W ")
                         .pattern("G G")

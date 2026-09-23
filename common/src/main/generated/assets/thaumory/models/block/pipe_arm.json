@@ -1,0 +1,7 @@
+{
+  "parent": "thaumory:block/template_pipe_arm",
+  "textures": {
+    "arm": "thaumory:block/pipe_arm",
+    "pipe": "thaumory:block/pipe"
+  }
+}

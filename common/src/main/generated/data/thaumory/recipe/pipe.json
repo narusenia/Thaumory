@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:glass",
+    "N": "minecraft:gold_nugget"
+  },
+  "pattern": [
+    "NGN",
+    "NGN",
+    "NGN"
+  ],
+  "result": {
+    "count": 8,
+    "id": "thaumory:pipe"
+  }
+}

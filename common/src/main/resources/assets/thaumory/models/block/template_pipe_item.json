@@ -1,0 +1,32 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "#pipe"
+  },
+  "elements": [
+    {
+      "from": [5, 5, 5],
+      "to": [11, 11, 11],
+      "faces": {
+        "north": {"uv": [5, 5, 11, 11], "texture": "#pipe"},
+        "south": {"uv": [5, 5, 11, 11], "texture": "#pipe"},
+        "east": {"uv": [5, 5, 11, 11], "texture": "#pipe"},
+        "west": {"uv": [5, 5, 11, 11], "texture": "#pipe"},
+        "up": {"uv": [5, 5, 11, 11], "texture": "#pipe"},
+        "down": {"uv": [5, 5, 11, 11], "texture": "#pipe"}
+      }
+    },
+    {
+      "from": [5.5, 5.5, 0],
+      "to": [10.5, 10.5, 16],
+      "faces": {
+        "north": {"uv": [5.5, 5.5, 10.5, 10.5], "texture": "#pipe"},
+        "south": {"uv": [5.5, 5.5, 10.5, 10.5], "texture": "#pipe"},
+        "east": {"uv": [0, 5.5, 16, 10.5], "texture": "#arm"},
+        "west": {"uv": [0, 5.5, 16, 10.5], "texture": "#arm"},
+        "up": {"uv": [5.5, 0, 10.5, 16], "texture": "#arm", "rotation": 90},
+        "down": {"uv": [5.5, 0, 10.5, 16], "texture": "#arm", "rotation": 90}
+      }
+    }
+  ]
+}

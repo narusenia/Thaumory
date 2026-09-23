@@ -1,5 +1,6 @@
 package one.nxeu.thaumory;
 
+import one.nxeu.thaumory.essentia.EssentiaLookup;
 import one.nxeu.thaumory.flux.FluxStorage;
 import one.nxeu.thaumory.knowledge.KnowledgeStorage;
 
@@ -8,4 +9,6 @@ public interface ThaumoryPlatform {
     FluxStorage fluxStorage();
 
     KnowledgeStorage knowledgeStorage();
+
+    EssentiaLookup essentiaLookup();
 }

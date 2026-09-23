@@ -23,6 +23,7 @@ import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CoreBlock;
 import one.nxeu.thaumory.block.jar.JarBlock;
+import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.client.RuneTint;
 import one.nxeu.thaumory.item.RuneItem;
@@ -46,6 +47,15 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     private static final TextureSlot PATTERN = TextureSlot.create("pattern");
     private static final ModelTemplate CHALK_PATTERN = new ModelTemplate(Optional.of(Thaumory.id("block/template_chalk_pattern")),
             Optional.empty(), PATTERN);
+
+    private static final TextureSlot PIPE = TextureSlot.create("pipe");
+    private static final TextureSlot ARM = TextureSlot.create("arm");
+    private static final ModelTemplate PIPE_CENTER = new ModelTemplate(Optional.of(Thaumory.id("block/template_pipe_center")),
+            Optional.of("_center"), PIPE);
+    private static final ModelTemplate PIPE_ARM = new ModelTemplate(Optional.of(Thaumory.id("block/template_pipe_arm")),
+            Optional.of("_arm"), PIPE, ARM);
+    private static final ModelTemplate PIPE_ITEM = new ModelTemplate(Optional.of(Thaumory.id("block/template_pipe_item")),
+            Optional.of("_inventory"), PIPE, ARM);
 
     /** Cauldron shapes with Thaumory's own textures. Water is a plain texture, so it needs no tint. */
     @Override
@@ -92,10 +102,30 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                 new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(core, "_center")), generators.modelOutput);
         generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(core, BlockModelGenerators.plainVariant(coreModel)));
 
+        pipe(generators, ThaumoryBlocks.PIPE.get());
+
         for (var pattern : List.of(ThaumoryBlocks.CHALK_LINE, ThaumoryBlocks.AMPLIFYING_PATTERN, ThaumoryBlocks.EXTENDING_PATTERN,
                 ThaumoryBlocks.ECONOMIZING_PATTERN, ThaumoryBlocks.STABILIZING_PATTERN)) {
             chalkPattern(generators, pattern.get());
         }
+    }
+
+    /** A joint in the middle, and an arm towards each joined side (the arm model points north). */
+    private static void pipe(BlockModelGenerators generators, EssentiaPipeBlock pipe) {
+        TextureMapping textures = new TextureMapping()
+                .put(PIPE, TextureMapping.getBlockTexture(pipe))
+                .put(ARM, TextureMapping.getBlockTexture(pipe, "_arm"));
+        Identifier center = PIPE_CENTER.create(pipe, textures, generators.modelOutput);
+        MultiVariant arm = BlockModelGenerators.plainVariant(PIPE_ARM.create(pipe, textures, generators.modelOutput));
+        generators.blockStateOutput.accept(MultiPartGenerator.multiPart(pipe)
+                .with(BlockModelGenerators.plainVariant(center))
+                .with(new ConditionBuilder().term(BlockStateProperties.NORTH, true), arm)
+                .with(new ConditionBuilder().term(BlockStateProperties.EAST, true), arm.with(BlockModelGenerators.Y_ROT_90))
+                .with(new ConditionBuilder().term(BlockStateProperties.SOUTH, true), arm.with(BlockModelGenerators.Y_ROT_180))
+                .with(new ConditionBuilder().term(BlockStateProperties.WEST, true), arm.with(BlockModelGenerators.Y_ROT_270))
+                .with(new ConditionBuilder().term(BlockStateProperties.UP, true), arm.with(BlockModelGenerators.X_ROT_270))
+                .with(new ConditionBuilder().term(BlockStateProperties.DOWN, true), arm.with(BlockModelGenerators.X_ROT_90)));
+        generators.registerSimpleItemModel(pipe, PIPE_ITEM.create(pipe, textures, generators.modelOutput));
     }
 
     /** A mark in the middle, and an arm towards each joined neighbor (the arm texture points north). */

@@ -23,6 +23,8 @@ import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
+import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
+import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 /** Blocks and their block entities. Block items are registered in {@link one.nxeu.thaumory.item.ThaumoryItems}. */
@@ -37,6 +39,9 @@ public final class ThaumoryBlocks {
 
     public static final RegistrySupplier<JarBlock> JAR = register("jar", JarBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
+
+    public static final RegistrySupplier<EssentiaPipeBlock> PIPE = register("pipe", EssentiaPipeBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
 
     public static final RegistrySupplier<CoreBlock> CORE = register("core", CoreBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
@@ -62,6 +67,9 @@ public final class ThaumoryBlocks {
 
     public static final RegistrySupplier<BlockEntityType<CoreBlockEntity>> CORE_ENTITY = BLOCK_ENTITIES.register(
             "core", () -> new BlockEntityType<>(CoreBlockEntity::new, Set.of(CORE.get())));
+
+    public static final RegistrySupplier<BlockEntityType<PipeBlockEntity>> PIPE_ENTITY = BLOCK_ENTITIES.register(
+            "pipe", () -> new BlockEntityType<>(PipeBlockEntity::new, Set.of(PIPE.get())));
 
     private ThaumoryBlocks() {}
 

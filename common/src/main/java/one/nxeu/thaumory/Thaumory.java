@@ -23,6 +23,7 @@ import one.nxeu.thaumory.command.ThaumoryCommands;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.data.SettingsFileReloadListener;
 import one.nxeu.thaumory.entity.ThaumoryEntities;
+import one.nxeu.thaumory.essentia.EssentiaLookup;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxReadings;
 import one.nxeu.thaumory.flux.FluxSettings;
@@ -34,6 +35,8 @@ import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.item.TranscriptItem;
 import one.nxeu.thaumory.jar.JarSettings;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
+import one.nxeu.thaumory.pipe.PipeNetworks;
+import one.nxeu.thaumory.pipe.PipeSettings;
 import one.nxeu.thaumory.research.ResearchData;
 import one.nxeu.thaumory.research.ResearchProgress;
 import one.nxeu.thaumory.network.AspectSync;
@@ -46,6 +49,7 @@ public final class Thaumory {
 
     private static KnowledgeManager knowledge;
     private static FluxManager flux;
+    private static EssentiaLookup essentia;
 
     public static void init(ThaumoryPlatform platform) {
         ThaumoryAspects.register(ThaumoryApi.aspects());
@@ -54,6 +58,7 @@ public final class Thaumory {
         ThaumoryRecipes.registerAdapters(ThaumoryApi.recipeAdapters());
         ThaumoryCircleEffects.register(ThaumoryApi.circleEffects());
         flux = new FluxManager(platform.fluxStorage());
+        essentia = platform.essentiaLookup();
         ThaumoryApi.provideFlux(flux);
         knowledge = new KnowledgeManager(platform.knowledgeStorage());
         ThaumoryComponents.register();
@@ -75,6 +80,8 @@ public final class Thaumory {
                 id("thaumory/rune.json"), RuneSettings.CODEC, RuneSettings.DEFAULT, RuneItem::updateSettings), id("rune"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/circle.json"), CircleSettings.CODEC, CircleSettings.DEFAULT, CoreBlockEntity::updateSettings), id("circle"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
+                id("thaumory/pipe.json"), PipeSettings.CODEC, PipeSettings.DEFAULT, PipeNetworks::updateSettings), id("pipe"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new CircleDefinitionReloadListener(), id("circle_definitions"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new PollutionRules(), id("pollution"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.chapterListener(), id("research_chapters"));
@@ -89,6 +96,7 @@ public final class Thaumory {
         PlayerEvent.PLAYER_QUIT.register(research::forget);
         ItemScanner.register();
         TranscriptItem.register();
+        PipeNetworks.register();
         FluxReadings.register();
         new FluxWorldEffects(flux).register();
     }
@@ -96,6 +104,11 @@ public final class Thaumory {
     /** Flux in every chunk, with its settings. Available once {@link #init} has run. */
     public static FluxManager flux() {
         return flux;
+    }
+
+    /** Essentia storages in the world, other mods' included. Available once {@link #init} has run. */
+    public static EssentiaLookup essentia() {
+        return essentia;
     }
 
     /** Every player's knowledge. Available once {@link #init} has run. */

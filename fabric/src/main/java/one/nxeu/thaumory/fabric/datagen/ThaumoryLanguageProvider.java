@@ -68,6 +68,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.rune.aspect", "Aspect: %s");
             builder.add("message.thaumory.rune.not_enough", "A rune takes %s Essentia of one aspect");
             builder.add(ThaumoryBlocks.JAR.get(), "Jar");
+            builder.add(ThaumoryBlocks.PIPE.get(), "Essentia Pipe");
             builder.add(ThaumoryItems.LABEL.get(), "Label");
             builder.add(ThaumoryItems.TRANSCRIPT.get(), "Transcript");
             builder.add("item.thaumory.transcript.aspect", "Aspect Transcript");
@@ -228,6 +229,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.rune.aspect", "アスペクト: %s");
             builder.add("message.thaumory.rune.not_enough", "ルーンには 1 種類のアスペクトの Essentia が %s 必要");
             builder.add(ThaumoryBlocks.JAR.get(), "瓶");
+            builder.add(ThaumoryBlocks.PIPE.get(), "Essentia のパイプ");
             builder.add(ThaumoryItems.LABEL.get(), "ラベル");
             builder.add(ThaumoryItems.TRANSCRIPT.get(), "知識の写し");
             builder.add("item.thaumory.transcript.aspect", "アスペクトの写し");
