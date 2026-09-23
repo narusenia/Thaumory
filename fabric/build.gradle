@@ -58,6 +58,10 @@ assemble.dependsOn shadowJar
 
 loom {
     runs {
+        // Always "Dev" (an operator on the dev server), joining the local :fabric:runServer on launch.
+        client {
+            programArgs '--username', 'Dev', '--quickPlayMultiplayer', 'localhost'
+        }
         // ./gradlew :fabric:runDatagen writes into common so every loader ships the same data.
         datagen {
             // Client, so model providers can load client classes.
