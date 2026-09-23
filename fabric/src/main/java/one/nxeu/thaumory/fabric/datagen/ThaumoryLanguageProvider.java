@@ -38,6 +38,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.aspects", "Aspects:");
             builder.add(AspectText.UNKNOWN_KEY, "?");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "Arcane Loupe");
+            builder.add(ThaumoryItems.WAND.get(), "Wand");
+            builder.add("message.thaumory.wand.started", "The circle comes to life");
+            builder.add("message.thaumory.wand.stopped", "The circle falls still");
+            builder.add("message.thaumory.wand.triggered", "The circle goes off");
+            builder.add("message.thaumory.wand.no_rings", "No ring holds around the Core");
+            builder.add("message.thaumory.wand.no_response", "The circle does not answer");
+            builder.add("message.thaumory.wand.no_essentia", "The Core lacks Essentia");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "Arcane Codex");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "Blank Rune");
@@ -117,6 +124,13 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.aspects", "アスペクト:");
             builder.add(AspectText.UNKNOWN_KEY, "？");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "魔術のルーペ");
+            builder.add(ThaumoryItems.WAND.get(), "杖");
+            builder.add("message.thaumory.wand.started", "陣が動き出した");
+            builder.add("message.thaumory.wand.stopped", "陣が静まった");
+            builder.add("message.thaumory.wand.triggered", "陣が発動した");
+            builder.add("message.thaumory.wand.no_rings", "Core のまわりにリングが成立していない");
+            builder.add("message.thaumory.wand.no_response", "陣は応えなかった");
+            builder.add("message.thaumory.wand.no_essentia", "Core の Essentia が足りない");
             builder.add("itemGroup.thaumory", "Thaumory");
             builder.add(ThaumoryItems.ARCANE_CODEX.get(), "魔術の書");
             builder.add(ThaumoryItems.BLANK_RUNE.get(), "空のルーン");

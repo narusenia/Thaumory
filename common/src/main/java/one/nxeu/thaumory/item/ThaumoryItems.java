@@ -24,6 +24,8 @@ public final class ThaumoryItems {
 
     public static final RegistrySupplier<ArcaneLoupeItem> ARCANE_LOUPE =
             register("arcane_loupe", ArcaneLoupeItem::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<WandItem> WAND =
+            register("wand", WandItem::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<ArcaneCodexItem> ARCANE_CODEX =
             register("arcane_codex", ArcaneCodexItem::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<Item> BLANK_RUNE = register("blank_rune", Item::new, new Item.Properties());
@@ -49,7 +51,7 @@ public final class ThaumoryItems {
 
     /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, BLANK_RUNE, RUNE, CORE,
+            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, BLANK_RUNE, RUNE, CORE,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK);
 
     public static final RegistrySupplier<CreativeModeTab> TAB = TABS.register("thaumory", () -> CreativeTabRegistry.create(builder -> builder
