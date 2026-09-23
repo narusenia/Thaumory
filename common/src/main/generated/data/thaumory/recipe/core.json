@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "R": "thaumory:blank_rune",
+    "S": "minecraft:stone_bricks"
+  },
+  "pattern": [
+    "SGS",
+    "GRG",
+    "SGS"
+  ],
+  "result": {
+    "id": "thaumory:core"
+  }
+}

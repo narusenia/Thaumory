@@ -41,11 +41,15 @@ public final class ThaumoryItems {
             register("crucible", properties -> new BlockItem(ThaumoryBlocks.CRUCIBLE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
+    public static final RegistrySupplier<BlockItem> CORE =
+            register("core", properties -> new BlockItem(ThaumoryBlocks.CORE.get(), properties),
+                    new Item.Properties().useBlockDescriptionPrefix());
+
     private ThaumoryItems() {}
 
     /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, BLANK_RUNE, RUNE,
+            ARCANE_LOUPE, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, BLANK_RUNE, RUNE, CORE,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK);
 
     public static final RegistrySupplier<CreativeModeTab> TAB = TABS.register("thaumory", () -> CreativeTabRegistry.create(builder -> builder

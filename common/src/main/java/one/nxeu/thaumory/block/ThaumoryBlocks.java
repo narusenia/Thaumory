@@ -16,6 +16,8 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
+import one.nxeu.thaumory.block.core.CoreBlock;
+import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlock;
@@ -35,6 +37,10 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<JarBlock> JAR = register("jar", JarBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
 
+    public static final RegistrySupplier<CoreBlock> CORE = register("core", CoreBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
+                    .strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
+
     public static final RegistrySupplier<ChalkPatternBlock> CHALK_LINE = pattern("chalk_line", ThaumoryItems.CHALK);
     public static final RegistrySupplier<ChalkPatternBlock> AMPLIFYING_PATTERN = pattern("amplifying_pattern", ThaumoryItems.AMPLIFYING_CHALK);
     public static final RegistrySupplier<ChalkPatternBlock> EXTENDING_PATTERN = pattern("extending_pattern", ThaumoryItems.EXTENDING_CHALK);
@@ -46,6 +52,9 @@ public final class ThaumoryBlocks {
 
     public static final RegistrySupplier<BlockEntityType<CrucibleBlockEntity>> CRUCIBLE_ENTITY = BLOCK_ENTITIES.register(
             "crucible", () -> new BlockEntityType<>(CrucibleBlockEntity::new, Set.of(CRUCIBLE.get())));
+
+    public static final RegistrySupplier<BlockEntityType<CoreBlockEntity>> CORE_ENTITY = BLOCK_ENTITIES.register(
+            "core", () -> new BlockEntityType<>(CoreBlockEntity::new, Set.of(CORE.get())));
 
     private ThaumoryBlocks() {}
 

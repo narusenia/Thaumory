@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_blank_rune": {
+      "conditions": {
+        "items": [
+          {
+            "items": "thaumory:blank_rune"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "thaumory:core"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_blank_rune"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "thaumory:core"
+    ]
+  }
+}

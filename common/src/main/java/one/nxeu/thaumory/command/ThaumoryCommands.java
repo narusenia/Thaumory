@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -29,6 +30,8 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
+import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
@@ -59,6 +62,8 @@ public final class ThaumoryCommands {
                             flux.set(c.getSource().getLevel(), chunk, DoubleArgumentType.getDouble(c, "amount"));
                             return showFlux(c, flux, chunk);
                         }))))
+                .then(Commands.literal("circle").then(Commands.argument("pos", BlockPosArgument.blockPos())
+                        .executes(ThaumoryCommands::showCircle)))
                 .then(Commands.literal("knowledge")
                         .then(Commands.literal("show").then(Commands.argument("player", EntityArgument.player())
                                 .executes(ThaumoryCommands::showKnowledge)))
@@ -148,6 +153,27 @@ public final class ThaumoryCommands {
                 .executes(c -> command.run(c, ChunkPos.containing(BlockPos.containing(c.getSource().getPosition()))))
                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
                         .executes(c -> command.run(c, ChunkPos.containing(BlockPosArgument.getBlockPos(c, "pos")))));
+    }
+
+    /** Rescans the Core at {@code pos} now and prints what it sees. */
+    private static int showCircle(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "pos");
+        if (!(context.getSource().getLevel().getBlockEntity(pos) instanceof CoreBlockEntity core)) {
+            context.getSource().sendFailure(Component.literal("No Core at " + pos.toShortString()));
+            return 0;
+        }
+        core.rescan();
+        CircleScan scan = core.scan();
+        String nodes = scan.nodes().stream()
+                .map(node -> "r" + node.ring() + " " + node.side().name().toLowerCase(Locale.ROOT) + " " + node.pattern())
+                .collect(Collectors.joining(", "));
+        String ignored = scan.ignoredModifiers().stream()
+                .map(offset -> "(" + offset.dx() + ", " + offset.dz() + ")")
+                .collect(Collectors.joining(", "));
+        context.getSource().sendSuccess(() -> Component.literal("Core at " + pos.toShortString() + ": runes " + core.runes()
+                + ", rings " + scan.rings() + ", nodes [" + nodes + "], ignored modifiers [" + ignored + "], instability "
+                + core.instability() + " (threshold " + CoreBlockEntity.settings().instabilityThreshold() + ")"), false);
+        return scan.rings();
     }
 
     private static int showFlux(CommandContext<CommandSourceStack> context, FluxManager flux, ChunkPos chunk) {

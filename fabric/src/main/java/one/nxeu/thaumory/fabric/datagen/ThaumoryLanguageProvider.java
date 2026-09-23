@@ -53,6 +53,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "Extending Chalk");
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "Economizing Chalk");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "Stabilizing Chalk");
+            builder.add(ThaumoryBlocks.CORE.get(), "Circle Core");
+            builder.add("message.thaumory.core.full", "All three rune slots are full");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
             builder.add(ThaumoryBlocks.EXTENDING_PATTERN.get(), "Extending Pattern");
@@ -110,6 +112,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "延長のチョーク");
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "節約のチョーク");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "安定のチョーク");
+            builder.add(ThaumoryBlocks.CORE.get(), "陣の核");
+            builder.add("message.thaumory.core.full", "ルーンのスロットは 3 つとも埋まっている");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
             builder.add(ThaumoryBlocks.EXTENDING_PATTERN.get(), "延長の紋様");

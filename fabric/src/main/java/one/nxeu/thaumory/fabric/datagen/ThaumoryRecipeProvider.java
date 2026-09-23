@@ -70,6 +70,15 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .define('G', Items.GLASS)
                         .unlockedBy(getHasName(Items.GLASS), has(Items.GLASS))
                         .save(output);
+                shaped(RecipeCategory.MISC, ThaumoryItems.CORE.get())
+                        .pattern("SGS")
+                        .pattern("GRG")
+                        .pattern("SGS")
+                        .define('S', Items.STONE_BRICKS)
+                        .define('G', Items.GOLD_INGOT)
+                        .define('R', ThaumoryItems.BLANK_RUNE.get())
+                        .unlockedBy(getHasName(ThaumoryItems.BLANK_RUNE.get()), has(ThaumoryItems.BLANK_RUNE.get()))
+                        .save(output);
                 shapeless(RecipeCategory.MISC, ThaumoryItems.LABEL.get(), 4)
                         .requires(Items.PAPER)
                         .requires(Items.INK_SAC)

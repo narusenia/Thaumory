@@ -25,7 +25,7 @@ final class ThaumoryBlockTagProvider extends FabricTagsProvider.BlockTagsProvide
         for (Block block : List.of(Blocks.FIRE, Blocks.SOUL_FIRE, Blocks.LAVA, Blocks.MAGMA_BLOCK, Blocks.CAMPFIRE, Blocks.SOUL_CAMPFIRE)) {
             heatSources.add(key(block));
         }
-        builder(BlockTags.MINEABLE_WITH_PICKAXE).add(key(ThaumoryBlocks.CRUCIBLE.get()));
+        builder(BlockTags.MINEABLE_WITH_PICKAXE).add(key(ThaumoryBlocks.CRUCIBLE.get())).add(key(ThaumoryBlocks.CORE.get()));
     }
 
     private static ResourceKey<Block> key(Block block) {

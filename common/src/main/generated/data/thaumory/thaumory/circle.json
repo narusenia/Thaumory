@@ -1,0 +1,12 @@
+{
+  "instability_threshold": 3,
+  "patterns": {
+    "thaumory:amplifying_pattern": {
+      "instability": 2
+    },
+    "thaumory:stabilizing_pattern": {
+      "instability": -3
+    }
+  },
+  "scan_interval": 40
+}

@@ -1,6 +1,7 @@
 package one.nxeu.thaumory.item;
 
 import java.util.Optional;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import one.nxeu.thaumory.api.ThaumoryApi;
@@ -28,8 +29,13 @@ public final class RuneItem extends Item {
     }
 
     public static ItemStack of(Aspect aspect) {
+        return of(aspect.id());
+    }
+
+    /** A rune by aspect id, kept even when no such aspect is registered any more. */
+    public static ItemStack of(Identifier aspect) {
         ItemStack stack = new ItemStack(ThaumoryItems.RUNE.get());
-        stack.set(ThaumoryComponents.RUNE_ASPECT.get(), aspect.id());
+        stack.set(ThaumoryComponents.RUNE_ASPECT.get(), aspect);
         return stack;
     }
 
