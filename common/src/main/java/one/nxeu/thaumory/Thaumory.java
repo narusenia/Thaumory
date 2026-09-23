@@ -1,9 +1,12 @@
 package one.nxeu.thaumory;
 
+import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.aspect.ThaumoryAspects;
+
 public final class Thaumory {
-    public static final String MOD_ID = "thaumory";
+    public static final String MOD_ID = ThaumoryApi.MOD_ID;
 
     public static void init() {
-        // Write common init code here.
+        ThaumoryAspects.register(ThaumoryApi.aspects());
     }
 }
