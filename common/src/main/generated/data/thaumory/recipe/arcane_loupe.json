@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "N": "minecraft:gold_nugget",
-    "P": "minecraft:glass_pane",
+    "P": "thaumory:arcane_crystal_shard",
     "S": "minecraft:stick"
   },
   "pattern": [

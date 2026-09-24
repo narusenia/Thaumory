@@ -77,6 +77,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockModelGenerators generators) {
         generators.createTrivialCube(ThaumoryBlocks.POLLUTED_SOIL.get());
+        generators.createAmethystCluster(ThaumoryBlocks.ARCANE_CRYSTAL.get());
+        generators.registerSimpleFlatItemModel(ThaumoryBlocks.ARCANE_CRYSTAL.get());
         generators.createTrivialCube(ThaumoryBlocks.POLLUTED_STONE.get());
         CrucibleBlock crucible = ThaumoryBlocks.CRUCIBLE.get();
         TextureMapping textures = new TextureMapping()
@@ -227,6 +229,7 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerators generators) {
         generators.generateFlatItem(ThaumoryItems.ARCANE_LOUPE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        generators.generateFlatItem(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.WAND.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CODEX.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_RUNE.get(), ModelTemplates.FLAT_ITEM);

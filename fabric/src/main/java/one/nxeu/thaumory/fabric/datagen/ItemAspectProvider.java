@@ -24,6 +24,8 @@ final class ItemAspectProvider extends FabricCodecDataProvider<ItemAspectFile> {
         output.accept(Thaumory.id("vanilla"), VanillaItemAspects.build());
         // A rune's aspect lives in a component, so the item itself has none (requirements §4.2).
         output.accept(Thaumory.id("thaumory"), new ItemAspectFileBuilder().none(ThaumoryItems.RUNE.get())
+                .item(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), new AspectStack(ThaumoryAspects.ARCANUM, 4), new AspectStack(ThaumoryAspects.LUX, 1))
+                .item(ThaumoryItems.ARCANE_CRYSTAL.get(), new AspectStack(ThaumoryAspects.ARCANUM, 8), new AspectStack(ThaumoryAspects.LUX, 2))
                 .item(ThaumoryItems.POLLUTED_SOIL.get(), new AspectStack(ThaumoryAspects.TERRA, 4), new AspectStack(ThaumoryAspects.VENENUM, 2))
                 .item(ThaumoryItems.POLLUTED_STONE.get(), new AspectStack(ThaumoryAspects.TERRA, 4), new AspectStack(ThaumoryAspects.CHAOS, 2))
                 .build());

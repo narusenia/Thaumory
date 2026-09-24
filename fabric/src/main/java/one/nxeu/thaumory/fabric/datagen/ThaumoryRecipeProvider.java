@@ -45,14 +45,14 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
         return new RecipeProvider(recipes, advancements) {
             @Override
             public void buildRecipes() {
-                // Lens in a gold rim on a stick handle.
+                // A crystal lens in a gold rim on a stick handle.
                 shaped(RecipeCategory.TOOLS, ThaumoryItems.ARCANE_LOUPE.get())
                         .pattern("NP")
                         .pattern("SN")
-                        .define('P', Items.GLASS_PANE)
+                        .define('P', ThaumoryItems.ARCANE_CRYSTAL_SHARD.get())
                         .define('N', Items.GOLD_NUGGET)
                         .define('S', Items.STICK)
-                        .unlockedBy(getHasName(Items.GLASS_PANE), has(Items.GLASS_PANE))
+                        .unlockedBy(getHasName(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get()), has(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get()))
                         .save(output);
                 shapeless(RecipeCategory.MISC, ThaumoryItems.ARCANE_CODEX.get())
                         .requires(Items.BOOK)

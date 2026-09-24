@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "thaumory:block/arcane_crystal"
+  }
+}

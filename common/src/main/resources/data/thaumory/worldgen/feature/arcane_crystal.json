@@ -1,0 +1,12 @@
+{
+  "type": "thaumory:crystal_cluster",
+  "block": "thaumory:arcane_crystal",
+  "can_be_placed_on": "#minecraft:base_stone_overworld",
+  "search_range": 8,
+  "size": {
+    "type": "minecraft:uniform",
+    "min_inclusive": 3,
+    "max_inclusive": 6
+  },
+  "spread": 3
+}

@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -56,6 +57,12 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<CircleCoreBlock> CIRCLE_CORE = register("circle_core", CircleCoreBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
                     .strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
+
+    /** Grows on the stone of caves (requirements §17.3); drops shards like an amethyst cluster. */
+    public static final RegistrySupplier<AmethystClusterBlock> ARCANE_CRYSTAL = register("arcane_crystal",
+            properties -> new AmethystClusterBlock(7.0f, 10.0f, properties),
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).forceSolidOn().noOcclusion()
+                    .sound(SoundType.AMETHYST_CLUSTER).strength(1.5f).lightLevel(state -> 6).pushReaction(PushReaction.POPPED));
 
     public static final RegistrySupplier<ChalkPatternBlock> CHALK_LINE = pattern("chalk_line", ThaumoryItems.CHALK);
     public static final RegistrySupplier<ChalkPatternBlock> AMPLIFYING_PATTERN = pattern("amplifying_pattern", ThaumoryItems.AMPLIFYING_CHALK);

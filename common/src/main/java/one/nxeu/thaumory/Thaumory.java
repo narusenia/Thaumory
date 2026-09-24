@@ -48,6 +48,7 @@ import one.nxeu.thaumory.research.ResearchProgress;
 import one.nxeu.thaumory.rune.RuneSettings;
 import one.nxeu.thaumory.scan.ItemScanner;
 import one.nxeu.thaumory.scan.ScanSettings;
+import one.nxeu.thaumory.world.ThaumoryFeatures;
 
 public final class Thaumory {
     public static final String MOD_ID = ThaumoryApi.MOD_ID;
@@ -71,6 +72,7 @@ public final class Thaumory {
         ThaumoryBlocks.register();
         ThaumoryItems.register();
         ThaumoryEntities.register();
+        ThaumoryFeatures.register();
         ThaumoryRecipes.register();
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));

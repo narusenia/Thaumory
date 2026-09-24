@@ -1,0 +1,57 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": "minecraft:tool/can_silk_touch",
+              "name": "thaumory:arcane_crystal"
+            },
+            {
+              "type": "minecraft:alternatives",
+              "children": [
+                {
+                  "type": "minecraft:item",
+                  "condition": {
+                    "type": "minecraft:match_tool",
+                    "predicate": {
+                      "items": "#minecraft:cluster_max_harvestables"
+                    }
+                  },
+                  "modifier": [
+                    {
+                      "type": "minecraft:set_count",
+                      "count": {
+                        "type": "minecraft:uniform",
+                        "max": 4,
+                        "min": 2
+                      }
+                    },
+                    {
+                      "type": "minecraft:apply_bonus",
+                      "enchantment": "minecraft:fortune",
+                      "formula": "minecraft:ore_drops"
+                    }
+                  ],
+                  "name": "thaumory:arcane_crystal_shard"
+                },
+                {
+                  "type": "minecraft:item",
+                  "modifier": {
+                    "type": "minecraft:explosion_decay"
+                  },
+                  "name": "thaumory:arcane_crystal_shard"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

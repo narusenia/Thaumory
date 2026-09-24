@@ -32,7 +32,7 @@ final class ThaumoryBlockTagProvider extends FabricTagsProvider.BlockTagsProvide
             patterns.add(key(pattern.get()));
         }
         builder(BlockTags.MINEABLE_WITH_PICKAXE).add(key(ThaumoryBlocks.CRUCIBLE.get())).add(key(ThaumoryBlocks.CIRCLE_CORE.get()))
-                .add(key(ThaumoryBlocks.POLLUTED_STONE.get()));
+                .add(key(ThaumoryBlocks.POLLUTED_STONE.get())).add(key(ThaumoryBlocks.ARCANE_CRYSTAL.get()));
         builder(BlockTags.MINEABLE_WITH_SHOVEL).add(key(ThaumoryBlocks.POLLUTED_SOIL.get()));
     }
 

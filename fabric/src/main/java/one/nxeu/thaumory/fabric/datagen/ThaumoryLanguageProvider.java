@@ -137,6 +137,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "Stabilizing Chalk");
             builder.add(ThaumoryBlocks.CIRCLE_CORE.get(), "Circle Core");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "Polluted Soil");
+            builder.add(ThaumoryBlocks.ARCANE_CRYSTAL.get(), "Arcane Crystal");
+            builder.add(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), "Arcane Crystal Shard");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "Polluted Stone");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "Void Remnant");
             builder.add("message.thaumory.core.full", "All three rune slots are full");
@@ -356,6 +358,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "安定のチョーク");
             builder.add(ThaumoryBlocks.CIRCLE_CORE.get(), "陣の核");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "汚染された土");
+            builder.add(ThaumoryBlocks.ARCANE_CRYSTAL.get(), "魔力の結晶");
+            builder.add(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), "結晶のかけら");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "汚染された石");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "虚空の残滓");
             builder.add("message.thaumory.core.full", "ルーンのスロットは 3 つとも埋まっている");

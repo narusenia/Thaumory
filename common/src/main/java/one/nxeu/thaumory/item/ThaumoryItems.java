@@ -84,6 +84,11 @@ public final class ThaumoryItems {
             register("circle_core", properties -> new BlockItem(ThaumoryBlocks.CIRCLE_CORE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
+    public static final RegistrySupplier<BlockItem> ARCANE_CRYSTAL =
+            register("arcane_crystal", properties -> new BlockItem(ThaumoryBlocks.ARCANE_CRYSTAL.get(), properties),
+                    new Item.Properties().useBlockDescriptionPrefix());
+    public static final RegistrySupplier<Item> ARCANE_CRYSTAL_SHARD = register("arcane_crystal_shard", Item::new, new Item.Properties());
+
     public static final RegistrySupplier<BlockItem> POLLUTED_SOIL =
             register("polluted_soil", properties -> new BlockItem(ThaumoryBlocks.POLLUTED_SOIL.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
@@ -103,7 +108,7 @@ public final class ThaumoryItems {
      * the empty jar is followed by a full one for each aspect.
      */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
+            ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
             Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();
