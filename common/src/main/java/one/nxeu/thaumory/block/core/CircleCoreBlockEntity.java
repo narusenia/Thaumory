@@ -184,7 +184,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
      */
     public static void serverTick(Level level, BlockPos pos, BlockState state, CircleCoreBlockEntity core) {
         long time = level.getGameTime();
-        if (Math.floorMod(time + pos.hashCode(), settings.scanInterval()) == 0) {
+        // The scan is not saved, so a Core just loaded scans at once: a running circle would take
+        // the missing rings for a broken circle and stop.
+        if (core.scan == UNSCANNED || Math.floorMod(time + pos.hashCode(), settings.scanInterval()) == 0) {
             core.rescan();
         }
         if (core.running.isPresent() && level instanceof ServerLevel server) {

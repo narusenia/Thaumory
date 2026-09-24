@@ -2,6 +2,8 @@ package one.nxeu.thaumory.fabric.gametest;
 
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityTypes;
@@ -12,6 +14,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.phys.Vec3;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -211,5 +214,21 @@ public class CircleEffectGameTests {
             helper.assertTrue(zombie.position().distanceTo(coreCentre(helper)) > before + 1.5, "zombie was not pushed away");
             helper.assertTrue(pig.position().distanceTo(pigBefore) < 0.5, "the pig was pushed too");
         });
+    }
+
+    @GameTest(maxTicks = 20)
+    public void aRunningCircleKeepsRunningWhenItsCoreLoadsAgain(GameTestHelper helper) {
+        Circles.floor(helper);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
+        start(helper, core);
+        // What a chunk load does: a fresh Core read back from what was saved, ticked for the first time.
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(CORE);
+        CompoundTag saved = core.saveWithFullMetadata(level.registryAccess());
+        CircleCoreBlockEntity loaded = (CircleCoreBlockEntity) BlockEntity.loadStatic(pos, level.getBlockState(pos), saved, level.registryAccess());
+        loaded.setLevel(level);
+        CircleCoreBlockEntity.serverTick(level, pos, level.getBlockState(pos), loaded);
+        helper.assertTrue(loaded.isRunning(), "the circle stopped after loading");
+        helper.succeed();
     }
 }
