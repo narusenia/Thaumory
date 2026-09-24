@@ -57,7 +57,7 @@ public class InfusionGameTests {
     @GameTest
     public void infusesTheItemAndPaysForIt(GameTestHelper helper) {
         CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
-        pedestal(helper, core, new ItemStack(Items.IRON_CHESTPLATE));
+        pedestal(helper, core, new ItemStack(ThaumoryItems.ARCANE_IRON.chestplate().get()));
         failureChance(0);
         try {
             helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "result");
@@ -75,7 +75,7 @@ public class InfusionGameTests {
         CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
         helper.setBlock(CORE.east(), ThaumoryBlocks.AMPLIFYING_PATTERN.get());
         core.rescan();
-        pedestal(helper, core, new ItemStack(Items.IRON_CHESTPLATE));
+        pedestal(helper, core, new ItemStack(ThaumoryItems.ARCANE_IRON.chestplate().get()));
         failureChance(0);
         try {
             helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "result");
@@ -91,7 +91,7 @@ public class InfusionGameTests {
     @GameTest
     public void slotThreeGoesIntoTheItem(GameTestHelper helper) {
         CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ARCANUM, ThaumoryAspects.AER, ThaumoryAspects.TERRA);
-        pedestal(helper, core, new ItemStack(Items.IRON_SWORD));
+        pedestal(helper, core, new ItemStack(ThaumoryItems.ARCANE_IRON.sword().get()));
         failureChance(0);
         try {
             helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "result");
@@ -105,11 +105,11 @@ public class InfusionGameTests {
     }
 
     @GameTest
-    public void stackableItemsAndMissingEssentiaAreRefused(GameTestHelper helper) {
+    public void itemsWithoutCapacityAndMissingEssentiaAreRefused(GameTestHelper helper) {
         CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
-        pedestal(helper, core, new ItemStack(Items.STONE));
-        helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.STACKABLE, "stone");
-        core.setPedestalItem(new ItemStack(Items.IRON_CHESTPLATE));
+        pedestal(helper, core, new ItemStack(Items.IRON_CHESTPLATE));
+        helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.NO_CAPACITY, "iron chestplate");
+        core.setPedestalItem(new ItemStack(ThaumoryItems.ARCANE_IRON.chestplate().get()));
         core.setEssentia(AspectList.builder().add(ThaumoryAspects.VITA, 31).add(ThaumoryAspects.ORDO, 64).build());
         helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.NO_ESSENTIA, "short of Vita");
         helper.assertValueEqual(core.essentia().amount(ThaumoryAspects.VITA), 31, "Vita left");
@@ -117,11 +117,53 @@ public class InfusionGameTests {
         helper.succeed();
     }
 
+    /** Arcane Iron holds 3: healing (2) and teleport (3) do not fit together, and nothing is paid. */
+    @GameTest
+    public void anEffectOverTheCapacityIsRefused(GameTestHelper helper) {
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ARCANUM, ThaumoryAspects.AER, ThaumoryAspects.TERRA);
+        ItemStack sword = new ItemStack(ThaumoryItems.ARCANE_IRON.sword().get());
+        Infusion healing = new Infusion(Thaumory.id("healing"), 1, Optional.empty(), 2);
+        sword.set(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY.with(healing));
+        pedestal(helper, core, sword);
+        AspectList before = core.essentia();
+        failureChance(0);
+        try {
+            CircleCoreBlockEntity.InfuseOutcome outcome = core.infuse(Optional.empty());
+            helper.assertValueEqual(outcome.result(), InfuseResult.NO_ROOM, "result");
+            helper.assertValueEqual(outcome.used(), 2, "used");
+            helper.assertValueEqual(outcome.capacity(), 3, "capacity");
+        } finally {
+            restore();
+        }
+        helper.assertValueEqual(infusions(core), List.of(healing), "infusions");
+        helper.assertValueEqual(core.essentia(), before, "Essentia");
+        helper.succeed();
+    }
+
+    /** Burning the same effect in again only needs room for the difference. */
+    @GameTest
+    public void reinfusingAnEffectReusesItsShare(GameTestHelper helper) {
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ARCANUM, ThaumoryAspects.AER, ThaumoryAspects.TERRA);
+        ItemStack sword = new ItemStack(ThaumoryItems.ARCANE_IRON.sword().get());
+        sword.set(ThaumoryComponents.INFUSIONS.get(),
+                Infusions.EMPTY.with(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.AQUA.id()), 3)));
+        pedestal(helper, core, sword);
+        failureChance(0);
+        try {
+            helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "result");
+        } finally {
+            restore();
+        }
+        helper.assertValueEqual(infusions(core),
+                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3)), "infusions");
+        helper.succeed();
+    }
+
     /** Kept apart from other tests, since it checks the Flux of its whole chunk. */
     @GameTest(padding = 24)
     public void aFailureLosesTheEssentiaToFlux(GameTestHelper helper) {
         CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
-        pedestal(helper, core, new ItemStack(Items.IRON_CHESTPLATE));
+        pedestal(helper, core, new ItemStack(ThaumoryItems.ARCANE_IRON.chestplate().get()));
         ChunkPos chunk = ChunkPos.containing(helper.absolutePos(CORE));
         Thaumory.flux().set(helper.getLevel(), chunk, 0);
         failureChance(1);
@@ -131,7 +173,7 @@ public class InfusionGameTests {
             restore();
         }
         helper.assertValueEqual(infusions(core), List.of(), "infusions");
-        helper.assertValueEqual(core.pedestalItem().getItem(), Items.IRON_CHESTPLATE, "item");
+        helper.assertValueEqual(core.pedestalItem().getItem(), ThaumoryItems.ARCANE_IRON.chestplate().get(), "item");
         helper.assertValueEqual(core.essentia(), AspectList.builder().add(ThaumoryAspects.VITA, 32).add(ThaumoryAspects.ORDO, 32).build(),
                 "Essentia left");
         helper.assertValueInBetween(31.9, Thaumory.flux().get(helper.getLevel(), chunk), 32.0, "Flux");
@@ -162,8 +204,7 @@ public class InfusionGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         helper.useBlock(CORE, player);
         helper.assertTrue(core.pedestalItem().isEmpty(), "an empty hand did not take the item");
-        // The wand's click infused the sword, so look for any sword.
-        helper.assertTrue(player.getInventory().hasAnyMatching(stack -> stack.is(Items.IRON_SWORD)), "the sword did not come to the hand");
+        helper.assertTrue(player.getInventory().contains(new ItemStack(Items.IRON_SWORD)), "the sword did not come to the hand");
         player.getInventory().clearContent();
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
         helper.useBlock(CORE, player);

@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "capacity": 3,
+      "target": "#thaumory:arcane_iron_equipment"
+    },
+    {
+      "capacity": 5,
+      "target": "#thaumory:aether_silver_equipment"
+    }
+  ]
+}

@@ -63,6 +63,7 @@ import one.nxeu.thaumory.circle.InfusionSettings;
 import one.nxeu.thaumory.flux.FluxSettings;
 import one.nxeu.thaumory.flux.FluxWorldEffects;
 import one.nxeu.thaumory.infusion.Infusion;
+import one.nxeu.thaumory.infusion.InfusionCapacities;
 import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
@@ -119,12 +120,16 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     /** {@code OVERLOADED}: it paid, but Flux at overload made it misfire and explode. */
     public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, TRIGGERED_ONLY, NO_ESSENTIA, OVERLOADED }
 
-    public enum InfuseResult { INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, STACKABLE, NO_ESSENTIA }
+    public enum InfuseResult { INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, NO_CAPACITY, NO_ROOM, NO_ESSENTIA }
 
-    /** @param infusion what went into the item, when it did */
-    public record InfuseOutcome(InfuseResult result, Optional<Infusion> infusion) {
+    /**
+     * @param infusion what went into the item when it did, or what would have when there was no room
+     * @param used the item's capacity in use, not counting an effect being burnt in again
+     * @param capacity the item's capacity
+     */
+    public record InfuseOutcome(InfuseResult result, Optional<Infusion> infusion, int used, int capacity) {
         static InfuseOutcome of(InfuseResult result) {
-            return new InfuseOutcome(result, Optional.empty());
+            return new InfuseOutcome(result, Optional.empty(), 0, 0);
         }
     }
 
@@ -603,32 +608,36 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return InfuseOutcome.of(misfire(server, activator) ? InfuseResult.MISFIRED : InfuseResult.UNDEFINED);
         }
         ItemStack stack = pedestalItem;
-        if (stack.isStackable()) {
-            return InfuseOutcome.of(InfuseResult.STACKABLE);
+        int capacity = InfusionCapacities.of(stack.getItem());
+        if (capacity == 0) {
+            return InfuseOutcome.of(InfuseResult.NO_CAPACITY);
         }
         CircleDefinitions.Definition definition = circle.get().definition();
         CircleSettings.Multipliers multipliers = circle.get().multipliers();
+        InfusionSettings infusion = settings.infusion();
+        Infusion burnt = new Infusion(definition.effect(), InfusionRules.level(multipliers.strength(), infusion),
+                circle.get().parameter().map(Aspect::id), definition.capacity());
+        Infusions infusions = stack.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY);
+        if (!infusions.fits(burnt, capacity)) {
+            return new InfuseOutcome(InfuseResult.NO_ROOM, Optional.of(burnt), infusions.usedBesides(burnt.effect()), capacity);
+        }
         AspectList cost = InfusionRules.cost(definition.infusionCost(), multipliers.cost(), definition.first(), definition.second(),
                 circle.get().parameter());
         if (!essentia.containsAll(cost)) {
             return InfuseOutcome.of(InfuseResult.NO_ESSENTIA);
         }
         setEssentia(essentia.minus(cost));
-        InfusionSettings infusion = settings.infusion();
         if (server.getRandom().nextDouble() < InfusionRules.failureChance(instability, settings.instabilityThreshold(), infusion)) {
             releaseFlux(server, InfusionRules.failureFlux(cost, infusion));
             return InfuseOutcome.of(InfuseResult.FAILED);
         }
-        Infusion burnt = new Infusion(definition.effect(), InfusionRules.level(multipliers.strength(), infusion),
-                circle.get().parameter().map(Aspect::id), definition.capacity());
         ItemStack infused = stack.copy();
-        infused.set(ThaumoryComponents.INFUSIONS.get(),
-                infused.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).with(burnt));
+        infused.set(ThaumoryComponents.INFUSIONS.get(), infusions.with(burnt));
         setPedestalItem(infused);
         server.sendParticles(ParticleTypes.ENCHANT, worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,
                 40, 0.3, 0.3, 0.3, 0.6);
         recordSuccess(activator, definition.effect());
-        return new InfuseOutcome(InfuseResult.INFUSED, Optional.of(burnt));
+        return new InfuseOutcome(InfuseResult.INFUSED, Optional.of(burnt), infusions.usedBesides(burnt.effect()) + burnt.capacity(), capacity);
     }
 
     private void runSustained(ServerLevel server, long time) {

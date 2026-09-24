@@ -89,7 +89,9 @@ public final class WandItem extends Item {
         MutableComponent message = switch (outcome.result()) {
             case INFUSED -> Component.translatable("message.thaumory.infusion.infused", InfusionText.describe(outcome.infusion().orElseThrow()));
             case FAILED -> ThaumoryText.withEffect(Component.translatable("message.thaumory.infusion.failed"), TextEffect.SHAKE);
-            case STACKABLE -> Component.translatable("message.thaumory.infusion.stackable");
+            case NO_CAPACITY -> Component.translatable("message.thaumory.infusion.no_capacity");
+            case NO_ROOM -> Component.translatable("message.thaumory.infusion.no_room", outcome.used(), outcome.capacity(),
+                    outcome.infusion().orElseThrow().capacity());
             case NO_ITEM -> Component.translatable("message.thaumory.infusion.no_item");
             case NO_RINGS -> Component.translatable("message.thaumory.wand.no_rings");
             case UNDEFINED -> Component.translatable("message.thaumory.wand.no_response");

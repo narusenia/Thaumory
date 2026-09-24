@@ -9,6 +9,8 @@ import one.nxeu.thaumory.alchemy.ThaumoryRecipes;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.aspect.data.ItemAspectReloadListener;
+import one.nxeu.thaumory.infusion.InfusionCapacities;
+import one.nxeu.thaumory.network.CapacitySync;
 import one.nxeu.thaumory.aspect.estimate.AspectEstimation;
 import one.nxeu.thaumory.aspect.estimate.VanillaRecipeAdapters;
 import one.nxeu.thaumory.aspect.estimate.VanillaWorldChanges;
@@ -84,6 +86,7 @@ public final class Thaumory {
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/pipe.json"), PipeSettings.CODEC, PipeSettings.DEFAULT, PipeNetworks::updateSettings), id("pipe"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new CircleDefinitionReloadListener(), id("circle_definitions"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, InfusionCapacities.reloadListener(), id("infusion_capacity"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new PollutionRules(), id("pollution"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.chapterListener(), id("research_chapters"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.hintListener(), id("research_hints"));
@@ -91,6 +94,7 @@ public final class Thaumory {
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();
         AspectSync.register();
+        CapacitySync.register();
         knowledge.registerEvents();
         ResearchProgress research = new ResearchProgress();
         research.register(knowledge);

@@ -22,6 +22,9 @@ import one.nxeu.thaumory.Thaumory;
 public final class ThaumoryMaterials {
     public static final TagKey<Item> REPAIRS_ARCANE_IRON = TagKey.create(Registries.ITEM, Thaumory.id("repairs_arcane_iron"));
     public static final TagKey<Item> REPAIRS_AETHER_SILVER = TagKey.create(Registries.ITEM, Thaumory.id("repairs_aether_silver"));
+    /** Each metal's tools and armor, which its infusion capacity is given to. */
+    public static final TagKey<Item> ARCANE_IRON_EQUIPMENT = TagKey.create(Registries.ITEM, Thaumory.id("arcane_iron_equipment"));
+    public static final TagKey<Item> AETHER_SILVER_EQUIPMENT = TagKey.create(Registries.ITEM, Thaumory.id("aether_silver_equipment"));
 
     public static final ResourceKey<EquipmentAsset> ARCANE_IRON_ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, Thaumory.id("arcane_iron"));
     public static final ResourceKey<EquipmentAsset> AETHER_SILVER_ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, Thaumory.id("aether_silver"));

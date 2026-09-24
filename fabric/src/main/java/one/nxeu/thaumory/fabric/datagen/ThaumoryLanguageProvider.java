@@ -92,9 +92,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             equipment(builder, ThaumoryItems.AETHER_SILVER, "Aether Silver");
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "Infused:");
+            builder.add("tooltip.thaumory.capacity", "Capacity %s/%s");
             builder.add("message.thaumory.infusion.infused", "Infused: %s");
             builder.add("message.thaumory.infusion.failed", "The infusion failed");
-            builder.add("message.thaumory.infusion.stackable", "Only an item that does not stack takes an infusion");
+            builder.add("message.thaumory.infusion.no_capacity", "This item does not take a circle's effect");
+            builder.add("message.thaumory.infusion.no_room", "Not enough capacity (used %s/%s, needs %s)");
             builder.add("message.thaumory.infusion.no_item", "Nothing on the pedestal");
             builder.add(ThaumoryBlocks.FILTER_PIPE.get(), "Filtered Essentia Pipe");
             builder.add(ThaumoryBlocks.VALVE.get(), "Essentia Valve");
@@ -291,9 +293,11 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             equipment(builder, ThaumoryItems.AETHER_SILVER, "天銀");
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "焼き付けた効果:");
+            builder.add("tooltip.thaumory.capacity", "容量 %s/%s");
             builder.add("message.thaumory.infusion.infused", "注入した: %s");
             builder.add("message.thaumory.infusion.failed", "注入に失敗した");
-            builder.add("message.thaumory.infusion.stackable", "スタックするアイテムには注入できない");
+            builder.add("message.thaumory.infusion.no_capacity", "この品は陣の効果を受け入れない");
+            builder.add("message.thaumory.infusion.no_room", "容量が足りない（使用 %s/%s・必要 %s）");
             builder.add("message.thaumory.infusion.no_item", "台座に何も載っていない");
             builder.add(ThaumoryBlocks.FILTER_PIPE.get(), "フィルタ付きのパイプ");
             builder.add(ThaumoryBlocks.VALVE.get(), "Essentia のバルブ");

@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.codec.StreamCodec;
 
 /** Every effect burnt into one item, in the order they went in. Each effect appears once. */
@@ -29,8 +30,12 @@ public record Infusions(List<Infusion> list) {
      * replaced, so its old share does not count.
      */
     public boolean fits(Infusion next, int capacity) {
-        int kept = list.stream().filter(infusion -> !infusion.effect().equals(next.effect())).mapToInt(Infusion::capacity).sum();
-        return kept + next.capacity() <= capacity;
+        return usedBesides(next.effect()) + next.capacity() <= capacity;
+    }
+
+    /** The capacity every effect but {@code effect} takes: what stays when {@code effect} is burnt in again. */
+    public int usedBesides(Identifier effect) {
+        return list.stream().filter(infusion -> !infusion.effect().equals(effect)).mapToInt(Infusion::capacity).sum();
     }
 
     /** With {@code infusion} added; one of the same effect already there is replaced where it stood. */

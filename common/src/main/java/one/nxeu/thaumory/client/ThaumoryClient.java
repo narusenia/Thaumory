@@ -32,6 +32,7 @@ import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.AspectSyncPayload;
+import one.nxeu.thaumory.network.CapacitySyncPayload;
 import one.nxeu.thaumory.client.entity.VoidRemnantRenderer;
 import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.network.FluxReadingPayload;
@@ -51,6 +52,8 @@ public final class ThaumoryClient {
                     ClientItemAspects.replace(payload.items());
                     LOGGER.info("Received aspects for {} items", payload.items().size());
                 }));
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CapacitySyncPayload.TYPE, CapacitySyncPayload.STREAM_CODEC,
+                (payload, context) -> context.queue(() -> ClientCapacities.replace(payload.items())));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, KnowledgeSyncPayload.TYPE, KnowledgeSyncPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> {
                     ClientKnowledge.replace(payload.knowledge());
@@ -65,6 +68,7 @@ public final class ThaumoryClient {
                 (payload, context) -> context.queue(() -> ClientResearch.replace(payload.view())));
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register(player -> {
             ClientItemAspects.clear();
+            ClientCapacities.clear();
             ClientKnowledge.clear();
             ClientFlux.clear();
             ClientPipeReading.clear();
@@ -103,10 +107,14 @@ public final class ThaumoryClient {
                 AspectText.name(aspect, ClientKnowledge.get().knowsAspect(aspect.id()))).withColor(0xAAAAAA)));
     }
 
-    /** The circle effects burnt into the item, each with its level. */
+    /** How much of its capacity the item has used, then the circle effects burnt into it, each with its level. */
     private static void appendInfusions(ItemStack stack, List<Component> lines) {
-        Infusions infusions = stack.get(ThaumoryComponents.INFUSIONS.get());
-        if (infusions == null || infusions.list().isEmpty()) {
+        Infusions infusions = stack.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY);
+        int capacity = ClientCapacities.of(stack.getItem());
+        if (capacity > 0) {
+            lines.add(Component.translatable("tooltip.thaumory.capacity", infusions.used(), capacity).withColor(0xAAAAAA));
+        }
+        if (infusions.list().isEmpty()) {
             return;
         }
         lines.add(Component.translatable("tooltip.thaumory.infusions").withColor(0xAAAAAA));
