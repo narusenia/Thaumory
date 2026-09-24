@@ -24,7 +24,7 @@ final class ThaumoryItemTagProvider extends FabricTagsProvider<Item> {
     protected void addTags(HolderLookup.Provider registries) {
         // The tools that act on a circle core; they must not end up on its pedestal.
         var ignored = builder(ThaumoryItems.PEDESTAL_IGNORED);
-        for (var item : List.of(ThaumoryItems.WAND, ThaumoryItems.JAR, ThaumoryItems.ARCANE_LOUPE, ThaumoryItems.ARCANE_CODEX,
+        for (var item : List.of(ThaumoryItems.WAND, ThaumoryItems.JAR, ThaumoryItems.ARCANE_LOUPE, ThaumoryItems.MONOCLE, ThaumoryItems.ARCANE_CODEX,
                 ThaumoryItems.RUNE, ThaumoryItems.PEDESTAL, ThaumoryItems.CHALK, ThaumoryItems.AMPLIFYING_CHALK, ThaumoryItems.EXTENDING_CHALK,
                 ThaumoryItems.ECONOMIZING_CHALK, ThaumoryItems.STABILIZING_CHALK)) {
             ignored.add(key(item.get()));

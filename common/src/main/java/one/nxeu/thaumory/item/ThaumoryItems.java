@@ -7,17 +7,23 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.EquipmentAsset;
+import net.minecraft.world.item.equipment.EquipmentAssets;
+import net.minecraft.world.item.equipment.Equippable;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
@@ -84,6 +90,13 @@ public final class ThaumoryItems {
             register("circle_core", properties -> new BlockItem(ThaumoryBlocks.CIRCLE_CORE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
+    /** The monocle's look when worn: {@code assets/thaumory/equipment/monocle.json}. */
+    public static final ResourceKey<EquipmentAsset> MONOCLE_ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, Thaumory.id("monocle"));
+    /** A loupe worn on the head (requirements §17.6): it shows what the loupe does, without scanning. */
+    public static final RegistrySupplier<Item> MONOCLE = register("monocle", Item::new, new Item.Properties().stacksTo(1)
+            .component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.HEAD).setAsset(MONOCLE_ASSET)
+                    .setEquipSound(SoundEvents.ARMOR_EQUIP_GOLD).setDamageOnHurt(false).build()));
+
     public static final RegistrySupplier<BlockItem> ARCANE_CRYSTAL =
             register("arcane_crystal", properties -> new BlockItem(ThaumoryBlocks.ARCANE_CRYSTAL.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
@@ -108,7 +121,7 @@ public final class ThaumoryItems {
      * the empty jar is followed by a full one for each aspect.
      */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
+            ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
             Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();

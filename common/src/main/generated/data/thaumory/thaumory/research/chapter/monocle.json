@@ -1,0 +1,20 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:lux",
+        "thaumory:arcanum"
+      ]
+    }
+  ],
+  "icon": "thaumory:monocle",
+  "order": 9,
+  "requires": [
+    "thaumory:aspects",
+    "thaumory:crucible"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/monocle"
+  ]
+}

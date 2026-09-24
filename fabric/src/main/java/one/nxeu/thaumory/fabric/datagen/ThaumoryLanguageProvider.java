@@ -56,6 +56,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
         protected void translations(TranslationBuilder builder) {
             builder.add("tooltip.thaumory.aspects", "Aspects:");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "Arcane Loupe");
+            builder.add(ThaumoryItems.MONOCLE.get(), "Monocle of Revealing");
             builder.add(ThaumoryItems.WAND.get(), "Wand");
             builder.add("message.thaumory.wand.started", "The circle comes to life");
             builder.add("message.thaumory.wand.stopped", "The circle falls still");
@@ -212,6 +213,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.arcane_metals.text", "Iron steeped in Arcanum turns into Arcane Iron. Tools and armor forged from it are no stronger than iron, but they have room to take in a circle's effect.");
             builder.add("chapter.thaumory.aether_silver", "Aether Silver");
             builder.add("chapter.thaumory.aether_silver.text", "Steep Arcane Iron again, deep in Aer and Lux, and it pales into Aether Silver. It holds more of a circle's effect than Arcane Iron can.");
+            builder.add("chapter.thaumory.monocle", "Monocle of Revealing");
+            builder.add("chapter.thaumory.monocle.text", "Steep a loupe deep in Lux and Arcanum, and it will stay at your eye. Worn on the head, it shows the Flux and what vessels, pipes and circles hold, without a hand to hold it. To name other things or to scan, you still need the loupe itself.");
             builder.add("hint.thaumory.teleport", "Arcanum, bound with Aer, bends space.");
             builder.add("hint.thaumory.light", "Where Lux lies over Ignis, darkness gives way.");
             builder.add("hint.thaumory.purification", "Ordo and Lux clear what has stagnated.");
@@ -277,6 +280,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
         protected void translations(TranslationBuilder builder) {
             builder.add("tooltip.thaumory.aspects", "アスペクト:");
             builder.add(ThaumoryItems.ARCANE_LOUPE.get(), "魔術のルーペ");
+            builder.add(ThaumoryItems.MONOCLE.get(), "暴きのモノクル");
             builder.add(ThaumoryItems.WAND.get(), "杖");
             builder.add("message.thaumory.wand.started", "陣が動き出した");
             builder.add("message.thaumory.wand.stopped", "陣が静まった");
@@ -433,6 +437,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.arcane_metals.text", "鉄に Arcanum を沁ませれば魔鉄となる。魔鉄で鍛えた道具と防具は鉄より強くはないが、陣の効果を受け入れる余地を持つ。");
             builder.add("chapter.thaumory.aether_silver", "天の銀");
             builder.add("chapter.thaumory.aether_silver.text", "魔鉄をさらに Aer と Lux にたっぷりと浸せば、色が抜けて天銀となる。魔鉄より多くの陣の効果を抱える。");
+            builder.add("chapter.thaumory.monocle", "暴きのモノクル");
+            builder.add("chapter.thaumory.monocle.text", "ルーペを Lux と Arcanum にたっぷりと浸せば、目に据わって離れなくなる。頭に着ければ、手に持たずとも Flux と、器・管・陣の中身が見える。ほかのものの名を知るにも、スキャンするにも、ルーペそのものが要る。");
             builder.add("hint.thaumory.teleport", "Arcanum は、Aer と結びつくとき、空間を歪める。");
             builder.add("hint.thaumory.light", "Lux が Ignis に重なるとき、闇は退く。");
             builder.add("hint.thaumory.purification", "Ordo と Lux は、淀みを澄ませる。");

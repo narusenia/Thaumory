@@ -52,7 +52,7 @@ final class LoupeHud {
     static void render(GuiGraphicsExtractor graphics, DeltaTracker delta) {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if (player == null || minecraft.level == null || !ArcaneLoupeItem.isHeldBy(player)) {
+        if (player == null || minecraft.level == null || !ArcaneLoupeItem.sees(player)) {
             return;
         }
         renderFlux(graphics, minecraft);
@@ -64,7 +64,8 @@ final class LoupeHud {
             case JarBlockEntity jar -> jarLines(jar);
             case CircleCoreBlockEntity core -> coreLines(core);
             case PipeBlockEntity pipe -> pipeLines(pipe);
-            case null, default -> blockLines(minecraft.level.getBlockState(hit.getBlockPos()));
+            // Worn as the monocle, only containers, pipes and circles show, so the view is not always cluttered.
+            case null, default -> ArcaneLoupeItem.isHeldBy(player) ? blockLines(minecraft.level.getBlockState(hit.getBlockPos())) : List.of();
         };
 
         int x = graphics.guiWidth() / 2 + 12;

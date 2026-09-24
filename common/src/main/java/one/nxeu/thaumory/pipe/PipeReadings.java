@@ -29,7 +29,7 @@ public final class PipeReadings {
                 return;
             }
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (ArcaneLoupeItem.isHeldBy(player)) {
+                if (ArcaneLoupeItem.sees(player)) {
                     send(player);
                 }
             }

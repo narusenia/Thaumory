@@ -1,0 +1,11 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:arcanum": 8,
+    "thaumory:lux": 12
+  },
+  "catalyst": "thaumory:arcane_loupe",
+  "result": {
+    "id": "thaumory:monocle"
+  }
+}

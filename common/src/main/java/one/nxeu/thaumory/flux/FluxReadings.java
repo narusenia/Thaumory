@@ -25,7 +25,7 @@ public final class FluxReadings {
                 return;
             }
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (ArcaneLoupeItem.isHeldBy(player)) {
+                if (ArcaneLoupeItem.sees(player)) {
                     send(player);
                 }
             }

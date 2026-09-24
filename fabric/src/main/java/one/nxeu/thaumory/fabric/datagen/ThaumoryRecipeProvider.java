@@ -69,6 +69,7 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 alchemy("arcane_iron_ingot", Items.IRON_INGOT, ThaumoryItems.ARCANE_IRON.ingot().get(), new AspectStack(ARCANUM, 8));
                 alchemy("aether_silver_ingot", ThaumoryItems.ARCANE_IRON.ingot().get(), ThaumoryItems.AETHER_SILVER.ingot().get(),
                         new AspectStack(AER, 16), new AspectStack(LUX, 16));
+                alchemy("monocle", ThaumoryItems.ARCANE_LOUPE.get(), ThaumoryItems.MONOCLE.get(), new AspectStack(LUX, 12), new AspectStack(ARCANUM, 8));
                 // A gold chain with an Arcane Iron charm hanging from it.
                 shaped(RecipeCategory.TOOLS, ThaumoryItems.AMULET.get())
                         .pattern("N N")

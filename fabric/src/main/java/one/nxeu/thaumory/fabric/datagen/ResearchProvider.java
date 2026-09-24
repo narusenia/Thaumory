@@ -41,6 +41,7 @@ final class ResearchProvider {
     static final Identifier INQUIRY = Thaumory.id("inquiry");
     static final Identifier ARCANE_METALS = Thaumory.id("arcane_metals");
     static final Identifier AETHER_SILVER = Thaumory.id("aether_silver");
+    static final Identifier MONOCLE = Thaumory.id("monocle");
 
     private ResearchProvider() {}
 
@@ -73,6 +74,8 @@ final class ResearchProvider {
                     List.of(ResearchCondition.Scanned.item(key(ThaumoryItems.ARCANE_IRON.ingot().get())),
                             ResearchCondition.Aspects.all(List.of(AER.id(), LUX.id()))),
                     List.of(alchemy("aether_silver_ingot"))));
+            output.accept(MONOCLE, chapter(ThaumoryItems.MONOCLE.get(), 9, List.of(ASPECTS, CRUCIBLE),
+                    List.of(ResearchCondition.Aspects.all(List.of(LUX.id(), ARCANUM.id()))), List.of(alchemy("monocle"))));
         }
 
         private static Chapter chapter(ItemLike icon, int order, List<Identifier> requires, List<ResearchCondition> conditions,

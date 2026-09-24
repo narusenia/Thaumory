@@ -1,5 +1,6 @@
 package one.nxeu.thaumory.item;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -21,6 +22,14 @@ public final class ArcaneLoupeItem extends Item {
 
     public static boolean isHeldBy(Player player) {
         return player.getMainHandItem().is(ThaumoryItems.ARCANE_LOUPE.get()) || player.getOffhandItem().is(ThaumoryItems.ARCANE_LOUPE.get());
+    }
+
+    /**
+     * Whether {@code player} sees the Flux and what containers, pipes and circles hold: holding the
+     * loupe in either hand, or wearing the monocle. Other blocks' names and aspects need the loupe in hand.
+     */
+    public static boolean sees(Player player) {
+        return isHeldBy(player) || player.getItemBySlot(EquipmentSlot.HEAD).is(ThaumoryItems.MONOCLE.get());
     }
 
     @Override
