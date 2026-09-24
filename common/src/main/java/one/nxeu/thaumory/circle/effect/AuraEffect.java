@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -21,25 +22,32 @@ import net.minecraft.world.phys.AABB;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.circle.CircleContext;
 import one.nxeu.thaumory.api.circle.CircleEffect;
+import one.nxeu.thaumory.aspect.ThaumoryAspects;
 
 /**
- * Lightness (Aer + Terra), breath (Aqua + Aer) and night sight (Lux + Umbra), sustained. Keeps
- * status effects on what slot 3 picks in range: players when it is empty, animals with Bestia,
- * hostile mobs with Chaos. The effects are renewed every second and kept short, so they wear off
- * soon after leaving. Lightness also takes away fall damage on landing in range (requirements §17.4).
+ * A sustained circle that keeps status effects on what it targets in range: the life circles
+ * (lightness, breath, night sight) and the binding and withering defence circles. The effects are
+ * renewed every second and kept short, so they wear off soon after leaving. Lightness also takes
+ * away fall damage on landing in range (requirements §17.4).
  */
 final class AuraEffect implements CircleEffect {
-    /** One status effect the circle keeps up. {@code leveled} ones take their level from the strength. */
-    record Aura(Holder<MobEffect> effect, int duration, boolean leveled) {}
+    /**
+     * One status effect the circle keeps up, at amplifier {@code amplifier}. {@code leveled} ones go
+     * up one level per step of strength past 1.
+     */
+    record Aura(Holder<MobEffect> effect, int duration, int amplifier, boolean leveled) {}
 
     private record Cushion(Predicate<Entity> target, Queue<BlockPos> landed) {}
 
     private static final ActiveAreas<Cushion> CUSHIONS = new ActiveAreas<>();
 
+    private final Function<Optional<Aspect>, Predicate<Entity>> targets;
     private final List<Aura> auras;
     private final boolean cushionsFalls;
 
-    AuraEffect(boolean cushionsFalls, Aura... auras) {
+    /** {@code targets} turns the slot 3 rune into what the circle works on. */
+    AuraEffect(Function<Optional<Aspect>, Predicate<Entity>> targets, boolean cushionsFalls, Aura... auras) {
+        this.targets = targets;
         this.auras = List.of(auras);
         this.cushionsFalls = cushionsFalls;
     }
@@ -62,7 +70,7 @@ final class AuraEffect implements CircleEffect {
 
     @Override
     public void apply(CircleContext context) {
-        Predicate<Entity> target = target(context.parameter());
+        Predicate<Entity> target = targets.apply(context.parameter());
         AABB box = CircleRange.box(context);
         if (cushionsFalls) {
             Queue<BlockPos> landed = CUSHIONS.renew(context, box,
@@ -71,12 +79,13 @@ final class AuraEffect implements CircleEffect {
                 context.affected(pos);
             }
         }
-        int amplifier = Math.max(0, (int) Math.ceil(context.strength()) - 1);
+        int steps = Math.max(0, (int) Math.ceil(context.strength()) - 1);
         for (LivingEntity entity : context.level().getEntitiesOfClass(LivingEntity.class, box, e -> e.isAlive() && target.test(e))) {
             boolean fresh = false;
             for (Aura aura : auras) {
                 fresh |= !entity.hasEffect(aura.effect());
-                entity.addEffect(new MobEffectInstance(aura.effect(), aura.duration(), aura.leveled() ? amplifier : 0, true, false, true));
+                int amplifier = aura.amplifier() + (aura.leveled() ? steps : 0);
+                entity.addEffect(new MobEffectInstance(aura.effect(), aura.duration(), amplifier, true, false, true));
             }
             if (fresh) {
                 context.affected(entity);
@@ -91,7 +100,13 @@ final class AuraEffect implements CircleEffect {
         }
     }
 
-    static Predicate<Entity> target(Optional<Aspect> parameter) {
+    /** The life circles: players when slot 3 is empty, else what the rune picks as for the ward. */
+    static Predicate<Entity> playersUnlessPicked(Optional<Aspect> parameter) {
         return parameter.map(WardEffect::target).orElse(entity -> entity instanceof Player player && !player.isSpectator());
+    }
+
+    /** The defence circles: hostile mobs when slot 3 is empty, else what the rune picks as for the ward. */
+    static Predicate<Entity> enemiesUnlessPicked(Optional<Aspect> parameter) {
+        return WardEffect.target(parameter.orElse(ThaumoryAspects.CHAOS));
     }
 }

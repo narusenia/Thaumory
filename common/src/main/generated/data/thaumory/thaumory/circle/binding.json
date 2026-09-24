@@ -1,0 +1,18 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:binding",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:umbra",
+    "thaumory:vinculum"
+  ],
+  "settings": {
+    "work_flux": 0.02
+  },
+  "slot3": [
+    "none",
+    "thaumory:bestia",
+    "thaumory:mors",
+    "thaumory:chaos"
+  ]
+}

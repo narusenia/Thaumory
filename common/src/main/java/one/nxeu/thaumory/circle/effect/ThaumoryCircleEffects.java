@@ -1,5 +1,6 @@
 package one.nxeu.thaumory.circle.effect;
 
+import java.util.Optional;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffects;
 import one.nxeu.thaumory.Thaumory;
@@ -27,11 +28,20 @@ public final class ThaumoryCircleEffects {
     public static final Identifier BREATH = Thaumory.id("breath");
     public static final Identifier NIGHT_SIGHT = Thaumory.id("night_sight");
     public static final Identifier SAFEGUARD = Thaumory.id("safeguard");
+    public static final Identifier LURE = Thaumory.id("lure");
+    public static final Identifier BINDING = Thaumory.id("binding");
+    public static final Identifier SEARING = Thaumory.id("searing");
+    public static final Identifier WITHERING = Thaumory.id("withering");
 
     /** How long the life circles' status effects outlast leaving the range, in ticks (requirements §17.4). */
     private static final int SHORT_AURA = 60;
     /** Night vision flickers under 10 seconds left, so it is kept above that. */
     private static final int NIGHT_VISION_AURA = 220;
+    /**
+     * Wither hurts on durations that are multiples of 40; renewed to 80 every second, it bites once
+     * a second.
+     */
+    private static final int WITHER_AURA = 80;
 
     private ThaumoryCircleEffects() {}
 
@@ -52,11 +62,22 @@ public final class ThaumoryCircleEffects {
         registry.register(MINING, new MiningEffect());
         registry.register(SORTING, new SortingEffect());
         registry.register(MELTING, new MeltingEffect());
-        registry.register(LIGHTNESS, new AuraEffect(true, new AuraEffect.Aura(MobEffects.SPEED, SHORT_AURA, true)));
-        registry.register(BREATH, new AuraEffect(false, new AuraEffect.Aura(MobEffects.WATER_BREATHING, SHORT_AURA, false),
-                new AuraEffect.Aura(MobEffects.DOLPHINS_GRACE, SHORT_AURA, false)));
-        registry.register(NIGHT_SIGHT, new AuraEffect(false, new AuraEffect.Aura(MobEffects.NIGHT_VISION, NIGHT_VISION_AURA, false)));
+        registry.register(LIGHTNESS, new AuraEffect(AuraEffect::playersUnlessPicked, true,
+                new AuraEffect.Aura(MobEffects.SPEED, SHORT_AURA, 0, true)));
+        registry.register(BREATH, new AuraEffect(AuraEffect::playersUnlessPicked, false,
+                new AuraEffect.Aura(MobEffects.WATER_BREATHING, SHORT_AURA, 0, false),
+                new AuraEffect.Aura(MobEffects.DOLPHINS_GRACE, SHORT_AURA, 0, false)));
+        registry.register(NIGHT_SIGHT, new AuraEffect(AuraEffect::playersUnlessPicked, false,
+                new AuraEffect.Aura(MobEffects.NIGHT_VISION, NIGHT_VISION_AURA, 0, false)));
         registry.register(SAFEGUARD, new SafeguardEffect());
+        registry.register(LURE, new LureEffect());
+        // Slowness IV at strength 1.
+        registry.register(BINDING, new AuraEffect(AuraEffect::enemiesUnlessPicked, false,
+                new AuraEffect.Aura(MobEffects.SLOWNESS, SHORT_AURA, 3, true)));
+        registry.register(SEARING, new SearingEffect());
+        registry.register(WITHERING, new AuraEffect(parameter -> AuraEffect.enemiesUnlessPicked(Optional.empty()), false,
+                new AuraEffect.Aura(MobEffects.WITHER, WITHER_AURA, 0, false),
+                new AuraEffect.Aura(MobEffects.WEAKNESS, WITHER_AURA, 0, false)));
         WardEffect.registerEvents();
         AuraEffect.registerEvents();
         SafeguardEffect.registerEvents();

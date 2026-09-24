@@ -15,6 +15,7 @@ import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TEMPESTAS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TERRA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.UMBRA;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.VENENUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VINCULUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VITA;
 
@@ -92,6 +93,16 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
         sustained(output, ThaumoryCircleEffects.NIGHT_SIGHT, LUX, UMBRA, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 0,
                 Optional.empty(), Map.of());
         sustained(output, ThaumoryCircleEffects.SAFEGUARD, ORDO, TERRA, slot3(true), Map.of("work_flux", 0.2), 0, Optional.empty(),
+                Map.of());
+        // So can the defence circles.
+        sustained(output, ThaumoryCircleEffects.LURE, BESTIA, VINCULUM, slot3(true, BESTIA, MORS, CHAOS),
+                Map.of("pull_per_level", 0.6, "work_flux", 0.01), 0,
+                Optional.empty(), Map.of());
+        sustained(output, ThaumoryCircleEffects.BINDING, UMBRA, VINCULUM, slot3(true, BESTIA, MORS, CHAOS), Map.of("work_flux", 0.02), 0,
+                Optional.empty(), Map.of());
+        triggered(output, ThaumoryCircleEffects.SEARING, BELLUM, IGNIS, slot3(true), 4,
+                Map.of("damage_per_level", 4.0, "burn_seconds", 3.0, "work_flux", 0.1), 0, Map.of());
+        sustained(output, ThaumoryCircleEffects.WITHERING, MORS, VENENUM, slot3(true), Map.of("work_flux", 0.02), 0, Optional.empty(),
                 Map.of());
     }
 

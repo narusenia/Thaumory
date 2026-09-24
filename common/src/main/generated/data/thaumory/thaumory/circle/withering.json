@@ -1,0 +1,12 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:withering",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:mors",
+    "thaumory:venenum"
+  ],
+  "settings": {
+    "work_flux": 0.02
+  }
+}

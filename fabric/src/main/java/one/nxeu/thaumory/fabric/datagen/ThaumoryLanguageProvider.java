@@ -183,6 +183,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.BREATH.toLanguageKey("circle_effect"), "Breath");
             builder.add(ThaumoryCircleEffects.NIGHT_SIGHT.toLanguageKey("circle_effect"), "Night Sight");
             builder.add(ThaumoryCircleEffects.SAFEGUARD.toLanguageKey("circle_effect"), "Safeguard");
+            builder.add(ThaumoryCircleEffects.LURE.toLanguageKey("circle_effect"), "Lure");
+            builder.add(ThaumoryCircleEffects.BINDING.toLanguageKey("circle_effect"), "Binding");
+            builder.add(ThaumoryCircleEffects.SEARING.toLanguageKey("circle_effect"), "Searing");
+            builder.add(ThaumoryCircleEffects.WITHERING.toLanguageKey("circle_effect"), "Withering");
             builder.add("hud.thaumory.core.essentia", "Essentia (up to %s each)");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
@@ -251,6 +255,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.breath", "Where Aqua holds Aer, there is breath beneath the waves.");
             builder.add("hint.thaumory.night_sight", "Lux kept within Umbra opens the eye in the dark.");
             builder.add("hint.thaumory.safeguard", "Ordo holds Terra fast against blast and claw.");
+            builder.add("hint.thaumory.lure", "Vinculum cast over Bestia draws the beast into the chalk.");
+            builder.add("hint.thaumory.binding", "Umbra woven into Vinculum weighs down every step.");
+            builder.add("hint.thaumory.searing", "Bellum kindled with Ignis sears whatever stands against you.");
+            builder.add("hint.thaumory.withering", "Mors steeped in Venenum wastes the living and the dead alike.");
             builder.add("subtitles.thaumory.block.circle_core.activate", "Circle wakes");
             builder.add("subtitles.thaumory.block.circle_core.deactivate", "Circle falls quiet");
             builder.add("subtitles.thaumory.block.circle_core.infuse", "Item is infused");
@@ -448,6 +456,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.BREATH.toLanguageKey("circle_effect"), "息吹き");
             builder.add(ThaumoryCircleEffects.NIGHT_SIGHT.toLanguageKey("circle_effect"), "夜目");
             builder.add(ThaumoryCircleEffects.SAFEGUARD.toLanguageKey("circle_effect"), "護り");
+            builder.add(ThaumoryCircleEffects.LURE.toLanguageKey("circle_effect"), "誘引");
+            builder.add(ThaumoryCircleEffects.BINDING.toLanguageKey("circle_effect"), "束縛");
+            builder.add(ThaumoryCircleEffects.SEARING.toLanguageKey("circle_effect"), "灼光");
+            builder.add(ThaumoryCircleEffects.WITHERING.toLanguageKey("circle_effect"), "衰弱");
             builder.add("hud.thaumory.core.essentia", "Essentia（各 %s まで）");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
@@ -516,6 +528,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.breath", "Aqua が Aer を抱くところでは、波の下でも息ができる。");
             builder.add("hint.thaumory.night_sight", "Umbra の内に宿る Lux は、闇の中で目を開かせる。");
             builder.add("hint.thaumory.safeguard", "Ordo は Terra を、爆風からも爪からも固く守る。");
+            builder.add("hint.thaumory.lure", "Bestia に掛けた Vinculum は、獣を紋の内へと引き寄せる。");
+            builder.add("hint.thaumory.binding", "Umbra を編み込んだ Vinculum は、一歩ごとに足を重くする。");
+            builder.add("hint.thaumory.searing", "Ignis で熾した Bellum は、刃向かうものを焼く。");
+            builder.add("hint.thaumory.withering", "Venenum に浸した Mors は、生者も死者も等しく蝕む。");
             builder.add("subtitles.thaumory.block.circle_core.activate", "陣が目覚める");
             builder.add("subtitles.thaumory.block.circle_core.deactivate", "陣が静まる");
             builder.add("subtitles.thaumory.block.circle_core.infuse", "品に効果が焼き付く");

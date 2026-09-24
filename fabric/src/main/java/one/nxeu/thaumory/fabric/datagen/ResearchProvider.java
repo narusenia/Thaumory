@@ -15,6 +15,7 @@ import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TEMPESTAS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TERRA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.UMBRA;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.VENENUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VINCULUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VITA;
 
@@ -163,6 +164,10 @@ final class ResearchProvider {
             hint(output, ThaumoryCircleEffects.BREATH, AQUA, AER);
             hint(output, ThaumoryCircleEffects.NIGHT_SIGHT, LUX, UMBRA);
             hint(output, ThaumoryCircleEffects.SAFEGUARD, ORDO, TERRA);
+            hint(output, ThaumoryCircleEffects.LURE, BESTIA, VINCULUM);
+            hint(output, ThaumoryCircleEffects.BINDING, UMBRA, VINCULUM);
+            hint(output, ThaumoryCircleEffects.SEARING, BELLUM, IGNIS);
+            hint(output, ThaumoryCircleEffects.WITHERING, MORS, VENENUM);
         }
 
         private static void hint(BiConsumer<Identifier, Hint> output, Identifier effect, Aspect first, Aspect second) {
