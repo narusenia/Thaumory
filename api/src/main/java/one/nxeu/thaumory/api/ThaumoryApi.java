@@ -4,6 +4,7 @@ import java.util.Objects;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
 import one.nxeu.thaumory.api.circle.CircleEffectRegistry;
 import one.nxeu.thaumory.api.estimate.RecipeAdapterRegistry;
+import one.nxeu.thaumory.api.infusion.InfusionEffectRegistry;
 import one.nxeu.thaumory.api.flux.ChunkFlux;
 
 /** Entry point for addons. */
@@ -13,6 +14,7 @@ public final class ThaumoryApi {
     private static final AspectRegistry ASPECTS = new AspectRegistry();
     private static final RecipeAdapterRegistry RECIPE_ADAPTERS = new RecipeAdapterRegistry();
     private static final CircleEffectRegistry CIRCLE_EFFECTS = new CircleEffectRegistry();
+    private static final InfusionEffectRegistry INFUSION_EFFECTS = new InfusionEffectRegistry();
     private static volatile ChunkFlux flux;
 
     private ThaumoryApi() {}
@@ -27,6 +29,12 @@ public final class ThaumoryApi {
      */
     public static CircleEffectRegistry circleEffects() {
         return CIRCLE_EFFECTS;
+    }
+
+    /** What circle effects do once burnt into an item. A circle effect without one cannot be infused. */
+    @Experimental
+    public static InfusionEffectRegistry infusionEffects() {
+        return INFUSION_EFFECTS;
     }
 
     /** Recipe types that aspect estimation reads. */
