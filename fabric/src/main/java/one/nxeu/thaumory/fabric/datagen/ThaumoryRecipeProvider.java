@@ -85,6 +85,13 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .requires(Items.PISTON)
                         .unlockedBy(getHasName(ThaumoryItems.PIPE.get()), has(ThaumoryItems.PIPE.get()))
                         .save(output);
+                shaped(RecipeCategory.MISC, ThaumoryItems.PEDESTAL.get())
+                        .pattern("SSS")
+                        .pattern(" G ")
+                        .define('S', Items.STONE_BRICK_SLAB)
+                        .define('G', Items.GOLD_INGOT)
+                        .unlockedBy(getHasName(ThaumoryItems.CORE.get()), has(ThaumoryItems.CORE.get()))
+                        .save(output);
                 shaped(RecipeCategory.BREWING, ThaumoryItems.JAR.get())
                         .pattern(" W ")
                         .pattern("G G")

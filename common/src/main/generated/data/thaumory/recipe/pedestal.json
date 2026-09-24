@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "S": "minecraft:stone_brick_slab"
+  },
+  "pattern": [
+    "SSS",
+    " G "
+  ],
+  "result": {
+    "id": "thaumory:pedestal"
+  }
+}

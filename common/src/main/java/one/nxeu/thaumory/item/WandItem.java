@@ -1,6 +1,7 @@
 package one.nxeu.thaumory.item;
 
 import java.util.Optional;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
@@ -11,13 +12,17 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import net.minecraft.world.level.Level;
 import one.nxeu.thaumory.api.text.TextEffect;
+import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
+import one.nxeu.thaumory.infusion.InfusionText;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
  * The working tool for magic circles. Right-clicking a Core starts or stops a sustained circle, or
- * sets off a triggered one once, and says how it went on the action bar.
+ * sets off a triggered one once, and says how it went on the action bar. With an item on the
+ * pedestal over the Core, it infuses that item instead; the pedestal can be clicked too.
  */
 public final class WandItem extends Item {
     public WandItem(Properties properties) {
@@ -26,10 +31,25 @@ public final class WandItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (!(context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CoreBlockEntity core)) {
+        BlockPos pos = context.getClickedPos();
+        Level world = context.getLevel();
+        Optional<CoreBlockEntity> clicked = world.getBlockEntity(pos) instanceof CoreBlockEntity core ? Optional.of(core)
+                : world.getBlockEntity(pos) instanceof PedestalBlockEntity && world.getBlockEntity(pos.below()) instanceof CoreBlockEntity below
+                        ? Optional.of(below) : Optional.empty();
+        if (clicked.isEmpty()) {
             return InteractionResult.PASS;
         }
-        if (context.getLevel() instanceof ServerLevel level && context.getPlayer() != null) {
+        CoreBlockEntity core = clicked.get();
+        if (core.pedestal().filter(pedestal -> !pedestal.item().isEmpty()).isPresent()) {
+            if (world instanceof ServerLevel level && context.getPlayer() != null) {
+                infuse(level, core, context.getPlayer());
+            }
+            return InteractionResult.SUCCESS;
+        }
+        if (!(world.getBlockEntity(pos) instanceof CoreBlockEntity)) {
+            return InteractionResult.PASS;
+        }
+        if (world instanceof ServerLevel level && context.getPlayer() != null) {
             Player player = context.getPlayer();
             Outcome outcome = operate(core, player);
             MutableComponent message = Component.translatable("message.thaumory.wand." + outcome.key);
@@ -58,6 +78,27 @@ public final class WandItem extends Item {
             this.key = key;
             this.sound = sound;
         }
+    }
+
+    private static void infuse(ServerLevel level, CoreBlockEntity core, Player player) {
+        core.rescan();
+        CoreBlockEntity.InfuseOutcome outcome = core.infuse(Optional.of(player));
+        MutableComponent message = switch (outcome.result()) {
+            case INFUSED -> Component.translatable("message.thaumory.infusion.infused", InfusionText.describe(outcome.infusion().orElseThrow()));
+            case FAILED -> ThaumoryText.withEffect(Component.translatable("message.thaumory.infusion.failed"), TextEffect.SHAKE);
+            case STACKABLE -> Component.translatable("message.thaumory.infusion.stackable");
+            case NO_ITEM -> Component.translatable("message.thaumory.infusion.no_item");
+            case NO_RINGS -> Component.translatable("message.thaumory.wand.no_rings");
+            case UNDEFINED -> Component.translatable("message.thaumory.wand.no_response");
+            case MISFIRED -> ThaumoryText.withEffect(Component.translatable("message.thaumory.wand.misfired"), TextEffect.SHAKE);
+            case NO_ESSENTIA -> Component.translatable("message.thaumory.wand.no_essentia");
+        };
+        player.sendOverlayMessage(message);
+        level.playSound(null, core.getBlockPos(), switch (outcome.result()) {
+            case INFUSED -> SoundEvents.ENCHANTMENT_TABLE_USE;
+            case FAILED -> SoundEvents.GENERIC_EXTINGUISH_FIRE;
+            default -> SoundEvents.FIRE_EXTINGUISH;
+        }, SoundSource.BLOCKS, 0.8f, 1.0f);
     }
 
     private static Outcome operate(CoreBlockEntity core, Player player) {

@@ -25,6 +25,7 @@ import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CoreBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.jar.JarBlock;
+import one.nxeu.thaumory.block.pedestal.PedestalBlock;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.block.pipe.PumpBlock;
@@ -51,6 +52,9 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     private static final TextureSlot PATTERN = TextureSlot.create("pattern");
     private static final ModelTemplate CHALK_PATTERN = new ModelTemplate(Optional.of(Thaumory.id("block/template_chalk_pattern")),
             Optional.empty(), PATTERN);
+
+    private static final ModelTemplate PEDESTAL = new ModelTemplate(Optional.of(Thaumory.id("block/template_pedestal")),
+            Optional.empty(), TextureSlot.SIDE, TextureSlot.TOP);
 
     private static final TextureSlot PIPE = TextureSlot.create("pipe");
     private static final TextureSlot ARM = TextureSlot.create("arm");
@@ -108,6 +112,13 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         Identifier coreModel = CHALK_PATTERN.create(core,
                 new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(core, "_center")), generators.modelOutput);
         generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(core, BlockModelGenerators.plainVariant(coreModel)));
+
+        PedestalBlock pedestal = ThaumoryBlocks.PEDESTAL.get();
+        Identifier pedestalModel = PEDESTAL.create(pedestal, new TextureMapping()
+                .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(pedestal, "_side"))
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(pedestal, "_top")), generators.modelOutput);
+        generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(pedestal, BlockModelGenerators.plainVariant(pedestalModel)));
+        generators.registerSimpleItemModel(pedestal, pedestalModel);
 
         EssentiaPipeBlock pipe = ThaumoryBlocks.PIPE.get();
         TextureMapping pipeTextures = pipeTextures(TextureMapping.getBlockTexture(pipe));

@@ -10,7 +10,8 @@
       "one.nxeu.thaumory.fabric.gametest.CrucibleGameTests",
       "one.nxeu.thaumory.fabric.gametest.CircleEffectGameTests",
       "one.nxeu.thaumory.fabric.gametest.EssentiaStorageGameTests",
-      "one.nxeu.thaumory.fabric.gametest.PipeGameTests"
+      "one.nxeu.thaumory.fabric.gametest.PipeGameTests",
+      "one.nxeu.thaumory.fabric.gametest.InfusionGameTests"
     ]
   },
   "depends": {

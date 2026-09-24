@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.Transcript;
 
@@ -36,6 +37,13 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<Transcript>builder()
                     .persistent(Transcript.CODEC)
                     .networkSynchronized(Transcript.STREAM_CODEC)
+                    .build());
+
+    /** The circle effects burnt into an item by infusion. */
+    public static final RegistrySupplier<DataComponentType<Infusions>> INFUSIONS = COMPONENTS.register("infusions",
+            () -> DataComponentType.<Infusions>builder()
+                    .persistent(Infusions.CODEC)
+                    .networkSynchronized(Infusions.STREAM_CODEC)
                     .build());
 
     private ThaumoryComponents() {}

@@ -26,6 +26,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -47,6 +48,7 @@ import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
+import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
 import one.nxeu.thaumory.circle.CircleDefinitionReloadListener;
 import one.nxeu.thaumory.circle.CircleDefinitions;
 import one.nxeu.thaumory.circle.CircleIndex;
@@ -55,9 +57,14 @@ import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.circle.CircleSettings;
 import one.nxeu.thaumory.circle.CircleSide;
 import one.nxeu.thaumory.circle.CircleUpkeep;
+import one.nxeu.thaumory.circle.InfusionRules;
+import one.nxeu.thaumory.circle.InfusionSettings;
 import one.nxeu.thaumory.flux.FluxSettings;
 import one.nxeu.thaumory.flux.FluxWorldEffects;
+import one.nxeu.thaumory.infusion.Infusion;
+import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.item.RuneItem;
+import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.text.ThaumoryText;
@@ -109,6 +116,15 @@ public final class CoreBlockEntity extends BlockEntity {
     /** {@code UNDEFINED}: fewer than two runes, so not a circle yet. {@code MISFIRED}: the combination is undefined. */
     /** {@code OVERLOADED}: it paid, but Flux at overload made it misfire and explode. */
     public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, TRIGGERED_ONLY, NO_ESSENTIA, OVERLOADED }
+
+    public enum InfuseResult { INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, STACKABLE, NO_ESSENTIA }
+
+    /** @param infusion what went into the item, when it did */
+    public record InfuseOutcome(InfuseResult result, Optional<Infusion> infusion) {
+        static InfuseOutcome of(InfuseResult result) {
+            return new InfuseOutcome(result, Optional.empty());
+        }
+    }
 
     public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA, OVERLOADED }
 
@@ -529,6 +545,61 @@ public final class CoreBlockEntity extends BlockEntity {
         effect.get().apply(context);
         recordSuccess(activator, definition.effect());
         return TriggerResult.TRIGGERED;
+    }
+
+    /** The pedestal standing on this Core, if any. */
+    public Optional<PedestalBlockEntity> pedestal() {
+        return level != null && level.getBlockEntity(worldPosition.above()) instanceof PedestalBlockEntity pedestal
+                ? Optional.of(pedestal) : Optional.empty();
+    }
+
+    /**
+     * Burns this circle's effect into the item on the pedestal (requirements §10.1). It takes much
+     * Essentia and may fail, losing it and releasing Flux; the item never breaks. A sustained
+     * circle keeps running.
+     */
+    public InfuseOutcome infuse(Optional<Entity> activator) {
+        if (!(level instanceof ServerLevel server)) {
+            return InfuseOutcome.of(InfuseResult.UNDEFINED);
+        }
+        Optional<PedestalBlockEntity> pedestal = pedestal().filter(p -> !p.item().isEmpty());
+        if (pedestal.isEmpty()) {
+            return InfuseOutcome.of(InfuseResult.NO_ITEM);
+        }
+        if (scan.rings() == 0) {
+            return InfuseOutcome.of(InfuseResult.NO_RINGS);
+        }
+        Optional<Circle> circle = circle();
+        if (circle.isEmpty()) {
+            return InfuseOutcome.of(misfire(server, activator) ? InfuseResult.MISFIRED : InfuseResult.UNDEFINED);
+        }
+        ItemStack stack = pedestal.get().item();
+        if (stack.isStackable()) {
+            return InfuseOutcome.of(InfuseResult.STACKABLE);
+        }
+        CircleDefinitions.Definition definition = circle.get().definition();
+        CircleSettings.Multipliers multipliers = circle.get().multipliers();
+        AspectList cost = InfusionRules.cost(definition.infusionCost(), multipliers.cost(), definition.first(), definition.second(),
+                circle.get().parameter());
+        if (!essentia.containsAll(cost)) {
+            return InfuseOutcome.of(InfuseResult.NO_ESSENTIA);
+        }
+        setEssentia(essentia.minus(cost));
+        InfusionSettings infusion = settings.infusion();
+        if (server.getRandom().nextDouble() < InfusionRules.failureChance(instability, settings.instabilityThreshold(), infusion)) {
+            releaseFlux(server, InfusionRules.failureFlux(cost, infusion));
+            return InfuseOutcome.of(InfuseResult.FAILED);
+        }
+        Infusion burnt = new Infusion(definition.effect(), InfusionRules.level(multipliers.strength(), infusion),
+                circle.get().parameter().map(Aspect::id));
+        ItemStack infused = stack.copy();
+        infused.set(ThaumoryComponents.INFUSIONS.get(),
+                infused.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).with(burnt));
+        pedestal.get().setItem(infused);
+        BlockPos above = worldPosition.above();
+        server.sendParticles(ParticleTypes.ENCHANT, above.getX() + 0.5, above.getY() + 1.2, above.getZ() + 0.5, 40, 0.3, 0.3, 0.3, 0.6);
+        recordSuccess(activator, definition.effect());
+        return new InfuseOutcome(InfuseResult.INFUSED, Optional.of(burnt));
     }
 
     private void runSustained(ServerLevel server, long time) {

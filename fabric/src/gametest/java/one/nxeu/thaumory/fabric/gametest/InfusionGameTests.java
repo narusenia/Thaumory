@@ -1,0 +1,137 @@
+package one.nxeu.thaumory.fabric.gametest;
+
+import java.util.List;
+import java.util.Optional;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
+import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.api.aspect.AspectList;
+import one.nxeu.thaumory.aspect.ThaumoryAspects;
+import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CoreBlockEntity.InfuseResult;
+import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
+import one.nxeu.thaumory.circle.CircleSettings;
+import one.nxeu.thaumory.circle.InfusionSettings;
+import one.nxeu.thaumory.infusion.Infusion;
+import one.nxeu.thaumory.infusion.Infusions;
+import one.nxeu.thaumory.item.ThaumoryComponents;
+
+/**
+ * Infusing the item on a pedestal with a circle's effect (requirements §10.1). Failure is a roll,
+ * so each test sets the chance to never or always and puts the settings back after.
+ */
+public class InfusionGameTests {
+    private static final BlockPos CORE = new BlockPos(4, 2, 4);
+
+    private static void failureChance(double chance) {
+        CircleSettings current = CoreBlockEntity.settings();
+        InfusionSettings infusion = current.infusion();
+        CoreBlockEntity.updateSettings(new CircleSettings(current.scanInterval(), current.instabilityThreshold(), current.instabilityFlux(),
+                current.undefinedFlux(), current.ringRadius(), current.essentiaCapacity(), current.patterns(),
+                new InfusionSettings(chance, infusion.failurePerPoint(), infusion.fluxRatio(), infusion.maxLevel())));
+    }
+
+    private static void restore() {
+        CoreBlockEntity.updateSettings(CircleSettings.DEFAULT);
+    }
+
+    private static PedestalBlockEntity pedestal(GameTestHelper helper, ItemStack item) {
+        helper.setBlock(CORE.above(), ThaumoryBlocks.PEDESTAL.get());
+        PedestalBlockEntity pedestal = helper.getBlockEntity(CORE.above(), PedestalBlockEntity.class);
+        pedestal.setItem(item);
+        return pedestal;
+    }
+
+    private static List<Infusion> infusions(PedestalBlockEntity pedestal) {
+        return pedestal.item().getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).list();
+    }
+
+    @GameTest
+    public void infusesTheItemAndPaysForIt(GameTestHelper helper) {
+        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
+        PedestalBlockEntity pedestal = pedestal(helper, new ItemStack(Items.IRON_CHESTPLATE));
+        failureChance(0);
+        try {
+            helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "result");
+        } finally {
+            restore();
+        }
+        helper.assertValueEqual(infusions(pedestal), List.of(new Infusion(Thaumory.id("healing"), 1, Optional.empty())), "infusions");
+        helper.assertValueEqual(core.essentia(), AspectList.builder().add(ThaumoryAspects.VITA, 32).add(ThaumoryAspects.ORDO, 32).build(),
+                "Essentia left");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void anAmplifierRaisesTheLevelAndTheCost(GameTestHelper helper) {
+        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
+        helper.setBlock(CORE.east(), ThaumoryBlocks.AMPLIFYING_PATTERN.get());
+        core.rescan();
+        PedestalBlockEntity pedestal = pedestal(helper, new ItemStack(Items.IRON_CHESTPLATE));
+        failureChance(0);
+        try {
+            helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "result");
+        } finally {
+            restore();
+        }
+        helper.assertValueEqual(infusions(pedestal), List.of(new Infusion(Thaumory.id("healing"), 2, Optional.empty())), "infusions");
+        helper.assertValueEqual(core.essentia(), AspectList.builder().add(ThaumoryAspects.VITA, 16).add(ThaumoryAspects.ORDO, 16).build(),
+                "Essentia left");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void slotThreeGoesIntoTheItem(GameTestHelper helper) {
+        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ARCANUM, ThaumoryAspects.AER, ThaumoryAspects.TERRA);
+        PedestalBlockEntity pedestal = pedestal(helper, new ItemStack(Items.IRON_SWORD));
+        failureChance(0);
+        try {
+            helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "result");
+        } finally {
+            restore();
+        }
+        helper.assertValueEqual(infusions(pedestal),
+                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()))), "infusions");
+        helper.assertValueEqual(core.essentia().amount(ThaumoryAspects.TERRA), CoreBlockEntity.capacity() - 4, "Terra left");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void stackableItemsAndMissingEssentiaAreRefused(GameTestHelper helper) {
+        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
+        PedestalBlockEntity pedestal = pedestal(helper, new ItemStack(Items.STONE));
+        helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.STACKABLE, "stone");
+        pedestal.setItem(new ItemStack(Items.IRON_CHESTPLATE));
+        core.setEssentia(AspectList.builder().add(ThaumoryAspects.VITA, 31).add(ThaumoryAspects.ORDO, 64).build());
+        helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.NO_ESSENTIA, "short of Vita");
+        helper.assertValueEqual(core.essentia().amount(ThaumoryAspects.VITA), 31, "Vita left");
+        helper.assertValueEqual(infusions(pedestal), List.of(), "infusions");
+        helper.succeed();
+    }
+
+    /** Kept apart from other tests, since it checks the Flux of its whole chunk. */
+    @GameTest(padding = 24)
+    public void aFailureLosesTheEssentiaToFlux(GameTestHelper helper) {
+        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
+        PedestalBlockEntity pedestal = pedestal(helper, new ItemStack(Items.IRON_CHESTPLATE));
+        ChunkPos chunk = ChunkPos.containing(helper.absolutePos(CORE));
+        Thaumory.flux().set(helper.getLevel(), chunk, 0);
+        failureChance(1);
+        try {
+            helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.FAILED, "result");
+        } finally {
+            restore();
+        }
+        helper.assertValueEqual(infusions(pedestal), List.of(), "infusions");
+        helper.assertValueEqual(pedestal.item().getItem(), Items.IRON_CHESTPLATE, "item");
+        helper.assertValueEqual(core.essentia(), AspectList.builder().add(ThaumoryAspects.VITA, 32).add(ThaumoryAspects.ORDO, 32).build(),
+                "Essentia left");
+        helper.assertValueInBetween(31.9, Thaumory.flux().get(helper.getLevel(), chunk), 32.0, "Flux");
+        helper.succeed();
+    }
+}
