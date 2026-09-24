@@ -2,7 +2,9 @@
   "capacity": 2,
   "effect": "thaumory:ward",
   "item_settings": {
-    "radius": 2.0
+    "radius": 2.0,
+    "scroll_push": 1.5,
+    "scroll_radius": 4.0
   },
   "mode": "sustained",
   "runes": [

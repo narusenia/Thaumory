@@ -1,7 +1,10 @@
 {
   "effect": "thaumory:light",
   "item_settings": {
-    "darkness_seconds": 3.0
+    "darkness_seconds": 3.0,
+    "scroll_darkness_seconds": 10.0,
+    "scroll_lights_per_level": 4.0,
+    "scroll_radius": 8.0
   },
   "mode": "sustained",
   "runes": [

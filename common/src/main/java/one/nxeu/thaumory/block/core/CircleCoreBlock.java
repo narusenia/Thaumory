@@ -26,6 +26,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.client.ClientCapacities;
+import one.nxeu.thaumory.infusion.InfusionCapacities;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
@@ -82,7 +84,7 @@ public final class CircleCoreBlock extends BaseEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
-        if (state.getValue(PEDESTAL) && core.pedestalItem().isEmpty() && !stack.isStackable() && !stack.is(ThaumoryItems.PEDESTAL_IGNORED)) {
+        if (state.getValue(PEDESTAL) && core.pedestalItem().isEmpty() && goesOnPedestal(level, stack)) {
             if (!level.isClientSide()) {
                 core.setPedestalItem(stack.split(1));
                 level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0f, 1.0f);
@@ -104,6 +106,18 @@ public final class CircleCoreBlock extends BaseEntityBlock {
             level.playSound(null, pos, SoundEvents.END_PORTAL_FRAME_FILL, SoundSource.BLOCKS, 1.0f, 1.0f);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * Items that do not stack, and items with an infusion capacity (a stack of blank scrolls, say), one
+     * at a time. The client goes by the capacities the server sent it.
+     */
+    private static boolean goesOnPedestal(Level level, ItemStack stack) {
+        if (stack.isEmpty() || stack.is(ThaumoryItems.PEDESTAL_IGNORED)) {
+            return false;
+        }
+        int capacity = level.isClientSide() ? ClientCapacities.of(stack.getItem()) : InfusionCapacities.of(stack.getItem());
+        return !stack.isStackable() || capacity > 0;
     }
 
     @Override

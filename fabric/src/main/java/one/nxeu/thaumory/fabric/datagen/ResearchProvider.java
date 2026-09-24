@@ -61,7 +61,8 @@ final class ResearchProvider {
                     List.of(ResearchCondition.Aspects.count(3)), List.of(alchemy("blank_rune"), alchemy("chalk"))));
             output.accept(CIRCLES, chapter(ThaumoryItems.CIRCLE_CORE.get(), 4, List.of(RUNES),
                     List.of(new ResearchCondition.Circles(true, 1, Optional.empty())),
-                    List.of(alchemy("amplifying_chalk"), alchemy("extending_chalk"), alchemy("economizing_chalk"), alchemy("stabilizing_chalk"))));
+                    List.of(alchemy("amplifying_chalk"), alchemy("extending_chalk"), alchemy("economizing_chalk"), alchemy("stabilizing_chalk"),
+                            alchemy("blank_scroll"))));
             output.accept(FLUX, chapter(ThaumoryItems.POLLUTED_SOIL.get(), 5, List.of(CIRCLES),
                     List.of(new ResearchCondition.Circles(false, 1, Optional.empty())), List.of()));
             output.accept(INQUIRY, chapter(ThaumoryItems.WAND.get(), 6, List.of(ASPECTS),

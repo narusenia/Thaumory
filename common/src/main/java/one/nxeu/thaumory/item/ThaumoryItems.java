@@ -37,6 +37,10 @@ public final class ThaumoryItems {
     public static final RegistrySupplier<TranscriptItem> TRANSCRIPT =
             register("transcript", TranscriptItem::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<Item> BLANK_RUNE = register("blank_rune", Item::new, new Item.Properties());
+    /** Takes one infusion and turns into a {@link #SCROLL} (requirements §10.3). */
+    public static final RegistrySupplier<Item> BLANK_SCROLL = register("blank_scroll", Item::new, new Item.Properties().stacksTo(16));
+    /** Made from a blank scroll by infusion only, so it is not in the creative tab. */
+    public static final RegistrySupplier<ScrollItem> SCROLL = register("scroll", ScrollItem::new, new Item.Properties().stacksTo(16));
     public static final RegistrySupplier<RuneItem> RUNE = register("rune", RuneItem::new, new Item.Properties());
     public static final RegistrySupplier<ChalkItem> CHALK = chalk("chalk", () -> ThaumoryBlocks.CHALK_LINE.get());
     public static final RegistrySupplier<ChalkItem> AMPLIFYING_CHALK = chalk("amplifying_chalk", () -> ThaumoryBlocks.AMPLIFYING_PATTERN.get());
@@ -90,7 +94,7 @@ public final class ThaumoryItems {
 
     /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL,
+            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
             Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();
@@ -108,6 +112,11 @@ public final class ThaumoryItems {
                 });
                 TAB_ORDER_EQUIPMENT.forEach(item -> output.accept(item.get()));
             })));
+
+    /** What an item becomes once infused: a blank scroll turns into a scroll, anything else stays itself. */
+    public static ItemStack infusedForm(ItemStack stack) {
+        return stack.is(BLANK_SCROLL.get()) ? stack.transmuteCopy(SCROLL.get()) : stack.copy();
+    }
 
     public static void register() {
         ITEMS.register();

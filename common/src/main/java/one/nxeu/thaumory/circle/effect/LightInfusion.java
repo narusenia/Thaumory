@@ -4,8 +4,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -72,6 +74,44 @@ final class LightInfusion implements InfusionEffect {
         if (level != null && level.isLoaded(placed.pos()) && level.getBlockState(placed.pos()).equals(LIGHT)) {
             level.setBlock(placed.pos(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
+    }
+
+    @Override
+    public boolean castable() {
+        return true;
+    }
+
+    /** Lights that stay on the dark ground around, or darkness on everything else living nearby with Umbra. */
+    @Override
+    public boolean cast(InfusionContext context) {
+        ServerLevel level = context.level();
+        LivingEntity wearer = context.wearer();
+        int radius = (int) context.setting("scroll_radius", 8);
+        if (umbra(context)) {
+            int ticks = (int) Math.round(context.setting("scroll_darkness_seconds", 10) * 20);
+            var others = level.getEntitiesOfClass(LivingEntity.class, wearer.getBoundingBox().inflate(radius), e -> e != wearer);
+            others.forEach(e -> e.addEffect(new MobEffectInstance(MobEffects.DARKNESS, ticks, 0)));
+            return !others.isEmpty();
+        }
+        int wanted = (int) Math.round(context.setting("scroll_lights_per_level", 4) * context.infusionLevel());
+        int placed = 0;
+        RandomSource random = level.getRandom();
+        BlockPos centre = wearer.blockPosition();
+        for (int attempt = 0; attempt < wanted * 8 && placed < wanted; attempt++) {
+            BlockPos column = centre.offset(random.nextIntBetweenInclusive(-radius, radius), 0, random.nextIntBetweenInclusive(-radius, radius));
+            for (int dy = -3; dy <= 3; dy++) {
+                BlockPos pos = column.above(dy);
+                BlockPos below = pos.below();
+                if (level.getBlockState(pos).isAir() && level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+                    if (level.getBrightness(LightLayer.BLOCK, pos) <= DARK) {
+                        level.setBlock(pos, LIGHT, Block.UPDATE_ALL);
+                        placed++;
+                    }
+                    break;
+                }
+            }
+        }
+        return placed > 0;
     }
 
     @Override

@@ -28,6 +28,7 @@ import one.nxeu.thaumory.infusion.Infusion;
 import one.nxeu.thaumory.infusion.InfusionRuntime;
 import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.item.ScrollItem;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 /**
@@ -216,6 +217,52 @@ public class InfusionGameTests {
         helper.assertValueEqual(player.getMainHandItem().get(ThaumoryComponents.STORED_ESSENTIA.get()),
                 AspectList.of(ThaumoryAspects.ORDO, 2), "stored");
         helper.assertValueEqual(InfusionRuntime.tryUse(player), InfusionRuntime.UseResult.NO_ESSENTIA, "second use");
+        helper.succeed();
+    }
+
+    /** One blank scroll off a stack goes on the pedestal, and infusing it makes a scroll that takes nothing more. */
+    @GameTest
+    public void aBlankScrollTurnsIntoAScroll(GameTestHelper helper) {
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
+        helper.setBlock(CORE, helper.getBlockState(CORE).setValue(CircleCoreBlock.PEDESTAL, true));
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ThaumoryItems.BLANK_SCROLL.get(), 5));
+        helper.useBlock(CORE, player);
+        helper.assertValueEqual(core.pedestalItem().getCount(), 1, "scrolls on the pedestal");
+        helper.assertValueEqual(player.getMainHandItem().getCount(), 4, "scrolls left in hand");
+        failureChance(0);
+        try {
+            helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.INFUSED, "first");
+            helper.assertValueEqual(core.pedestalItem().getItem(), ThaumoryItems.SCROLL.get(), "item");
+            helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.NO_CAPACITY, "second");
+        } finally {
+            restore();
+        }
+        helper.succeed();
+    }
+
+    /** A healing scroll heals at once and is used up; a teleport scroll with nowhere to go is kept. */
+    @GameTest
+    public void aScrollWorksOnceAndOnlyWhenItCan(GameTestHelper helper) {
+        Circles.floor(helper);
+        ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+        player.setPos(helper.absoluteVec(new Vec3(2.5, 2, 2.5)));
+        player.setHealth(10);
+        ItemStack healing = new ItemStack(ThaumoryItems.SCROLL.get(), 2);
+        healing.set(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY.with(new Infusion(Thaumory.id("healing"), 1, Optional.empty(), 2)));
+        player.setItemInHand(InteractionHand.MAIN_HAND, healing);
+        helper.assertTrue(ScrollItem.cast(helper.getLevel(), player, player.getMainHandItem()), "healing did not cast");
+        helper.assertValueEqual(player.getHealth(), 14.0f, "health");
+        helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "healing scrolls left");
+
+        ItemStack teleport = new ItemStack(ThaumoryItems.SCROLL.get());
+        teleport.set(ThaumoryComponents.INFUSIONS.get(),
+                Infusions.EMPTY.with(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.VENENUM.id()), 3, TELEPORT_COST)));
+        player.setItemInHand(InteractionHand.MAIN_HAND, teleport);
+        helper.assertFalse(ScrollItem.cast(helper.getLevel(), player, player.getMainHandItem()), "teleport cast with nowhere to go");
+        helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "teleport scroll kept");
+        // Held, a scroll is not equipment: the key finds nothing to use.
+        helper.assertValueEqual(InfusionRuntime.tryUse(player), InfusionRuntime.UseResult.NONE, "key with a scroll in hand");
         helper.succeed();
     }
 

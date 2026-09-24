@@ -617,7 +617,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return InfuseOutcome.of(misfire(server, activator) ? InfuseResult.MISFIRED : InfuseResult.UNDEFINED);
         }
         ItemStack stack = pedestalItem;
-        Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(circle.get().definition().effect());
+        Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(circle.get().definition().effect())
+                .filter(e -> e.castable() || !stack.is(ThaumoryItems.BLANK_SCROLL.get()));
         if (effect.isEmpty()) {
             return InfuseOutcome.of(InfuseResult.NOT_INFUSABLE);
         }
@@ -649,7 +650,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             releaseFlux(server, InfusionRules.failureFlux(cost, infusion));
             return InfuseOutcome.of(InfuseResult.FAILED);
         }
-        ItemStack infused = stack.copy();
+        ItemStack infused = ThaumoryItems.infusedForm(stack);
         infused.set(ThaumoryComponents.INFUSIONS.get(), infusions.with(burnt));
         setPedestalItem(infused);
         server.sendParticles(ParticleTypes.ENCHANT, worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,

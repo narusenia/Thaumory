@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:arcanum": 2
+  },
+  "catalyst": "minecraft:paper",
+  "result": {
+    "id": "thaumory:blank_scroll"
+  }
+}

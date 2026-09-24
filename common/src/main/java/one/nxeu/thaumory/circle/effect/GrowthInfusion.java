@@ -26,6 +26,41 @@ final class GrowthInfusion implements InfusionEffect {
         }
     }
 
+    @Override
+    public boolean castable() {
+        return true;
+    }
+
+    /** Every crop in reach gets a few random ticks at once, or young animals a good step towards grown. */
+    @Override
+    public boolean cast(InfusionContext context) {
+        ServerLevel level = context.level();
+        int radius = (int) (context.setting("scroll_radius", 3) + context.infusionLevel());
+        BlockPos centre = context.wearer().blockPosition();
+        if (context.parameter().filter(ThaumoryAspects.HERBA::equals).isPresent()) {
+            int ticks = (int) Math.round(context.setting("scroll_ticks_per_level", 2) * context.infusionLevel());
+            boolean grew = false;
+            for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-radius, -2, -radius), centre.offset(radius, 2, radius))) {
+                BlockState state = level.getBlockState(pos);
+                if (state.is(BlockTags.CROPS) && state.isRandomlyTicking()) {
+                    BlockPos crop = pos.immutable();
+                    for (int i = 0; i < ticks; i++) {
+                        level.getBlockState(crop).randomTick(level, crop, level.getRandom());
+                    }
+                    grew = true;
+                }
+            }
+            return grew;
+        }
+        if (context.parameter().filter(ThaumoryAspects.BESTIA::equals).isPresent()) {
+            int ticks = (int) Math.round(context.setting("scroll_animal_ticks_per_level", 1200) * context.infusionLevel());
+            var young = level.getEntitiesOfClass(AgeableMob.class, context.wearer().getBoundingBox().inflate(radius), mob -> mob.getAge() < 0);
+            young.forEach(mob -> mob.setAge(Math.min(0, mob.getAge() + ticks)));
+            return !young.isEmpty();
+        }
+        return false;
+    }
+
     /** One random tick for a crop in each of a few random columns around the wearer. */
     private static void crops(InfusionContext context, int radius) {
         ServerLevel level = context.level();

@@ -65,6 +65,7 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 alchemy("extending_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.EXTENDING_CHALK.get(), new AspectStack(AER, 8));
                 alchemy("economizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.ECONOMIZING_CHALK.get(), new AspectStack(VINCULUM, 4));
                 alchemy("stabilizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.STABILIZING_CHALK.get(), new AspectStack(ORDO, 4));
+                alchemy("blank_scroll", Items.PAPER, ThaumoryItems.BLANK_SCROLL.get(), new AspectStack(ARCANUM, 2));
                 alchemy("arcane_iron_ingot", Items.IRON_INGOT, ThaumoryItems.ARCANE_IRON.ingot().get(), new AspectStack(ARCANUM, 8));
                 alchemy("aether_silver_ingot", ThaumoryItems.ARCANE_IRON.ingot().get(), ThaumoryItems.AETHER_SILVER.ingot().get(),
                         new AspectStack(AER, 16), new AspectStack(LUX, 16));

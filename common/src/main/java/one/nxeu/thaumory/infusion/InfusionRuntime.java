@@ -26,6 +26,7 @@ import one.nxeu.thaumory.api.infusion.InfusionEffect;
 import one.nxeu.thaumory.circle.CircleDefinitionReloadListener;
 import one.nxeu.thaumory.circle.CircleDefinitions;
 import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.network.UseInfusionPayload;
 
 /**
@@ -96,7 +97,7 @@ public final class InfusionRuntime {
         ServerLevel level = player.level();
         for (EquipmentSlot slot : EQUIPPED) {
             ItemStack stack = player.getItemBySlot(slot);
-            for (Infusion infusion : stack.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).list()) {
+            for (Infusion infusion : equipped(stack).list()) {
                 Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(infusion.effect()).filter(e -> !e.active());
                 Working current = found.get(infusion.effect());
                 if (effect.isPresent() && (current == null || current.context().infusion().level() < infusion.level())) {
@@ -105,6 +106,11 @@ public final class InfusionRuntime {
             }
         }
         return found;
+    }
+
+    /** The effects an item carries as equipment. A scroll's effect works only when the scroll is used up. */
+    private static Infusions equipped(ItemStack stack) {
+        return stack.is(ThaumoryItems.SCROLL.get()) ? Infusions.EMPTY : stack.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY);
     }
 
     private static void stopAll(ServerPlayer player) {
@@ -116,7 +122,7 @@ public final class InfusionRuntime {
 
     private static void attack(ServerLevel level, net.minecraft.world.entity.player.Player player, LivingEntity target) {
         ItemStack stack = player.getMainHandItem();
-        for (Infusion infusion : stack.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).list()) {
+        for (Infusion infusion : equipped(stack).list()) {
             ThaumoryApi.infusionEffects().get(infusion.effect()).filter(e -> !e.active())
                     .ifPresent(effect -> effect.attack(new Context(level, player, stack, infusion), target));
         }
@@ -147,7 +153,7 @@ public final class InfusionRuntime {
     }
 
     private static UseResult useIn(ServerPlayer player, ItemStack stack) {
-        Optional<Infusion> active = stack.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).active();
+        Optional<Infusion> active = equipped(stack).active();
         Optional<InfusionEffect> effect = active.flatMap(infusion -> ThaumoryApi.infusionEffects().get(infusion.effect()))
                 .filter(InfusionEffect::active);
         if (effect.isEmpty()) {
@@ -165,6 +171,11 @@ public final class InfusionRuntime {
         setStored(stack, left.get());
         effect.get().use(context);
         return UseResult.USED;
+    }
+
+    /** An infusion at work for {@code wearer}, as effects see it. */
+    public static InfusionContext context(ServerLevel level, LivingEntity wearer, ItemStack stack, Infusion infusion) {
+        return new Context(level, wearer, stack, infusion);
     }
 
     /** Puts {@code stored} into the item, removing the component when nothing is left. */

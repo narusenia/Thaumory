@@ -2,7 +2,8 @@
   "capacity": 2,
   "effect": "thaumory:attraction",
   "item_settings": {
-    "radius": 3.0
+    "radius": 3.0,
+    "scroll_radius": 8.0
   },
   "mode": "sustained",
   "runes": [

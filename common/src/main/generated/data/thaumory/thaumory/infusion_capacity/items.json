@@ -7,6 +7,10 @@
     {
       "capacity": 5,
       "target": "#thaumory:aether_silver_equipment"
+    },
+    {
+      "capacity": 3,
+      "target": "thaumory:blank_scroll"
     }
   ]
 }
