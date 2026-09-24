@@ -58,6 +58,8 @@ public final class ArcaneCodexScreen extends Screen {
     /** Rows of text on a page, leaving the bottom line for the page arrows. */
     private static final int LINES_PER_PAGE = (PAGE_HEIGHT - PAD * 2 - LINE) / LINE;
     private static final int ICON = 18;
+    /** Chapters listed on the left page at a time, leaving the bottom line for the page arrows. */
+    private static final int CHAPTER_ROWS = (PAGE_HEIGHT - PAD * 2 - LINE) / ICON;
     /** Aspect icons in the aspects tab, drawn at three times the text size. */
     private static final int ASPECT_ICON = 24;
     private static final int ASPECT_CELL = 29;
@@ -87,6 +89,8 @@ public final class ArcaneCodexScreen extends Screen {
     private Optional<Identifier> chapter = lastChapter;
     /** Which page of the chosen chapter the right page shows. */
     private int chapterPage;
+    /** Which page of the chapter list the left page shows; starts at the chosen chapter's. */
+    private int listPage = -1;
     private int left;
     private int top;
     /** What the "transcribe" button would copy: a known aspect or a working circle picked in its tab. */
@@ -273,8 +277,14 @@ public final class ArcaneCodexScreen extends Screen {
 
     private void drawChapters(GuiGraphicsExtractor graphics, ResearchView view, int mouseX, int mouseY) {
         Optional<ResearchView.ChapterView> picked = chosen(view);
+        int listPages = Math.max(1, (view.chapters().size() + CHAPTER_ROWS - 1) / CHAPTER_ROWS);
+        if (listPage < 0) {
+            listPage = picked.map(view.chapters()::indexOf).map(index -> index / CHAPTER_ROWS).orElse(0);
+        }
+        listPage = Math.clamp(listPage, 0, listPages - 1);
         int y = textY();
-        for (ResearchView.ChapterView each : view.chapters()) {
+        int first = listPage * CHAPTER_ROWS;
+        for (ResearchView.ChapterView each : view.chapters().subList(first, Math.min(first + CHAPTER_ROWS, view.chapters().size()))) {
             boolean hovered = mouseX >= textX(0) - 2 && mouseX < textX(0) + TEXT_WIDTH && mouseY >= y - 1 && mouseY < y + ICON - 1;
             boolean isPicked = picked.filter(each::equals).isPresent();
             if (isPicked || hovered) {
@@ -288,9 +298,16 @@ public final class ArcaneCodexScreen extends Screen {
                     each.complete() ? GOLD : INK, false);
             y += ICON;
         }
+        if (listPage > 0) {
+            graphics.text(font, "◀", textX(0), arrowY(), FADED, false);
+        }
+        if (listPage + 1 < listPages) {
+            graphics.text(font, "▶", pageX(0) + PAGE_WIDTH - PAD - 8, arrowY(), FADED, false);
+        }
         if (view.closed() > 0) {
-            graphics.text(font, Component.translatable("codex.thaumory.chapters.closed", view.closed()), textX(0),
-                    pageY() + PAGE_HEIGHT - PAD - 8, FADED, false);
+            // Between the list's arrows.
+            graphics.text(font, font.substrByWidth(Component.translatable("codex.thaumory.chapters.closed", view.closed()), TEXT_WIDTH - 24).getString(),
+                    textX(0) + 12, arrowY(), FADED, false);
         }
 
         List<FormattedCharSequence> detail = picked.map(each -> wrap(chapterLines(each))).orElse(List.of());
@@ -575,8 +592,19 @@ public final class ArcaneCodexScreen extends Screen {
         if (tab == Tab.CHAPTERS) {
             ResearchView view = ClientResearch.get();
             int row = (int) Math.floor((y - textY() + 1) / ICON);
-            if (x >= textX(0) - 2 && x < textX(0) + TEXT_WIDTH && y >= textY() - 1 && row >= 0 && row < view.chapters().size()) {
-                choose(view.chapters().get(row).id());
+            int index = listPage * CHAPTER_ROWS + row;
+            if (x >= textX(0) - 2 && x < textX(0) + TEXT_WIDTH && y >= textY() - 1 && row >= 0 && row < CHAPTER_ROWS
+                    && index < view.chapters().size()) {
+                choose(view.chapters().get(index).id());
+                return true;
+            }
+            if (onLeftArrow) {
+                listPage = Math.max(0, listPage - 1);
+                return true;
+            }
+            boolean onListForward = onArrowRow && x >= pageX(0) + PAGE_WIDTH - PAD - 10 && x < pageX(0) + PAGE_WIDTH - PAD + 2;
+            if (onListForward) {
+                listPage++;
                 return true;
             }
             boolean onDetailBack = onArrowRow && x >= textX(1) - 2 && x < textX(1) + 10;
@@ -615,7 +643,9 @@ public final class ArcaneCodexScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         int step = scrollY > 0 ? -1 : 1;
-        if (tab == Tab.CHAPTERS) {
+        if (tab == Tab.CHAPTERS && mouseX < pageX(1)) {
+            listPage = Math.max(0, listPage + step);
+        } else if (tab == Tab.CHAPTERS) {
             chapterPage += step;
         } else {
             spread += step;
