@@ -29,6 +29,7 @@ import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.circle.CircleDefinitionFile;
 import one.nxeu.thaumory.circle.CircleMode;
+import one.nxeu.thaumory.circle.InfusionCost;
 import one.nxeu.thaumory.circle.effect.ThaumoryCircleEffects;
 
 /** Writes {@code data/thaumory/thaumory/circle/*.json}, the built-in combinations (requirements §4.5). */
@@ -56,13 +57,13 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
             List<String> slot3, int cost) {
         output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.TRIGGERED,
-                cost, SUSTAINED_INTERVAL, Map.of()));
+                cost, SUSTAINED_INTERVAL, Map.of(), InfusionCost.DEFAULT));
     }
 
     private static void sustained(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
             List<String> slot3, Map<String, Double> settings) {
         output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.SUSTAINED,
-                1, SUSTAINED_INTERVAL, settings));
+                1, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT));
     }
 
     private static List<String> slot3(boolean empty, Aspect... aspects) {

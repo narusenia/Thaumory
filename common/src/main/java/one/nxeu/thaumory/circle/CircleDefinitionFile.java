@@ -18,7 +18,8 @@ import net.minecraft.resources.Identifier;
  *   "slot3": ["none", "thaumory:ignis", "thaumory:aer"],
  *   "mode": "sustained",
  *   "interval": 200,
- *   "settings": { "flux_per_second": 0.5 }
+ *   "settings": { "flux_per_second": 0.5 },
+ *   "infusion_cost": { "runes": 32, "parameter": 4 }
  * }
  * }</pre>
  *
@@ -27,7 +28,7 @@ import net.minecraft.resources.Identifier;
  * empty. A triggered effect takes {@code cost}, a sustained one {@code interval}.
  */
 public record CircleDefinitionFile(Identifier effect, List<Identifier> runes, List<String> slot3,
-        CircleMode mode, int cost, int interval, Map<String, Double> settings) {
+        CircleMode mode, int cost, int interval, Map<String, Double> settings, InfusionCost infusionCost) {
     public static final String ANY = "any";
     public static final String NONE = "none";
 
@@ -41,6 +42,7 @@ public record CircleDefinitionFile(Identifier effect, List<Identifier> runes, Li
             CircleMode.CODEC.fieldOf("mode").forGetter(CircleDefinitionFile::mode),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("cost", 1).forGetter(CircleDefinitionFile::cost),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("interval", 200).forGetter(CircleDefinitionFile::interval),
-            Codec.unboundedMap(Codec.STRING, Codec.DOUBLE).optionalFieldOf("settings", Map.of()).forGetter(CircleDefinitionFile::settings)
+            Codec.unboundedMap(Codec.STRING, Codec.DOUBLE).optionalFieldOf("settings", Map.of()).forGetter(CircleDefinitionFile::settings),
+            InfusionCost.CODEC.optionalFieldOf("infusion_cost", InfusionCost.DEFAULT).forGetter(CircleDefinitionFile::infusionCost)
     ).apply(i, CircleDefinitionFile::new));
 }

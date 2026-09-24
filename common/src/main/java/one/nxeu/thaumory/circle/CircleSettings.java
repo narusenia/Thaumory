@@ -26,12 +26,13 @@ import net.minecraft.resources.Identifier;
  *     "thaumory:extending_pattern": { "range": 0.5, "cost": 0.25 },
  *     "thaumory:economizing_pattern": { "cost": -0.25, "strength": -0.25 },
  *     "thaumory:stabilizing_pattern": { "instability": -3 }
- *   }
+ *   },
+ *   "infusion": { "base_failure": 0.1, "failure_per_point": 0.2, "flux_ratio": 0.5, "max_level": 5 }
  * }
  * }</pre>
  */
 public record CircleSettings(int scanInterval, int instabilityThreshold, InstabilityFlux instabilityFlux, double undefinedFlux,
-        List<Integer> ringRadius, int essentiaCapacity, Map<Identifier, PatternSettings> patterns) {
+        List<Integer> ringRadius, int essentiaCapacity, Map<Identifier, PatternSettings> patterns, InfusionSettings infusion) {
     /** No multiplier goes below this, however many modifiers lower it. */
     public static final double MIN_MULTIPLIER = 0.25;
 
@@ -39,7 +40,7 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, Instabi
             thaumory("amplifying_pattern"), new PatternSettings(2, 0.5, 0, 0.5),
             thaumory("extending_pattern"), new PatternSettings(0, 0, 0.5, 0.25),
             thaumory("economizing_pattern"), new PatternSettings(0, -0.25, 0, -0.25),
-            thaumory("stabilizing_pattern"), new PatternSettings(-3, 0, 0, 0)));
+            thaumory("stabilizing_pattern"), new PatternSettings(-3, 0, 0, 0)), InfusionSettings.DEFAULT);
 
     /** Each point of instability over the threshold adds to the chance of Flux on a payment, and to its amount. */
     public record InstabilityFlux(double chancePerPoint, double fluxPerPoint) {
@@ -80,7 +81,8 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, Instabi
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("essentia_capacity", DEFAULT.essentiaCapacity)
                     .forGetter(CircleSettings::essentiaCapacity),
             Codec.unboundedMap(Identifier.CODEC, PatternSettings.CODEC).optionalFieldOf("patterns", Map.of())
-                    .forGetter(CircleSettings::patterns)
+                    .forGetter(CircleSettings::patterns),
+            InfusionSettings.CODEC.optionalFieldOf("infusion", InfusionSettings.DEFAULT).forGetter(CircleSettings::infusion)
     ).apply(i, CircleSettings::new));
 
     private PatternSettings pattern(Identifier id) {
