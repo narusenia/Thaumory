@@ -1,10 +1,13 @@
 package one.nxeu.thaumory.fabric.datagen;
 
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AER;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.AQUA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.BESTIA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.HERBA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.IGNIS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.LUX;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.MORS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TEMPESTAS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VINCULUM;
@@ -144,6 +147,9 @@ final class ResearchProvider {
             hint(output, ThaumoryCircleEffects.ATTRACTION, TEMPESTAS, VINCULUM);
             hint(output, ThaumoryCircleEffects.WEATHER, TEMPESTAS, ARCANUM);
             hint(output, ThaumoryCircleEffects.CHARGING, ARCANUM, VINCULUM);
+            hint(output, ThaumoryCircleEffects.HARVEST, HERBA, MORS);
+            hint(output, ThaumoryCircleEffects.BREEDING, BESTIA, VITA);
+            hint(output, ThaumoryCircleEffects.MOISTURE, AQUA, HERBA);
         }
 
         private static void hint(BiConsumer<Identifier, Hint> output, Identifier effect, Aspect first, Aspect second) {

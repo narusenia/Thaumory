@@ -64,6 +64,13 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
         // Cannot be infused, so it takes no capacity.
         sustained(output, ThaumoryCircleEffects.CHARGING, ARCANUM, VINCULUM, List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY),
                 Map.of("per_second", 4.0), 0, Optional.empty(), Map.of());
+        // The farming circles work only as circles (requirements §17.4).
+        sustained(output, ThaumoryCircleEffects.HARVEST, HERBA, MORS, slot3(true), Map.of("columns_per_level", 8.0), 0, Optional.empty(),
+                Map.of());
+        sustained(output, ThaumoryCircleEffects.BREEDING, BESTIA, VITA, slot3(true),
+                Map.of("interval_seconds", 10.0, "max_per_kind", 16.0), 0, Optional.empty(), Map.of());
+        sustained(output, ThaumoryCircleEffects.MOISTURE, AQUA, HERBA, slot3(true), Map.of("columns_per_level", 8.0), 0, Optional.empty(),
+                Map.of());
     }
 
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,

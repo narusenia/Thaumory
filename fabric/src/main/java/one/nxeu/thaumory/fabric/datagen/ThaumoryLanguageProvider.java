@@ -172,6 +172,9 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.ATTRACTION.toLanguageKey("circle_effect"), "Attraction");
             builder.add(ThaumoryCircleEffects.WEATHER.toLanguageKey("circle_effect"), "Weather");
             builder.add(ThaumoryCircleEffects.CHARGING.toLanguageKey("circle_effect"), "Charging");
+            builder.add(ThaumoryCircleEffects.HARVEST.toLanguageKey("circle_effect"), "Harvest");
+            builder.add(ThaumoryCircleEffects.BREEDING.toLanguageKey("circle_effect"), "Breeding");
+            builder.add(ThaumoryCircleEffects.MOISTURE.toLanguageKey("circle_effect"), "Moisture");
             builder.add("hud.thaumory.core.essentia", "Essentia (up to %s each)");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
@@ -229,6 +232,9 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.attraction", "Tempestas and Vinculum reel in what has fallen.");
             builder.add("hint.thaumory.weather", "Tempestas and Arcanum call the sky.");
             builder.add("hint.thaumory.charging", "Arcanum, held by Vinculum, fills a vessel.");
+            builder.add("hint.thaumory.harvest", "Where Herba meets Mors, what has ripened is reaped.");
+            builder.add("hint.thaumory.breeding", "Bestia and Vita bring the beasts together.");
+            builder.add("hint.thaumory.moisture", "Aqua and Herba soak the furrows and quench the flame.");
             builder.add("codex.thaumory.tab.chapters", "Chapters");
             builder.add("codex.thaumory.tab.aspects", "Aspects");
             builder.add("codex.thaumory.tab.scanned", "Scanned");
@@ -401,6 +407,9 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.ATTRACTION.toLanguageKey("circle_effect"), "引き寄せ");
             builder.add(ThaumoryCircleEffects.WEATHER.toLanguageKey("circle_effect"), "天候");
             builder.add(ThaumoryCircleEffects.CHARGING.toLanguageKey("circle_effect"), "充填");
+            builder.add(ThaumoryCircleEffects.HARVEST.toLanguageKey("circle_effect"), "収穫");
+            builder.add(ThaumoryCircleEffects.BREEDING.toLanguageKey("circle_effect"), "繁殖");
+            builder.add(ThaumoryCircleEffects.MOISTURE.toLanguageKey("circle_effect"), "潤い");
             builder.add("hud.thaumory.core.essentia", "Essentia（各 %s まで）");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
@@ -458,6 +467,9 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.attraction", "Tempestas と Vinculum は、落ちたものを手繰り寄せる。");
             builder.add("hint.thaumory.weather", "Tempestas と Arcanum は、空を呼ぶ。");
             builder.add("hint.thaumory.charging", "Arcanum は、Vinculum に留められるとき、器を満たす。");
+            builder.add("hint.thaumory.harvest", "Herba が Mors に出会うとき、実りは刈り取られる。");
+            builder.add("hint.thaumory.breeding", "Bestia と Vita は、獣を番わせる。");
+            builder.add("hint.thaumory.moisture", "Aqua と Herba は、畝を潤し、炎を鎮める。");
             builder.add("codex.thaumory.tab.chapters", "章");
             builder.add("codex.thaumory.tab.aspects", "アスペクト");
             builder.add("codex.thaumory.tab.scanned", "スキャン済み");

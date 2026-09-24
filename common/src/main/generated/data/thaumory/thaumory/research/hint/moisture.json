@@ -1,0 +1,11 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:aqua",
+        "thaumory:herba"
+      ]
+    }
+  ]
+}

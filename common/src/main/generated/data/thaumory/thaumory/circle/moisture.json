@@ -1,0 +1,12 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:moisture",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:aqua",
+    "thaumory:herba"
+  ],
+  "settings": {
+    "columns_per_level": 8.0
+  }
+}

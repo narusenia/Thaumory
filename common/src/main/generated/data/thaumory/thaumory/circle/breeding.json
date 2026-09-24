@@ -1,0 +1,13 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:breeding",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:bestia",
+    "thaumory:vita"
+  ],
+  "settings": {
+    "interval_seconds": 10.0,
+    "max_per_kind": 16.0
+  }
+}
