@@ -10,7 +10,6 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.transformers.SplitPacketTransformer;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
-import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +63,7 @@ public final class ThaumoryClient {
 
     private ThaumoryClient() {}
 
-    public static void init() {
+    public static void init(ParticleProviders particles) {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, AspectSyncPayload.TYPE, AspectSyncPayload.STREAM_CODEC,
                 List.of(new SplitPacketTransformer()), (payload, context) -> context.queue(() -> {
                     ClientItemAspects.replace(payload.items());
@@ -105,7 +104,7 @@ public final class ThaumoryClient {
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), CircleCoreRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.PIPE_ENTITY.get(), PipeRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
-        ParticleProviderRegistry.register(ThaumoryParticles.ASPECT_MOTE, AspectMoteParticle.Provider::new);
+        particles.register(ThaumoryParticles.ASPECT_MOTE.get(), AspectMoteParticle.Provider::new);
         RuneTint.register();
         FilterPipeTint.register();
         ArcaneCodexItem.setScreenOpener(() -> {
