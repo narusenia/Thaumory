@@ -20,8 +20,12 @@ import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.Aspect;
+import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
+import one.nxeu.thaumory.jar.JarContents;
+import one.nxeu.thaumory.jar.JarSettings;
 
 public final class ThaumoryItems {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Thaumory.MOD_ID, Registries.ITEM);
@@ -94,7 +98,10 @@ public final class ThaumoryItems {
 
     private ThaumoryItems() {}
 
-    /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
+    /**
+     * Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect, and
+     * the empty jar is followed by a full one for each aspect.
+     */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
             ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
@@ -108,12 +115,23 @@ public final class ThaumoryItems {
                 TAB_ORDER.forEach(item -> {
                     if (item == RUNE) {
                         ThaumoryApi.aspects().all().forEach(aspect -> output.accept(RuneItem.of(aspect)));
+                    } else if (item == JAR) {
+                        output.accept(item.get());
+                        ThaumoryApi.aspects().all().forEach(aspect -> output.accept(fullJar(aspect)));
                     } else {
                         output.accept(item.get());
                     }
                 });
                 TAB_ORDER_EQUIPMENT.forEach(item -> output.accept(item.get()));
             })));
+
+    /** A jar filled to the default capacity with one aspect, unlabeled. */
+    private static ItemStack fullJar(Aspect aspect) {
+        ItemStack jar = new ItemStack(JAR.get());
+        jar.set(ThaumoryComponents.JAR_CONTENTS.get(),
+                JarContents.EMPTY.withAspects(AspectList.builder().add(aspect, JarSettings.DEFAULT.capacity()).build()));
+        return jar;
+    }
 
     /** What an item becomes once infused: a blank scroll turns into a scroll, anything else stays itself. */
     public static ItemStack infusedForm(ItemStack stack) {
