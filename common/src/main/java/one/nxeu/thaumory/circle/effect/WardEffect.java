@@ -85,7 +85,7 @@ final class WardEffect implements CircleEffect {
             away = away.normalize().scale(push);
             entity.push(away.x, 0.1, away.z);
             if (mark) {
-                context.showAffected(entity);
+                context.affected(entity);
             }
         }
     }

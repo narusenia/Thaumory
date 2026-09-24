@@ -53,7 +53,7 @@ final class SmeltingEffect implements CircleEffect {
             cooked.addTag(SMELTED);
             level.addFreshEntity(cooked);
             experience(level, cooked, count, recipe.get().value().experience());
-            context.showAffected(cooked);
+            context.affected(cooked);
         }
     }
 

@@ -130,6 +130,7 @@ public final class WandItem extends Item {
                 case OVERLOADED -> Outcome.OVERLOADED;
                 case NO_TARGET -> Outcome.NO_TARGET;
                 case NO_ESSENTIA -> Outcome.NO_ESSENTIA;
+                case STOPPED -> Outcome.STOPPED;
             };
         };
     }

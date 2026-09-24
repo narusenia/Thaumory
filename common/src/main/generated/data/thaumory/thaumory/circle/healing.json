@@ -11,6 +11,9 @@
     "thaumory:vita",
     "thaumory:ordo"
   ],
+  "settings": {
+    "work_flux": 0.05
+  },
   "slot3": [
     "none",
     "thaumory:bestia"

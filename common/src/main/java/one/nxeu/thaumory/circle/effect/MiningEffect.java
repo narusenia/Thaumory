@@ -20,12 +20,16 @@ import one.nxeu.thaumory.circle.CirclePlane;
 
 /**
  * Bellum + Terra, triggered. Each activation digs out one layer behind the face the circle is drawn
- * on, a square as wide as the range, working deeper each time; the layer right behind the face is
- * left to hold the circle up. It takes what an iron pickaxe could and brings the drops to the Core
- * (requirements §17.4).
+ * on, a square as wide as the range, a few blocks a second, and the next goes one deeper; the layer
+ * right behind the face is left to hold the circle up. It takes what an iron pickaxe could, brings
+ * the drops to the Core, and pays for every few blocks as it goes (requirements §17.4).
  */
 final class MiningEffect implements CircleEffect {
     private static final String DEPTH = "depth";
+    /** The layer being dug, while an activation is at work. */
+    private static final String DIGGING = "digging";
+    /** Blocks dug since the circle last paid. */
+    private static final String UNPAID = "unpaid";
     /** The first layer dug: the one behind the circle's own support. */
     private static final int FIRST_DEPTH = 2;
     /** How many layers one activation looks through for something to dig. */
@@ -38,29 +42,64 @@ final class MiningEffect implements CircleEffect {
 
     @Override
     public void apply(CircleContext context) {
-        Optional<Integer> depth = nextLayer(context);
-        if (depth.isEmpty()) {
-            return;
-        }
+        nextLayer(context).ifPresent(depth -> {
+            context.data().putInt(DEPTH, depth);
+            context.data().putInt(DIGGING, depth);
+            // The activation's own cost pays for the first few blocks.
+            context.data().putInt(UNPAID, 0);
+        });
+    }
+
+    @Override
+    public boolean working(CircleContext context) {
+        return context.data().getInt(DIGGING).isPresent();
+    }
+
+    /** Stopped with the wand: the next activation picks the layer up where this one left off. */
+    @Override
+    public void stop(CircleContext context) {
+        context.data().remove(DIGGING);
+    }
+
+    @Override
+    public void work(CircleContext context) {
+        int depth = context.data().getIntOr(DIGGING, FIRST_DEPTH);
         ServerLevel level = context.level();
-        List<ItemStack> drops = new ArrayList<>();
+        int perEssentia = Math.max(1, (int) Math.round(context.setting("blocks_per_essentia", 8)));
+        int left = (int) Math.ceil(context.setting("blocks_per_level", 4) * context.strength());
+        int unpaid = context.data().getIntOr(UNPAID, 0);
         // What the drops are worked out with; made here, since items cannot be made before their components are.
         ItemStack tool = new ItemStack(Items.IRON_PICKAXE);
-        for (BlockPos pos : layer(context, depth.get())) {
-            BlockState state = level.getBlockState(pos);
-            if (diggable(level, pos, state)) {
-                for (ItemStack drop : Block.getDrops(state, level, pos, null, null, tool)) {
-                    merge(drops, drop);
-                }
-                level.destroyBlock(pos, false);
-                context.showAffected(pos);
-            }
-        }
-        context.data().putInt(DEPTH, depth.get() + 1);
         Vec3 at = Vec3.atCenterOf(context.core());
-        for (ItemStack drop : drops) {
-            level.addFreshEntity(new ItemEntity(level, at.x, at.y, at.z, drop, 0, 0, 0));
+        for (BlockPos pos : layer(context, depth)) {
+            BlockState state = level.getBlockState(pos);
+            if (!diggable(level, pos, state)) {
+                continue;
+            }
+            if (left <= 0) {
+                context.data().putInt(UNPAID, unpaid);
+                return;
+            }
+            if (unpaid >= perEssentia) {
+                if (!context.pay(1)) {
+                    // Out of Essentia: the next activation picks the layer up where this one left off.
+                    context.data().remove(DIGGING);
+                    context.data().putInt(UNPAID, unpaid);
+                    return;
+                }
+                unpaid = 0;
+            }
+            for (ItemStack drop : Block.getDrops(state, level, pos, null, null, tool)) {
+                level.addFreshEntity(new ItemEntity(level, at.x, at.y, at.z, drop, 0, 0, 0));
+            }
+            level.destroyBlock(pos, false);
+            context.affected(pos);
+            unpaid++;
+            left--;
         }
+        context.data().remove(DIGGING);
+        context.data().putInt(DEPTH, depth + 1);
+        context.data().putInt(UNPAID, unpaid);
     }
 
     /** The depth of the first layer from where the circle got to that has something to dig. */
@@ -105,21 +144,5 @@ final class MiningEffect implements CircleEffect {
     private static boolean diggable(ServerLevel level, BlockPos pos, BlockState state) {
         return !state.isAir() && state.getFluidState().isEmpty() && !state.hasBlockEntity()
                 && state.getDestroySpeed(level, pos) >= 0 && !state.is(BlockTags.INCORRECT_FOR_IRON_TOOL);
-    }
-
-    private static void merge(List<ItemStack> into, ItemStack drop) {
-        for (ItemStack stack : into) {
-            if (ItemStack.isSameItemSameComponents(stack, drop) && stack.getCount() < stack.getMaxStackSize()) {
-                int moved = Math.min(drop.getCount(), stack.getMaxStackSize() - stack.getCount());
-                stack.grow(moved);
-                drop.shrink(moved);
-                if (drop.isEmpty()) {
-                    return;
-                }
-            }
-        }
-        if (!drop.isEmpty()) {
-            into.add(drop.copy());
-        }
     }
 }

@@ -10,6 +10,9 @@
     "thaumory:tempestas",
     "thaumory:vinculum"
   ],
+  "settings": {
+    "work_flux": 0.01
+  },
   "slot3": [
     "none",
     "any"

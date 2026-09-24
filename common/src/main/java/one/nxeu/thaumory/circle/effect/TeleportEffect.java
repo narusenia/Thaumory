@@ -39,11 +39,11 @@ final class TeleportEffect implements CircleEffect {
         ServerLevel level = context.level();
         Entity entity = traveller.get();
         level.playSound(null, entity.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0f, 1.0f);
-        context.showAffected(entity);
+        context.affected(entity);
         BlockPos pos = target.get();
         entity.teleportTo(level, pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, Set.of(), entity.getYRot(), entity.getXRot(), true);
         level.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0f, 1.0f);
-        context.showAffected(entity);
+        context.affected(entity);
     }
 
     /**

@@ -47,11 +47,21 @@ public interface CircleContext {
     int store(Aspect aspect, int amount);
 
     /**
-     * Marks a block the effect has just worked on: motes in the colours of the circle's two runes
-     * rise from it. Call it for what the effect changed, not for everything it looked at.
+     * Records a block the effect has just worked on: motes in the colours of the circle's two runes
+     * rise from it, and the circle gives off the Flux its combination's {@code work_flux} setting
+     * asks for each piece of work. Call it for what the effect changed, not for everything it
+     * looked at.
      */
-    void showAffected(BlockPos pos);
+    void affected(BlockPos pos);
 
-    /** Marks a living thing or dropped item the effect has just worked on, as {@link #showAffected(BlockPos)}. */
-    void showAffected(Entity entity);
+    /** Records a living thing or dropped item the effect has just worked on, as {@link #affected(BlockPos)}. */
+    void affected(Entity entity);
+
+    /**
+     * Pays for work beyond the activation or upkeep: {@code amount}, scaled by the circle's cost
+     * modifiers and rounded (at least 1), of each of the two effect runes' Essentia from the Core.
+     *
+     * @return false, taking nothing, if the Core holds too little
+     */
+    boolean pay(int amount);
 }

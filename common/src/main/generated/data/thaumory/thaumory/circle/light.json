@@ -11,6 +11,9 @@
     "thaumory:lux",
     "thaumory:ignis"
   ],
+  "settings": {
+    "work_flux": 0.02
+  },
   "slot3": [
     "none",
     "thaumory:umbra"

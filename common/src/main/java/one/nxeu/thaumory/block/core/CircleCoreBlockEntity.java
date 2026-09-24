@@ -63,6 +63,7 @@ import one.nxeu.thaumory.circle.CircleSide;
 import one.nxeu.thaumory.circle.CircleUpkeep;
 import one.nxeu.thaumory.circle.InfusionRules;
 import one.nxeu.thaumory.circle.InfusionSettings;
+import one.nxeu.thaumory.circle.WorkFlux;
 import one.nxeu.thaumory.flux.FluxSettings;
 import one.nxeu.thaumory.flux.FluxWorldEffects;
 import one.nxeu.thaumory.infusion.Infusion;
@@ -93,6 +94,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     private static final Codec<List<Identifier>> RUNES_CODEC = Identifier.CODEC.listOf(0, SLOTS);
     private static final Codec<AspectList> ESSENTIA_CODEC = AspectCodecs.aspectList(ThaumoryApi.aspects());
     private static final CircleScan UNSCANNED = new CircleScan(0, List.of(), List.of());
+    /** The combination setting for the Flux given off per piece of work (requirements §4.5). */
+    private static final String WORK_FLUX = "work_flux";
     /** The scan as the loupe needs it on the client; sent with block updates, never saved. */
     private static final Codec<CircleScan> SCAN_CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.INT.fieldOf("rings").forGetter(CircleScan::rings),
@@ -137,7 +140,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
     }
 
-    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA, OVERLOADED }
+    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA, OVERLOADED, STOPPED }
 
     private List<Identifier> runes = List.of();
     private AspectList essentia = AspectList.empty();
@@ -157,6 +160,10 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     private List<Identifier> runningRunes = List.of();
     private long nextPayment;
     private CompoundTag effectData = new CompoundTag();
+    /** A triggered effect still carrying out its last activation, if any (the mining circle digging, say). */
+    private Identifier workingEffect;
+    /** Work Flux held back until it comes to a whole unit. */
+    private double workFlux;
 
     public CircleCoreBlockEntity(BlockPos pos, BlockState state) {
         super(ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), pos, state);
@@ -181,6 +188,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
         if (core.running.isPresent() && level instanceof ServerLevel server) {
             core.runSustained(server, time);
+        } else if (core.workingEffect != null && level instanceof ServerLevel server) {
+            core.continueWork(server, time);
         }
     }
 
@@ -524,17 +533,20 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         return StartResult.STARTED;
     }
 
-    /** Stops a sustained circle, letting its effect clean up. False if it was not running. */
+    /**
+     * Stops a sustained circle, or a triggered one still at work, letting its effect clean up. False
+     * if it was doing neither.
+     */
     public boolean stop() {
-        if (running.isEmpty() || !(level instanceof ServerLevel server)) {
+        if (!(level instanceof ServerLevel server)) {
             return false;
+        }
+        if (running.isEmpty()) {
+            return stopWork(server);
         }
         Identifier effectId = runningEffect;
         Optional<Circle> circle = circle();
-        CircleContext context = new Context(server, circle.flatMap(Circle::parameter),
-                circle.map(c -> c.multipliers().strength()).orElse(1.0),
-                circle.map(c -> settings.radius(scan.rings(), c.multipliers())).orElse(0.0), Optional.empty(),
-                circle.map(c -> c.definition().settings()).orElse(Map.of()), circle.map(Circle::colours).orElse(List.of()));
+        CircleContext context = new Context(server, circle, Optional.empty());
         effect(effectId).ifPresent(effect -> effect.stop(context));
         running = Optional.empty();
         runningEffect = null;
@@ -562,6 +574,10 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
         Optional<CircleEffect> effect = effect(definition.effect());
         CircleContext context = context(server, circle.get(), activator);
+        if (effect.isPresent() && definition.effect().equals(workingEffect) && effect.get().working(context)) {
+            stopWork(server);
+            return TriggerResult.STOPPED;
+        }
         if (effect.isEmpty() || !effect.get().canApply(context)) {
             return TriggerResult.NO_TARGET;
         }
@@ -576,6 +592,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
         rollInstability(server);
         effect.get().apply(context);
+        workingEffect = effect.get().working(context) ? definition.effect() : null;
+        setChanged();
         recordSuccess(activator, definition.effect());
         return TriggerResult.TRIGGERED;
     }
@@ -704,6 +722,48 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
     }
 
+    /**
+     * Stops the work a triggered effect's activation left going. Its data stays, so the next
+     * activation can carry on where this one left off. False if there was none.
+     */
+    private boolean stopWork(ServerLevel server) {
+        if (workingEffect == null) {
+            return false;
+        }
+        Optional<Circle> circle = circle();
+        CircleContext context = new Context(server, circle, Optional.empty());
+        effect(workingEffect).ifPresent(effect -> effect.stop(context));
+        workingEffect = null;
+        setChanged();
+        return true;
+    }
+
+    /**
+     * Carries on a triggered effect's work every period while the circle that started it still
+     * stands; it is given up if the circle breaks or changes.
+     */
+    private void continueWork(ServerLevel server, long time) {
+        Optional<Circle> circle = circle();
+        Optional<CircleEffect> effect = effect(workingEffect);
+        if (circle.isEmpty() || effect.isEmpty() || circle.get().definition().mode() != CircleMode.TRIGGERED
+                || !circle.get().definition().effect().equals(workingEffect)) {
+            workingEffect = null;
+            setChanged();
+            return;
+        }
+        if (Math.floorMod(time + worldPosition.hashCode(), Math.max(1, effect.get().period())) != 0) {
+            return;
+        }
+        CircleContext context = context(server, circle.get(), Optional.empty());
+        if (effect.get().working(context)) {
+            effect.get().work(context);
+        }
+        if (!effect.get().working(context)) {
+            workingEffect = null;
+        }
+        setChanged();
+    }
+
     /** A running circle stops when its rings go, its runes change, or the datapacks no longer define it the same. */
     private void stopIfBroken() {
         if (running.isPresent() && circle().filter(this::stillTheSame).isEmpty()) {
@@ -720,28 +780,19 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     }
 
     private CircleContext context(ServerLevel server, Circle circle, Optional<Entity> activator) {
-        return new Context(server, circle.parameter(), circle.multipliers().strength(),
-                settings.radius(scan.rings(), circle.multipliers()), activator, circle.definition().settings(), circle.colours());
+        return new Context(server, Optional.of(circle), activator);
     }
 
+    /** What an effect sees of this Core while it works, or while it stops with its circle gone ({@code circle} empty). */
     private final class Context implements CircleContext {
         private final ServerLevel level;
-        private final Optional<Aspect> parameter;
-        private final double strength;
-        private final double radius;
+        private final Optional<Circle> circle;
         private final Optional<Entity> activator;
-        private final Map<String, Double> numbers;
-        private final List<Aspect> colours;
 
-        Context(ServerLevel level, Optional<Aspect> parameter, double strength, double radius, Optional<Entity> activator,
-                Map<String, Double> numbers, List<Aspect> colours) {
+        Context(ServerLevel level, Optional<Circle> circle, Optional<Entity> activator) {
             this.level = level;
-            this.parameter = parameter;
-            this.strength = strength;
-            this.radius = radius;
+            this.circle = circle;
             this.activator = activator;
-            this.numbers = numbers;
-            this.colours = colours;
         }
 
         @Override
@@ -756,17 +807,17 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
         @Override
         public Optional<Aspect> parameter() {
-            return parameter;
+            return circle.flatMap(Circle::parameter);
         }
 
         @Override
         public double strength() {
-            return strength;
+            return circle.map(c -> c.multipliers().strength()).orElse(1.0);
         }
 
         @Override
         public double radius() {
-            return radius;
+            return circle.map(c -> settings.radius(scan.rings(), c.multipliers())).orElse(0.0);
         }
 
         @Override
@@ -781,7 +832,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
         @Override
         public double setting(String key, double fallback) {
-            return numbers.getOrDefault(key, fallback);
+            return circle.map(c -> c.definition().settings().get(key)).orElse(null) instanceof Double value ? value : fallback;
         }
 
         @Override
@@ -797,14 +848,46 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
 
         @Override
-        public void showAffected(BlockPos pos) {
-            ThaumoryParticles.motes(level, pos, colours);
+        public void affected(BlockPos pos) {
+            ThaumoryParticles.motes(level, pos, colours());
+            giveOffWorkFlux(level, setting(WORK_FLUX, 0));
         }
 
         @Override
-        public void showAffected(Entity entity) {
-            ThaumoryParticles.motes(level, entity, colours);
+        public void affected(Entity entity) {
+            ThaumoryParticles.motes(level, entity, colours());
+            giveOffWorkFlux(level, setting(WORK_FLUX, 0));
         }
+
+        @Override
+        public boolean pay(int amount) {
+            if (circle.isEmpty() || amount <= 0) {
+                return circle.isPresent();
+            }
+            CircleDefinitions.Definition definition = circle.get().definition();
+            Optional<AspectList> paid = CircleUpkeep.payWork(essentia, definition.first(), definition.second(), amount,
+                    circle.get().multipliers().cost());
+            paid.ifPresent(CircleCoreBlockEntity.this::setEssentia);
+            return paid.isPresent();
+        }
+
+        private List<Aspect> colours() {
+            return circle.map(Circle::colours).orElse(List.of());
+        }
+    }
+
+    /** The Flux a working circle gives off (requirements §4.5), held back until it comes to a whole unit. */
+    private void giveOffWorkFlux(ServerLevel server, double gain) {
+        if (gain <= 0) {
+            return;
+        }
+        ChunkPos chunk = ChunkPos.containing(worldPosition);
+        WorkFlux.Step step = WorkFlux.add(workFlux, gain, ThaumoryApi.flux().get(server, chunk));
+        if (step.released() > 0) {
+            ThaumoryApi.flux().add(server, chunk, step.released());
+        }
+        workFlux = step.held();
+        setChanged();
     }
 
     // Saving and syncing
@@ -853,8 +936,17 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             output.store("running_effect", Identifier.CODEC, runningEffect);
             output.store("running_runes", RUNES_CODEC, runningRunes);
             output.putLong("next_payment", nextPayment);
-            output.store("effect_data", CompoundTag.CODEC, effectData);
         });
+        // A triggered circle keeps its data between activations too (how deep the mining circle got, say).
+        if (!effectData.isEmpty()) {
+            output.store("effect_data", CompoundTag.CODEC, effectData);
+        }
+        if (workingEffect != null) {
+            output.store("working_effect", Identifier.CODEC, workingEffect);
+        }
+        if (workFlux > 0) {
+            output.putDouble("work_flux", workFlux);
+        }
     }
 
     @Override
@@ -868,6 +960,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         runningRunes = input.read("running_runes", RUNES_CODEC).orElse(runes);
         nextPayment = input.getLongOr("next_payment", 0);
         effectData = input.read("effect_data", CompoundTag.CODEC).orElseGet(CompoundTag::new);
+        workingEffect = input.read("working_effect", Identifier.CODEC).orElse(null);
+        workFlux = input.getDoubleOr("work_flux", 0);
         // Sent only to clients.
         input.read("scan", SCAN_CODEC).ifPresent(received -> scan = received);
         instability = input.getIntOr("instability", instability);

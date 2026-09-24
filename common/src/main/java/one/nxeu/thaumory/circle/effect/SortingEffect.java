@@ -58,7 +58,7 @@ final class SortingEffect implements CircleEffect {
             } else {
                 item.setItem(stack);
             }
-            context.showAffected(item);
+            context.affected(item);
         }
     }
 

@@ -32,6 +32,22 @@ public interface CircleEffect {
      * Called once when a sustained circle stops, for whatever reason: it was stopped, ran out of
      * Essentia, or its circle broke. Undo what should not outlive the circle here. The context's
      * {@link CircleContext#data() data} is cleared afterwards.
+     *
+     * <p>Also called when a triggered effect's {@link #working work} is stopped. Its data is kept
+     * then, so the next activation can carry on.
      */
     default void stop(CircleContext context) {}
+
+    /**
+     * For a triggered effect whose activation takes time (the mining circle digging out a layer,
+     * say): whether it is still at it, going by its {@link CircleContext#data() data}. While it is,
+     * the Core calls {@link #work} every {@link #period()} ticks, and activating it again stops the
+     * work instead (see {@link #stop}).
+     */
+    default boolean working(CircleContext context) {
+        return false;
+    }
+
+    /** Carries on the work an activation started, while {@link #working} says there is some left. */
+    default void work(CircleContext context) {}
 }

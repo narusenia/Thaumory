@@ -11,6 +11,9 @@
     "thaumory:vinculum",
     "thaumory:ordo"
   ],
+  "settings": {
+    "work_flux": 0.02
+  },
   "slot3": [
     "thaumory:bestia",
     "thaumory:mors",

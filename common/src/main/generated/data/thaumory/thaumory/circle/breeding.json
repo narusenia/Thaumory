@@ -8,6 +8,7 @@
   ],
   "settings": {
     "interval_seconds": 10.0,
-    "max_per_kind": 16.0
+    "max_per_kind": 16.0,
+    "work_flux": 0.5
   }
 }

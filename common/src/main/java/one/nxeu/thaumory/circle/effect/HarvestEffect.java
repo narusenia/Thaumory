@@ -36,7 +36,7 @@ final class HarvestEffect implements CircleEffect {
         ServerLevel level = context.level();
         CircleRange.sweep(context, pos -> {
             if (harvest(level, pos, level.getBlockState(pos))) {
-                context.showAffected(pos);
+                context.affected(pos);
             }
         });
     }

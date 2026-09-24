@@ -45,7 +45,8 @@ public class IndustryCircleGameTests {
                 .thenSucceed();
     }
 
-    @GameTest(maxTicks = 100)
+    // The layer reaches a block past the test area.
+    @GameTest(maxTicks = 400, padding = 4)
     public void miningDigsOneLayerAtATimeBehindTheCircle(GameTestHelper helper) {
         BlockPos core = new BlockPos(4, 5, 4);
         for (int y = 2; y <= 3; y++) {
@@ -60,17 +61,47 @@ public class IndustryCircleGameTests {
         helper.setBlock(5, 3, 5, Blocks.CHEST);
         CircleCoreBlockEntity entity = Circles.build(helper, core, ThaumoryAspects.BELLUM, ThaumoryAspects.TERRA);
         helper.assertValueEqual(entity.trigger(Optional.empty()), TriggerResult.TRIGGERED, "first trigger");
-        helper.assertBlockPresent(Blocks.AIR, new BlockPos(4, 3, 4));
-        helper.assertBlockPresent(Blocks.AIR, new BlockPos(2, 3, 6));
-        helper.assertBlockPresent(Blocks.OBSIDIAN, new BlockPos(3, 3, 3));
-        helper.assertBlockPresent(Blocks.CHEST, new BlockPos(5, 3, 5));
-        helper.assertBlockPresent(Blocks.STONE, new BlockPos(4, 4, 4));
-        helper.assertBlockPresent(Blocks.STONE, new BlockPos(4, 2, 4));
-        helper.assertItemEntityPresent(Items.RAW_IRON);
-        helper.assertItemEntityPresent(Items.COBBLESTONE);
-        helper.assertValueEqual(entity.trigger(Optional.empty()), TriggerResult.TRIGGERED, "second trigger");
-        helper.assertBlockPresent(Blocks.AIR, new BlockPos(4, 2, 4));
-        helper.succeed();
+        int essentia = entity.essentia().amount(ThaumoryAspects.BELLUM);
+        helper.startSequence()
+                .thenWaitUntil(() -> {
+                    helper.assertBlockPresent(Blocks.AIR, new BlockPos(4, 3, 4));
+                    helper.assertBlockPresent(Blocks.AIR, new BlockPos(2, 3, 6));
+                    // The last block of the layer: dx runs outermost, dz within it.
+                    helper.assertBlockPresent(Blocks.AIR, new BlockPos(6, 3, 6));
+                })
+                .thenExecute(() -> {
+                    helper.assertBlockPresent(Blocks.OBSIDIAN, new BlockPos(3, 3, 3));
+                    helper.assertBlockPresent(Blocks.CHEST, new BlockPos(5, 3, 5));
+                    helper.assertBlockPresent(Blocks.STONE, new BlockPos(4, 4, 4));
+                    helper.assertBlockPresent(Blocks.STONE, new BlockPos(4, 2, 4));
+                    helper.assertItemEntityPresent(Items.RAW_IRON);
+                    helper.assertItemEntityPresent(Items.COBBLESTONE);
+                    // 23 blocks: the activation covers 8, then one each for the next two eights.
+                    helper.assertValueEqual(entity.essentia().amount(ThaumoryAspects.BELLUM), essentia - 2, "paid while digging");
+                })
+                .thenWaitUntil(() -> helper.assertValueEqual(entity.trigger(Optional.empty()), TriggerResult.TRIGGERED, "second trigger"))
+                .thenIdle(20)
+                .thenExecute(() -> helper.assertValueEqual(entity.trigger(Optional.empty()), TriggerResult.STOPPED, "trigger while digging"))
+                .thenIdle(40)
+                .thenExecute(() -> helper.assertBlockPresent(Blocks.STONE, new BlockPos(6, 2, 6)))
+                .thenExecute(() -> helper.assertValueEqual(entity.trigger(Optional.empty()), TriggerResult.TRIGGERED, "carry on"))
+                .thenWaitUntil(() -> helper.assertBlockPresent(Blocks.AIR, new BlockPos(6, 2, 6)))
+                .thenSucceed();
+    }
+
+    @GameTest(maxTicks = 200, padding = 24)
+    public void workingGivesOffFlux(GameTestHelper helper) {
+        Circles.floor(helper);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.IGNIS, ThaumoryAspects.METALLUM);
+        ChunkPos chunk = ChunkPos.containing(helper.absolutePos(CORE));
+        Thaumory.flux().set(helper.getLevel(), chunk, 5);
+        helper.spawnItem(Items.RAW_IRON, new BlockPos(6, 2, 4));
+        helper.spawnItem(Items.RAW_IRON, new BlockPos(6, 2, 4));
+        start(helper, core);
+        helper.succeedWhen(() -> {
+            helper.assertItemEntityPresent(Items.IRON_INGOT);
+            helper.assertTrue(ThaumoryApi.flux().get(helper.getLevel(), chunk) > 5.1, "smelting gave off no Flux");
+        });
     }
 
     @GameTest(maxTicks = 200)

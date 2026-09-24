@@ -16,7 +16,7 @@ final class HealingEffect implements CircleEffect {
                 e -> e.isAlive() && (!animalsOnly || e instanceof Animal))) {
             if (entity.getHealth() < entity.getMaxHealth()) {
                 entity.heal(amount);
-                context.showAffected(entity);
+                context.affected(entity);
             }
         }
     }

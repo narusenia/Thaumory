@@ -41,7 +41,7 @@ final class PurificationEffect implements CircleEffect {
                 continue;
             }
             level.setBlockAndUpdate(pos, original.get().defaultBlockState());
-            context.showAffected(pos);
+            context.affected(pos);
             restored++;
         }
     }

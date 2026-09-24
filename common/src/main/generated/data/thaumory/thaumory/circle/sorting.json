@@ -7,7 +7,8 @@
     "thaumory:tempestas"
   ],
   "settings": {
-    "items_per_level": 4.0
+    "items_per_level": 4.0,
+    "work_flux": 0.02
   },
   "slot3": [
     "none",

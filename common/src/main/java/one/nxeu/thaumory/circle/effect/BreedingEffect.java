@@ -39,7 +39,7 @@ final class BreedingEffect implements CircleEffect {
         for (List<Animal> pair : BreedingPairs.choose(ready, population, cap, pairs, context.level().getRandom()::nextInt)) {
             for (Animal animal : pair) {
                 animal.setInLove(null);
-                context.showAffected(animal);
+                context.affected(animal);
             }
         }
     }

@@ -22,16 +22,16 @@ final class MoistureEffect implements CircleEffect {
             BlockState state = level.getBlockState(pos);
             if (state.getBlock() instanceof FarmlandBlock && state.getValue(FarmlandBlock.MOISTURE) < FarmlandBlock.MAX_MOISTURE) {
                 level.setBlock(pos, state.setValue(FarmlandBlock.MOISTURE, FarmlandBlock.MAX_MOISTURE), Block.UPDATE_CLIENTS);
-                context.showAffected(pos);
+                context.affected(pos);
             } else if (state.is(BlockTags.FIRE)) {
                 level.removeBlock(pos, false);
                 level.levelEvent(LevelEvent.SOUND_EXTINGUISH_FIRE, pos, 0);
-                context.showAffected(pos);
+                context.affected(pos);
             }
         });
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, CircleRange.box(context), LivingEntity::isOnFire)) {
             entity.clearFire();
-            context.showAffected(entity);
+            context.affected(entity);
         }
     }
 }

@@ -52,7 +52,7 @@ final class MeltingEffect implements CircleEffect {
             } else {
                 item.setItem(stack);
             }
-            context.showAffected(item);
+            context.affected(item);
             if (left <= 0) {
                 break;
             }

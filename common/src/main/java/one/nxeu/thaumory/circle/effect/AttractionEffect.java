@@ -37,7 +37,7 @@ final class AttractionEffect implements CircleEffect {
                 Vec3 motion = towards.normalize().scale(speed);
                 item.setDeltaMovement(motion.x, Math.max(motion.y, 0.1), motion.z);
                 if (mark) {
-                    context.showAffected(item);
+                    context.affected(item);
                 }
             }
         }
