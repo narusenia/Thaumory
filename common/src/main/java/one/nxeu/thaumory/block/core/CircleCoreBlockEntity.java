@@ -46,6 +46,7 @@ import one.nxeu.thaumory.api.circle.CircleContext;
 import one.nxeu.thaumory.api.circle.CircleEffect;
 import one.nxeu.thaumory.api.essentia.EssentiaContainer;
 import one.nxeu.thaumory.api.flux.FluxStage;
+import one.nxeu.thaumory.api.infusion.InfusionEffect;
 import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
@@ -120,7 +121,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     /** {@code OVERLOADED}: it paid, but Flux at overload made it misfire and explode. */
     public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, TRIGGERED_ONLY, NO_ESSENTIA, OVERLOADED }
 
-    public enum InfuseResult { INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, NO_CAPACITY, NO_ROOM, NO_ESSENTIA }
+    public enum InfuseResult { INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, NOT_INFUSABLE, NO_CAPACITY, NO_ROOM, ACTIVE_TAKEN, NO_ESSENTIA }
 
     /**
      * @param infusion what went into the item when it did, or what would have when there was no room
@@ -362,6 +363,14 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     }
 
     /** The effect the runes and chalk make now, if defined; what was last received on the client. */
+    /**
+     * Whether a wand's click with an item on the pedestal infuses it: true unless the circle works and
+     * its effect cannot be burnt into anything (a charging circle, say), which then starts and stops as usual.
+     */
+    public boolean infusesPedestalItem() {
+        return effectId().map(ThaumoryApi.infusionEffects()::contains).orElse(true);
+    }
+
     public Optional<Identifier> effectId() {
         if (level != null && level.isClientSide()) {
             return clientEffect;
@@ -608,6 +617,10 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return InfuseOutcome.of(misfire(server, activator) ? InfuseResult.MISFIRED : InfuseResult.UNDEFINED);
         }
         ItemStack stack = pedestalItem;
+        Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(circle.get().definition().effect());
+        if (effect.isEmpty()) {
+            return InfuseOutcome.of(InfuseResult.NOT_INFUSABLE);
+        }
         int capacity = InfusionCapacities.of(stack.getItem());
         if (capacity == 0) {
             return InfuseOutcome.of(InfuseResult.NO_CAPACITY);
@@ -616,10 +629,15 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         CircleSettings.Multipliers multipliers = circle.get().multipliers();
         InfusionSettings infusion = settings.infusion();
         Infusion burnt = new Infusion(definition.effect(), InfusionRules.level(multipliers.strength(), infusion),
-                circle.get().parameter().map(Aspect::id), definition.capacity());
+                circle.get().parameter().map(Aspect::id), definition.capacity(),
+                effect.get().active() ? InfusionRules.useCost(definition.itemCost(), multipliers.cost(), definition.first(), definition.second())
+                        : Map.of());
         Infusions infusions = stack.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY);
         if (!infusions.fits(burnt, capacity)) {
             return new InfuseOutcome(InfuseResult.NO_ROOM, Optional.of(burnt), infusions.usedBesides(burnt.effect()), capacity);
+        }
+        if (!infusions.allowsActive(burnt)) {
+            return InfuseOutcome.of(InfuseResult.ACTIVE_TAKEN);
         }
         AspectList cost = InfusionRules.cost(definition.infusionCost(), multipliers.cost(), definition.first(), definition.second(),
                 circle.get().parameter());

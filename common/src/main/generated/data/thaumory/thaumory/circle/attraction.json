@@ -1,6 +1,9 @@
 {
   "capacity": 2,
   "effect": "thaumory:attraction",
+  "item_settings": {
+    "radius": 3.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:tempestas",

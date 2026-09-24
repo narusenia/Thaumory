@@ -1,6 +1,10 @@
 {
   "capacity": 2,
   "effect": "thaumory:healing",
+  "item_settings": {
+    "amount_per_level": 1.0,
+    "animal_radius": 4.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:vita",

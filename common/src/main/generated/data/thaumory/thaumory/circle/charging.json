@@ -1,0 +1,16 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:charging",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:arcanum",
+    "thaumory:vinculum"
+  ],
+  "settings": {
+    "per_second": 4.0
+  },
+  "slot3": [
+    "none",
+    "any"
+  ]
+}

@@ -5,6 +5,7 @@ import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TERRA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Map;
 import java.util.Optional;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
@@ -12,6 +13,13 @@ import org.junit.jupiter.api.Test;
 
 class InfusionRulesTest {
     private static final InfusionSettings SETTINGS = InfusionSettings.DEFAULT;
+
+    @Test
+    void anActiveEffectsUseCostScalesLikeATriggeredCircle() {
+        assertEquals(Map.of(ARCANUM.id(), 4, AER.id(), 4), InfusionRules.useCost(4, 1.0, ARCANUM, AER));
+        assertEquals(Map.of(ARCANUM.id(), 3, AER.id(), 3), InfusionRules.useCost(4, 0.75, ARCANUM, AER));
+        assertEquals(Map.of(ARCANUM.id(), 1, AER.id(), 1), InfusionRules.useCost(1, 0.25, ARCANUM, AER));
+    }
 
     @Test
     void costsEachRuneAndSlotThreeScaled() {

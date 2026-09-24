@@ -94,7 +94,7 @@ final class WardEffect implements CircleEffect {
         }
     }
 
-    private static Predicate<Entity> target(Aspect aspect) {
+    static Predicate<Entity> target(Aspect aspect) {
         if (aspect.equals(ThaumoryAspects.BESTIA)) {
             return entity -> entity instanceof Animal;
         }

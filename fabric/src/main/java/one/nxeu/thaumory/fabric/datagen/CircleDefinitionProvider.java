@@ -43,28 +43,37 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
 
     @Override
     protected void configure(BiConsumer<Identifier, CircleDefinitionFile> output, HolderLookup.Provider registries) {
-        triggered(output, ThaumoryCircleEffects.TELEPORT, ARCANUM, AER, List.of(CircleDefinitionFile.ANY), 4, 3);
-        sustained(output, ThaumoryCircleEffects.LIGHT, LUX, IGNIS, slot3(true, UMBRA), Map.of(), 1);
+        triggered(output, ThaumoryCircleEffects.TELEPORT, ARCANUM, AER, List.of(CircleDefinitionFile.ANY), 4, 3, Map.of());
+        sustained(output, ThaumoryCircleEffects.LIGHT, LUX, IGNIS, slot3(true, UMBRA), Map.of(), 1, Optional.empty(),
+                Map.of("darkness_seconds", 3.0));
         sustained(output, ThaumoryCircleEffects.PURIFICATION, ORDO, LUX, slot3(true, IGNIS, AER, VITA, AQUA, TERRA, MORS),
-                Map.of("flux_per_second", 0.5, "flux_per_essentia", 2.0, "restore_per_second", 2.0), 2);
-        sustained(output, ThaumoryCircleEffects.WARD, VINCULUM, ORDO, slot3(false, BESTIA, MORS, CHAOS), Map.of(), 2);
-        sustained(output, ThaumoryCircleEffects.GROWTH, HERBA, VITA, slot3(false, HERBA, BESTIA), Map.of(), 1);
-        sustained(output, ThaumoryCircleEffects.HEALING, VITA, ORDO, slot3(true, BESTIA), Map.of(), 2);
+                Map.of("flux_per_second", 0.5, "flux_per_essentia", 2.0, "restore_per_second", 2.0), 2, Optional.of(4),
+                Map.of("flux_per_level", 10.0));
+        sustained(output, ThaumoryCircleEffects.WARD, VINCULUM, ORDO, slot3(false, BESTIA, MORS, CHAOS), Map.of(), 2, Optional.empty(),
+                Map.of("radius", 2.0));
+        sustained(output, ThaumoryCircleEffects.GROWTH, HERBA, VITA, slot3(false, HERBA, BESTIA), Map.of(), 1, Optional.empty(),
+                Map.of("radius", 2.0, "columns_per_level", 2.0, "animal_ticks_per_level", 20.0));
+        sustained(output, ThaumoryCircleEffects.HEALING, VITA, ORDO, slot3(true, BESTIA), Map.of(), 2, Optional.empty(),
+                Map.of("amount_per_level", 1.0, "animal_radius", 4.0));
         sustained(output, ThaumoryCircleEffects.ATTRACTION, TEMPESTAS, VINCULUM,
-                List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY), Map.of(), 2);
-        triggered(output, ThaumoryCircleEffects.WEATHER, TEMPESTAS, ARCANUM, slot3(false, AQUA, IGNIS, TEMPESTAS), 8, 3);
+                List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY), Map.of(), 2, Optional.empty(), Map.of("radius", 3.0));
+        triggered(output, ThaumoryCircleEffects.WEATHER, TEMPESTAS, ARCANUM, slot3(false, AQUA, IGNIS, TEMPESTAS), 8, 3,
+                Map.of("ticks_per_level", 6000.0));
+        // Cannot be infused, so it takes no capacity.
+        sustained(output, ThaumoryCircleEffects.CHARGING, ARCANUM, VINCULUM, List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY),
+                Map.of("per_second", 4.0), 0, Optional.empty(), Map.of());
     }
 
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
-            List<String> slot3, int cost, int capacity) {
+            List<String> slot3, int cost, int capacity, Map<String, Double> itemSettings) {
         output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.TRIGGERED,
-                cost, SUSTAINED_INTERVAL, Map.of(), InfusionCost.DEFAULT, capacity, Optional.empty(), Map.of()));
+                cost, SUSTAINED_INTERVAL, Map.of(), InfusionCost.DEFAULT, capacity, Optional.empty(), itemSettings));
     }
 
     private static void sustained(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
-            List<String> slot3, Map<String, Double> settings, int capacity) {
+            List<String> slot3, Map<String, Double> settings, int capacity, Optional<Integer> itemCost, Map<String, Double> itemSettings) {
         output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.SUSTAINED,
-                1, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity, Optional.empty(), Map.of()));
+                1, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity, itemCost, itemSettings));
     }
 
     private static List<String> slot3(boolean empty, Aspect... aspects) {

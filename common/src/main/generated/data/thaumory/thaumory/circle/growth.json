@@ -1,5 +1,10 @@
 {
   "effect": "thaumory:growth",
+  "item_settings": {
+    "animal_ticks_per_level": 20.0,
+    "columns_per_level": 2.0,
+    "radius": 2.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:herba",

@@ -1,6 +1,9 @@
 package one.nxeu.thaumory.circle;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
+import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 
@@ -17,6 +20,18 @@ public final class InfusionRules {
         AspectList.Builder needed = AspectList.builder().add(first, runes).add(second, runes);
         parameter.ifPresent(aspect -> needed.add(aspect, CircleUpkeep.triggeredCost(cost.parameter(), costMultiplier)));
         return needed.build();
+    }
+
+    /**
+     * What one use of an active effect takes from the Essentia in the item: the combination's item cost
+     * from each of its two runes' aspects, scaled by the cost multiplier and rounded, at least 1.
+     */
+    public static Map<Identifier, Integer> useCost(int itemCost, double costMultiplier, Aspect first, Aspect second) {
+        int each = CircleUpkeep.triggeredCost(itemCost, costMultiplier);
+        Map<Identifier, Integer> cost = new LinkedHashMap<>();
+        cost.merge(first.id(), each, Integer::sum);
+        cost.merge(second.id(), each, Integer::sum);
+        return cost;
     }
 
     /** Level 1, and one more for each 0.5 of strength over 1, up to the settings' maximum. */

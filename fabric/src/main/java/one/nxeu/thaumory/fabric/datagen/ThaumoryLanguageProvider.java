@@ -93,6 +93,16 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "Infused:");
             builder.add("tooltip.thaumory.capacity", "Capacity %s/%s");
+            builder.add("tooltip.thaumory.infusion.active", " (use)");
+            builder.add("tooltip.thaumory.stored_essentia", "Stored:");
+            builder.add("message.thaumory.infusion.not_infusable", "This circle's effect cannot be burnt into an item");
+            builder.add("message.thaumory.infusion.active_taken", "This item already has an effect to use");
+            builder.add("message.thaumory.infusion_use.none", "Nothing equipped has an effect to use");
+            builder.add("message.thaumory.infusion_use.nothing", "The effect finds nothing to act on");
+            builder.add("message.thaumory.infusion_use.no_essentia", "Not enough Essentia stored in the item");
+            builder.add("message.thaumory.infusion_use.nothing_to_pour", "The jar holds nothing this item stores, or it is full");
+            builder.add("key.thaumory.use_infusion", "Use Infused Effect");
+            builder.add("key.category.thaumory.thaumory", "Thaumory");
             builder.add("message.thaumory.infusion.infused", "Infused: %s");
             builder.add("message.thaumory.infusion.failed", "The infusion failed");
             builder.add("message.thaumory.infusion.no_capacity", "This item does not take a circle's effect");
@@ -152,6 +162,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.HEALING.toLanguageKey("circle_effect"), "Healing");
             builder.add(ThaumoryCircleEffects.ATTRACTION.toLanguageKey("circle_effect"), "Attraction");
             builder.add(ThaumoryCircleEffects.WEATHER.toLanguageKey("circle_effect"), "Weather");
+            builder.add(ThaumoryCircleEffects.CHARGING.toLanguageKey("circle_effect"), "Charging");
             builder.add("hud.thaumory.core.essentia", "Essentia (up to %s each)");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
@@ -201,6 +212,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.healing", "Vita and Ordo close wounds.");
             builder.add("hint.thaumory.attraction", "Tempestas and Vinculum reel in what has fallen.");
             builder.add("hint.thaumory.weather", "Tempestas and Arcanum call the sky.");
+            builder.add("hint.thaumory.charging", "Arcanum, held by Vinculum, fills a vessel.");
             builder.add("codex.thaumory.tab.chapters", "Chapters");
             builder.add("codex.thaumory.tab.aspects", "Aspects");
             builder.add("codex.thaumory.tab.scanned", "Scanned");
@@ -294,6 +306,16 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "焼き付けた効果:");
             builder.add("tooltip.thaumory.capacity", "容量 %s/%s");
+            builder.add("tooltip.thaumory.infusion.active", "（使う）");
+            builder.add("tooltip.thaumory.stored_essentia", "内蔵:");
+            builder.add("message.thaumory.infusion.not_infusable", "この陣の効果は焼き付けられない");
+            builder.add("message.thaumory.infusion.active_taken", "この品にはすでに使う効果がある");
+            builder.add("message.thaumory.infusion_use.none", "使える効果のある品を装備していない");
+            builder.add("message.thaumory.infusion_use.nothing", "効果の向かう先が無い");
+            builder.add("message.thaumory.infusion_use.no_essentia", "品の Essentia が足りない");
+            builder.add("message.thaumory.infusion_use.nothing_to_pour", "瓶にこの品が蓄えるものが無いか、品が満ちている");
+            builder.add("key.thaumory.use_infusion", "注入の効果を使う");
+            builder.add("key.category.thaumory.thaumory", "Thaumory");
             builder.add("message.thaumory.infusion.infused", "注入した: %s");
             builder.add("message.thaumory.infusion.failed", "注入に失敗した");
             builder.add("message.thaumory.infusion.no_capacity", "この品は陣の効果を受け入れない");
@@ -353,6 +375,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.HEALING.toLanguageKey("circle_effect"), "治癒");
             builder.add(ThaumoryCircleEffects.ATTRACTION.toLanguageKey("circle_effect"), "引き寄せ");
             builder.add(ThaumoryCircleEffects.WEATHER.toLanguageKey("circle_effect"), "天候");
+            builder.add(ThaumoryCircleEffects.CHARGING.toLanguageKey("circle_effect"), "充填");
             builder.add("hud.thaumory.core.essentia", "Essentia（各 %s まで）");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
@@ -402,6 +425,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.healing", "Vita と Ordo は、傷を塞ぐ。");
             builder.add("hint.thaumory.attraction", "Tempestas と Vinculum は、落ちたものを手繰り寄せる。");
             builder.add("hint.thaumory.weather", "Tempestas と Arcanum は、空を呼ぶ。");
+            builder.add("hint.thaumory.charging", "Arcanum は、Vinculum に留められるとき、器を満たす。");
             builder.add("codex.thaumory.tab.chapters", "章");
             builder.add("codex.thaumory.tab.aspects", "アスペクト");
             builder.add("codex.thaumory.tab.scanned", "スキャン済み");

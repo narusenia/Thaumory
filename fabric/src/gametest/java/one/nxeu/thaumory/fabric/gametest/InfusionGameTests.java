@@ -1,16 +1,20 @@
 package one.nxeu.thaumory.fabric.gametest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.Vec3;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
@@ -21,6 +25,7 @@ import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.circle.CircleSettings;
 import one.nxeu.thaumory.circle.InfusionSettings;
 import one.nxeu.thaumory.infusion.Infusion;
+import one.nxeu.thaumory.infusion.InfusionRuntime;
 import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
@@ -31,6 +36,9 @@ import one.nxeu.thaumory.item.ThaumoryItems;
  */
 public class InfusionGameTests {
     private static final BlockPos CORE = new BlockPos(4, 2, 4);
+    /** One use of teleport: its cost of 4 from each rune's aspect. */
+    private static final Map<Identifier, Integer> TELEPORT_COST = Map.of(ThaumoryAspects.ARCANUM.id(), 4, ThaumoryAspects.AER.id(), 4);
+    private static final Map<Identifier, Integer> PURIFICATION_COST = Map.of(ThaumoryAspects.ORDO.id(), 4, ThaumoryAspects.LUX.id(), 4);
 
     private static void failureChance(double chance) {
         CircleSettings current = CircleCoreBlockEntity.settings();
@@ -99,7 +107,7 @@ public class InfusionGameTests {
             restore();
         }
         helper.assertValueEqual(infusions(core),
-                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3)), "infusions");
+                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3, TELEPORT_COST)), "infusions");
         helper.assertValueEqual(core.essentia().amount(ThaumoryAspects.TERRA), CircleCoreBlockEntity.capacity() - 4, "Terra left");
         helper.succeed();
     }
@@ -146,7 +154,7 @@ public class InfusionGameTests {
         CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ARCANUM, ThaumoryAspects.AER, ThaumoryAspects.TERRA);
         ItemStack sword = new ItemStack(ThaumoryItems.ARCANE_IRON.sword().get());
         sword.set(ThaumoryComponents.INFUSIONS.get(),
-                Infusions.EMPTY.with(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.AQUA.id()), 3)));
+                Infusions.EMPTY.with(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.AQUA.id()), 3, TELEPORT_COST)));
         pedestal(helper, core, sword);
         failureChance(0);
         try {
@@ -155,7 +163,59 @@ public class InfusionGameTests {
             restore();
         }
         helper.assertValueEqual(infusions(core),
-                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3)), "infusions");
+                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3, TELEPORT_COST)), "infusions");
+        helper.succeed();
+    }
+
+    /** An item holds one active effect: purification does not go in beside teleport, though there is room. */
+    @GameTest
+    public void aSecondActiveEffectIsRefused(GameTestHelper helper) {
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ORDO, ThaumoryAspects.LUX);
+        ItemStack chestplate = new ItemStack(ThaumoryItems.AETHER_SILVER.chestplate().get());
+        chestplate.set(ThaumoryComponents.INFUSIONS.get(),
+                Infusions.EMPTY.with(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3, TELEPORT_COST)));
+        pedestal(helper, core, chestplate);
+        helper.assertValueEqual(core.infuse(Optional.empty()).result(), InfuseResult.ACTIVE_TAKEN, "result");
+        helper.succeed();
+    }
+
+    /** A charging circle fills what the item on its pedestal stores, and is started by the wand rather than infused. */
+    @GameTest(maxTicks = 100)
+    public void aChargingCircleFillsThePedestalItem(GameTestHelper helper) {
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ARCANUM, ThaumoryAspects.VINCULUM, ThaumoryAspects.AER);
+        ItemStack sword = new ItemStack(ThaumoryItems.ARCANE_IRON.sword().get());
+        sword.set(ThaumoryComponents.INFUSIONS.get(),
+                Infusions.EMPTY.with(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3, TELEPORT_COST)));
+        pedestal(helper, core, sword);
+        helper.assertFalse(core.infusesPedestalItem(), "a charging circle would infuse");
+        helper.assertValueEqual(core.start(Optional.empty()), CircleCoreBlockEntity.StartResult.STARTED, "start");
+        helper.succeedWhen(() -> {
+            AspectList stored = core.pedestalItem().getOrDefault(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.empty());
+            helper.assertTrue(stored.amount(ThaumoryAspects.ARCANUM) >= 8, "Arcanum stored: " + stored);
+            helper.assertTrue(stored.amount(ThaumoryAspects.AER) >= 8, "Aer stored: " + stored);
+            helper.assertValueEqual(stored.amount(ThaumoryAspects.VINCULUM), 0, "Vinculum stored");
+        });
+    }
+
+    /** Using an active effect pays from the item, and nothing happens once it runs dry. Checks its chunk's Flux. */
+    @GameTest(padding = 24)
+    public void usingAnActiveEffectPaysFromTheItem(GameTestHelper helper) {
+        Circles.floor(helper);
+        ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+        player.setPos(helper.absoluteVec(new Vec3(2.5, 2, 2.5)));
+        ItemStack sword = new ItemStack(ThaumoryItems.ARCANE_IRON.sword().get());
+        sword.set(ThaumoryComponents.INFUSIONS.get(),
+                Infusions.EMPTY.with(new Infusion(Thaumory.id("purification"), 1, Optional.empty(), 2, PURIFICATION_COST)));
+        sword.set(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.builder().add(ThaumoryAspects.ORDO, 6).add(ThaumoryAspects.LUX, 4).build());
+        player.setItemInHand(InteractionHand.MAIN_HAND, sword);
+        ChunkPos chunk = ChunkPos.containing(player.blockPosition());
+        Thaumory.flux().set(helper.getLevel(), chunk, 30);
+
+        helper.assertValueEqual(InfusionRuntime.tryUse(player), InfusionRuntime.UseResult.USED, "first use");
+        helper.assertValueInBetween(19.9, Thaumory.flux().get(helper.getLevel(), chunk), 20.0, "Flux");
+        helper.assertValueEqual(player.getMainHandItem().get(ThaumoryComponents.STORED_ESSENTIA.get()),
+                AspectList.of(ThaumoryAspects.ORDO, 2), "stored");
+        helper.assertValueEqual(InfusionRuntime.tryUse(player), InfusionRuntime.UseResult.NO_ESSENTIA, "second use");
         helper.succeed();
     }
 

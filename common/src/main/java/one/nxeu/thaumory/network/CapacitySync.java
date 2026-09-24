@@ -6,9 +6,10 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import net.minecraft.server.MinecraftServer;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.infusion.InfusionCapacities;
 
-/** Sends every item's infusion capacity to players when they join and after each datapack reload, for tooltips. */
+/** Sends every item's infusion capacity (and what an item stores for an active effect) to players when they join and after each datapack reload, for tooltips. */
 public final class CapacitySync {
     private static volatile MinecraftServer server;
 
@@ -35,6 +36,6 @@ public final class CapacitySync {
     }
 
     private static CapacitySyncPayload payload() {
-        return new CapacitySyncPayload(InfusionCapacities.snapshot());
+        return new CapacitySyncPayload(InfusionCapacities.snapshot(), CircleCoreBlockEntity.settings().infusion().itemEssentia());
     }
 }

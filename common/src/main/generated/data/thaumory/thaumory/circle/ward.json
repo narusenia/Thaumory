@@ -1,6 +1,9 @@
 {
   "capacity": 2,
   "effect": "thaumory:ward",
+  "item_settings": {
+    "radius": 2.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:vinculum",

@@ -4,9 +4,12 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.AspectList;
+import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.Transcript;
@@ -44,6 +47,13 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<Infusions>builder()
                     .persistent(Infusions.CODEC)
                     .networkSynchronized(Infusions.STREAM_CODEC)
+                    .build());
+
+    /** The Essentia an item with an active infusion keeps for it (requirements §10.2). */
+    public static final RegistrySupplier<DataComponentType<AspectList>> STORED_ESSENTIA = COMPONENTS.register("stored_essentia",
+            () -> DataComponentType.<AspectList>builder()
+                    .persistent(AspectCodecs.aspectList(ThaumoryApi.aspects()))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(AspectCodecs.aspectList(ThaumoryApi.aspects())))
                     .build());
 
     private ThaumoryComponents() {}

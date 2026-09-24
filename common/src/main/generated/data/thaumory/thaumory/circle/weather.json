@@ -2,6 +2,9 @@
   "capacity": 3,
   "cost": 8,
   "effect": "thaumory:weather",
+  "item_settings": {
+    "ticks_per_level": 6000.0
+  },
   "mode": "triggered",
   "runes": [
     "thaumory:tempestas",

@@ -23,6 +23,9 @@ import one.nxeu.thaumory.api.aspect.AspectRegistry;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
+import one.nxeu.thaumory.infusion.InfusionRuntime;
+import one.nxeu.thaumory.infusion.Infusions;
+import one.nxeu.thaumory.infusion.ItemEssentia;
 import one.nxeu.thaumory.jar.EssentiaTransfer;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.rune.RuneInfusion;
@@ -45,6 +48,9 @@ public final class JarItem extends BlockItem {
             if (player != null && pouringIntoRune(player, context.getHand())) {
                 return infuseRune(context.getLevel(), player, context.getItemInHand());
             }
+            if (player != null && pouringIntoItem(player, context.getHand())) {
+                return fillItem(context.getLevel(), player, context.getItemInHand());
+            }
             return super.useOn(context);
         }
         if (context.getLevel() instanceof ServerLevel level) {
@@ -58,12 +64,46 @@ public final class JarItem extends BlockItem {
         if (pouringIntoRune(player, hand)) {
             return infuseRune(level, player, player.getItemInHand(hand));
         }
+        if (pouringIntoItem(player, hand)) {
+            return fillItem(level, player, player.getItemInHand(hand));
+        }
         return super.use(level, player, hand);
     }
 
     private static boolean pouringIntoRune(Player player, InteractionHand hand) {
         return hand == InteractionHand.MAIN_HAND && player.isSecondaryUseActive()
                 && player.getOffhandItem().is(ThaumoryItems.BLANK_RUNE.get());
+    }
+
+    /** Pouring into an off-hand item whose active infusion stores Essentia (requirements §10.2). */
+    private static boolean pouringIntoItem(Player player, InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND && player.isSecondaryUseActive()
+                && !player.getOffhandItem().getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).storedAspects().isEmpty();
+    }
+
+    /** Pours what the off-hand item stores out of the jar, as much as fits; the rest stays in the jar. */
+    private static InteractionResult fillItem(Level level, Player player, ItemStack jar) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return InteractionResult.SUCCESS;
+        }
+        ItemStack item = player.getOffhandItem();
+        JarContents held = jar.getOrDefault(ThaumoryComponents.JAR_CONTENTS.get(), JarContents.EMPTY);
+        ItemEssentia.Fill fill = ItemEssentia.fill(item.getOrDefault(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.empty()),
+                held.aspects(), item.get(ThaumoryComponents.INFUSIONS.get()).storedAspects(),
+                CircleCoreBlockEntity.settings().infusion().itemEssentia());
+        if (fill.taken().isEmpty()) {
+            player.sendOverlayMessage(Component.translatable("message.thaumory.infusion_use.nothing_to_pour"));
+            return InteractionResult.FAIL;
+        }
+        InfusionRuntime.setStored(item, fill.stored());
+        JarContents updated = held.withAspects(held.aspects().minus(fill.taken()));
+        if (updated.isEmpty()) {
+            jar.remove(ThaumoryComponents.JAR_CONTENTS.get());
+        } else {
+            jar.set(ThaumoryComponents.JAR_CONTENTS.get(), updated);
+        }
+        serverLevel.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0f, 1.0f);
+        return InteractionResult.SUCCESS;
     }
 
     /** Turns one blank rune in the off hand into a rune of the aspect the jar would give. */

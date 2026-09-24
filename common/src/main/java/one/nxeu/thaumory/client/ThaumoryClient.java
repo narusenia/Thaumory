@@ -1,25 +1,37 @@
 package one.nxeu.thaumory.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
 import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.networking.transformers.SplitPacketTransformer;
+import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
-import dev.architectury.networking.transformers.SplitPacketTransformer;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalInt;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import one.nxeu.thaumory.Thaumory;
+import one.nxeu.thaumory.api.ThaumoryApi;
+import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
+import one.nxeu.thaumory.client.entity.VoidRemnantRenderer;
+import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.infusion.Infusion;
 import one.nxeu.thaumory.infusion.InfusionText;
 import one.nxeu.thaumory.infusion.Infusions;
@@ -27,22 +39,25 @@ import one.nxeu.thaumory.item.ArcaneCodexItem;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.TranscriptItem;
-import one.nxeu.thaumory.knowledge.Transcript.AspectTranscript;
-import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.knowledge.Transcript.AspectTranscript;
+import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
 import one.nxeu.thaumory.network.AspectSyncPayload;
 import one.nxeu.thaumory.network.CapacitySyncPayload;
-import one.nxeu.thaumory.client.entity.VoidRemnantRenderer;
-import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.network.FluxReadingPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
 import one.nxeu.thaumory.network.PipeReadingPayload;
 import one.nxeu.thaumory.network.ResearchViewPayload;
+import one.nxeu.thaumory.network.UseInfusionPayload;
 import org.slf4j.Logger;
 
 public final class ThaumoryClient {
     private static final Logger LOGGER = LogUtils.getLogger();
+
+    /** Uses the active effect of the item in hand, or of the armor worn (requirements §10.2). */
+    private static final KeyMapping USE_INFUSION = new KeyMapping("key.thaumory.use_infusion", InputConstants.KEY_V,
+            KeyMapping.Category.register(Thaumory.id("thaumory")));
 
     private ThaumoryClient() {}
 
@@ -53,7 +68,7 @@ public final class ThaumoryClient {
                     LOGGER.info("Received aspects for {} items", payload.items().size());
                 }));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CapacitySyncPayload.TYPE, CapacitySyncPayload.STREAM_CODEC,
-                (payload, context) -> context.queue(() -> ClientCapacities.replace(payload.items())));
+                (payload, context) -> context.queue(() -> ClientCapacities.replace(payload.items(), payload.itemEssentia())));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, KnowledgeSyncPayload.TYPE, KnowledgeSyncPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> {
                     ClientKnowledge.replace(payload.knowledge());
@@ -73,6 +88,14 @@ public final class ThaumoryClient {
             ClientFlux.clear();
             ClientPipeReading.clear();
             ClientResearch.clear();
+        });
+        KeyMappingRegistry.register(USE_INFUSION);
+        ClientTickEvent.CLIENT_POST.register(minecraft -> {
+            while (USE_INFUSION.consumeClick()) {
+                if (minecraft.player != null) {
+                    NetworkManager.sendToServer(UseInfusionPayload.INSTANCE);
+                }
+            }
         });
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
@@ -119,8 +142,35 @@ public final class ThaumoryClient {
         }
         lines.add(Component.translatable("tooltip.thaumory.infusions").withColor(0xAAAAAA));
         for (Infusion infusion : infusions.list()) {
-            lines.add(Component.literal("  ").append(InfusionText.describe(infusion)));
+            MutableComponent line = Component.literal("  ").append(InfusionText.describe(infusion));
+            if (infusion.active()) {
+                line.append(Component.translatable("tooltip.thaumory.infusion.active").withColor(0xAAAAAA));
+            }
+            lines.add(line);
         }
+        appendStoredEssentia(stack, infusions, lines);
+    }
+
+    /** The Essentia kept for the item's active effect, each aspect against what it holds. */
+    private static void appendStoredEssentia(ItemStack stack, Infusions infusions, List<Component> lines) {
+        if (infusions.storedAspects().isEmpty()) {
+            return;
+        }
+        AspectList stored = stack.getOrDefault(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.empty());
+        PlayerKnowledge knowledge = ClientKnowledge.get();
+        MutableComponent line = Component.translatable("tooltip.thaumory.stored_essentia").withColor(0xAAAAAA);
+        boolean first = true;
+        for (Identifier id : infusions.storedAspects().stream().sorted().toList()) {
+            Optional<Aspect> aspect = ThaumoryApi.aspects().get(id);
+            if (aspect.isEmpty()) {
+                continue;
+            }
+            line.append(Component.literal(first ? " " : " · "))
+                    .append(AspectText.name(aspect.get(), knowledge.knowsAspect(id)))
+                    .append(Component.literal(" " + stored.amount(aspect.get()) + "/" + ClientCapacities.itemEssentia()).withColor(0xAAAAAA));
+            first = false;
+        }
+        lines.add(line);
     }
 
     /** What a transcript holds, as far as the one holding it knows; a circle's effect stays unnamed. */

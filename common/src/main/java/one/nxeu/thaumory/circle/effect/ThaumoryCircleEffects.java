@@ -14,6 +14,7 @@ public final class ThaumoryCircleEffects {
     public static final Identifier HEALING = Thaumory.id("healing");
     public static final Identifier ATTRACTION = Thaumory.id("attraction");
     public static final Identifier WEATHER = Thaumory.id("weather");
+    public static final Identifier CHARGING = Thaumory.id("charging");
 
     private ThaumoryCircleEffects() {}
 
@@ -26,6 +27,7 @@ public final class ThaumoryCircleEffects {
         registry.register(HEALING, new HealingEffect());
         registry.register(ATTRACTION, new AttractionEffect());
         registry.register(WEATHER, new WeatherEffect());
+        registry.register(CHARGING, new ChargingEffect());
         WardEffect.registerEvents();
     }
 }

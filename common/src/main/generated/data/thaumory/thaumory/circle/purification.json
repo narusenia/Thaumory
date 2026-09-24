@@ -1,6 +1,10 @@
 {
   "capacity": 2,
   "effect": "thaumory:purification",
+  "item_cost": 4,
+  "item_settings": {
+    "flux_per_level": 10.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:ordo",

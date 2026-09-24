@@ -81,6 +81,11 @@ public final class CircleDefinitions {
         return definitions.stream().filter(d -> d.matches(a, b, parameter)).findFirst();
     }
 
+    /** The combination that starts {@code effect}; the first one when several do. */
+    public Optional<Definition> forEffect(Identifier effect) {
+        return definitions.stream().filter(d -> d.effect().equals(effect)).findFirst();
+    }
+
     public int size() {
         return definitions.size();
     }

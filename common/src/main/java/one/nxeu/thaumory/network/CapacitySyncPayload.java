@@ -9,12 +9,17 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import one.nxeu.thaumory.Thaumory;
 
-/** Server to client: every item's infusion capacity, replacing what the client had. Items without one are left out. */
-public record CapacitySyncPayload(Map<Identifier, Integer> items) implements CustomPacketPayload {
+/**
+ * Server to client: every item's infusion capacity, replacing what the client had (items without one
+ * are left out), and how much of each aspect an item with an active effect stores.
+ */
+public record CapacitySyncPayload(Map<Identifier, Integer> items, int itemEssentia) implements CustomPacketPayload {
     public static final Type<CapacitySyncPayload> TYPE = new Type<>(Thaumory.id("capacity_sync"));
-    public static final StreamCodec<ByteBuf, CapacitySyncPayload> STREAM_CODEC = ByteBufCodecs
-            .map(HashMap<Identifier, Integer>::new, Identifier.STREAM_CODEC, ByteBufCodecs.VAR_INT)
-            .map(CapacitySyncPayload::new, payload -> new HashMap<>(payload.items()));
+    public static final StreamCodec<ByteBuf, CapacitySyncPayload> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.map(HashMap<Identifier, Integer>::new, Identifier.STREAM_CODEC, ByteBufCodecs.VAR_INT),
+            payload -> new HashMap<>(payload.items()),
+            ByteBufCodecs.VAR_INT, CapacitySyncPayload::itemEssentia,
+            CapacitySyncPayload::new);
 
     public CapacitySyncPayload {
         items = Map.copyOf(items);

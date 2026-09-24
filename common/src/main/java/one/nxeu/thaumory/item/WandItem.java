@@ -46,7 +46,8 @@ public final class WandItem extends Item {
             }
             return InteractionResult.SUCCESS;
         }
-        if (core.hasPedestal() && !core.pedestalItem().isEmpty()) {
+        core.rescan();
+        if (core.hasPedestal() && !core.pedestalItem().isEmpty() && core.infusesPedestalItem()) {
             if (world instanceof ServerLevel level && user != null) {
                 infuse(level, core, user);
             }
@@ -89,7 +90,9 @@ public final class WandItem extends Item {
         MutableComponent message = switch (outcome.result()) {
             case INFUSED -> Component.translatable("message.thaumory.infusion.infused", InfusionText.describe(outcome.infusion().orElseThrow()));
             case FAILED -> ThaumoryText.withEffect(Component.translatable("message.thaumory.infusion.failed"), TextEffect.SHAKE);
+            case NOT_INFUSABLE -> Component.translatable("message.thaumory.infusion.not_infusable");
             case NO_CAPACITY -> Component.translatable("message.thaumory.infusion.no_capacity");
+            case ACTIVE_TAKEN -> Component.translatable("message.thaumory.infusion.active_taken");
             case NO_ROOM -> Component.translatable("message.thaumory.infusion.no_room", outcome.used(), outcome.capacity(),
                     outcome.infusion().orElseThrow().capacity());
             case NO_ITEM -> Component.translatable("message.thaumory.infusion.no_item");

@@ -1,5 +1,8 @@
 {
   "effect": "thaumory:light",
+  "item_settings": {
+    "darkness_seconds": 3.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:lux",
