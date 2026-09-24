@@ -6,8 +6,9 @@
     }
   ],
   "icon": "thaumory:arcane_loupe",
-  "order": 1,
   "requires": [
     "thaumory:beginning"
-  ]
+  ],
+  "x": 1,
+  "y": 0
 }

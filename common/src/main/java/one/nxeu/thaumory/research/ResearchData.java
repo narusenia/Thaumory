@@ -12,14 +12,15 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 
 /**
- * The chapters and hints of the loaded datapacks, from {@code data/<namespace>/thaumory/research/chapter/}
- * and {@code …/hint/}. Players catch up with changes on their next research check.
+ * The chapters, hints and categories of the loaded datapacks, from
+ * {@code data/<namespace>/thaumory/research/chapter/}, {@code …/hint/} and {@code …/category/}. Players catch up with changes on their next research check.
  */
 public final class ResearchData {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static volatile Map<Identifier, Chapter> chapters = Map.of();
     private static volatile Map<Identifier, Hint> hints = Map.of();
+    private static volatile Map<Identifier, Category> categories = Map.of();
     private static volatile Research research = Research.EMPTY;
 
     private ResearchData() {}
@@ -42,8 +43,15 @@ public final class ResearchData {
         });
     }
 
+    public static SimpleJsonResourceReloadListener<Category> categoryListener() {
+        return new Listener<>(Category.CODEC, "category", loaded -> {
+            categories = Map.copyOf(loaded);
+            rebuild();
+        });
+    }
+
     private static void rebuild() {
-        research = new Research(chapters, hints);
+        research = new Research(chapters, hints, categories);
     }
 
     private static final class Listener<T> extends SimpleJsonResourceReloadListener<T> {

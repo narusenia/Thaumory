@@ -6,8 +6,9 @@
     }
   ],
   "icon": "thaumory:wand",
-  "order": 6,
   "requires": [
     "thaumory:aspects"
-  ]
+  ],
+  "x": 2,
+  "y": 0
 }

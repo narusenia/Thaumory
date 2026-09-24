@@ -1,0 +1,5 @@
+{
+  "background": "minecraft:block/iron_block",
+  "icon": "thaumory:arcane_iron_ingot",
+  "order": 3
+}

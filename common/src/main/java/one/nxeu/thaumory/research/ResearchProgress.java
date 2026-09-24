@@ -114,9 +114,18 @@ public final class ResearchProgress implements KnowledgeManager.Research {
                     .filter(holder -> holder.value() instanceof AlchemyRecipe)
                     .map(holder -> BuiltInRegistries.ITEM.getKey(((AlchemyRecipe) holder.value()).result().create().getItem()))
                     .toList();
-            chapters.add(new ResearchView.ChapterView(id, chapter.icon(), knowledge.hasCompleted(id), lines, unlocks));
+            chapters.add(new ResearchView.ChapterView(id, chapter.icon(), node(research, id), knowledge.hasCompleted(id), lines, unlocks));
         }
-        return new ResearchView(List.copyOf(chapters), research.closedCount(knowledge.chapters()));
+        List<ResearchView.Node> unknown = research.unknown(knowledge.chapters()).stream().map(id -> node(research, id)).toList();
+        List<ResearchView.CategoryView> categories = research.shownCategories(knowledge.chapters()).stream()
+                .map(id -> new ResearchView.CategoryView(id, research.categories().get(id).icon(), research.categories().get(id).background()))
+                .toList();
+        return new ResearchView(categories, List.copyOf(chapters), unknown);
+    }
+
+    private static ResearchView.Node node(Research research, Identifier id) {
+        ChapterLayout.Cell cell = research.cell(id);
+        return new ResearchView.Node(research.categoryOf(id), cell.x(), cell.y(), research.chapters().get(id).requires());
     }
 
     private static Component describe(ResearchCondition condition, ResearchFacts facts, PlayerKnowledge knowledge) {

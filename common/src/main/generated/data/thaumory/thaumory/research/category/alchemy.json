@@ -1,0 +1,5 @@
+{
+  "background": "minecraft:block/polished_blackstone_bricks",
+  "icon": "thaumory:crucible",
+  "order": 1
+}

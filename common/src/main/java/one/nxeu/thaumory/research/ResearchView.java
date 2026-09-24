@@ -9,13 +9,33 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 
 /**
- * The chapters one player can see, as the server works them out: the book shows this as it is,
- * since only the server knows the circle definitions some conditions need.
+ * What one player's book shows, as the server works it out: the book shows this as it is, since
+ * only the server knows the circle definitions some conditions need.
  *
- * @param closed how many chapters are not open yet
+ * @param categories the bookmarks, in order
+ * @param chapters   open and complete chapters
+ * @param unknown    chapters shown only as "?": where they sit, never what they are
  */
-public record ResearchView(List<ChapterView> chapters, int closed) {
-    public static final ResearchView EMPTY = new ResearchView(List.of(), 0);
+public record ResearchView(List<CategoryView> categories, List<ChapterView> chapters, List<Node> unknown) {
+    public static final ResearchView EMPTY = new ResearchView(List.of(), List.of(), List.of());
+
+    public record CategoryView(Identifier id, Identifier icon, Identifier background) {
+        static final StreamCodec<RegistryFriendlyByteBuf, CategoryView> STREAM_CODEC = StreamCodec.composite(
+                Identifier.STREAM_CODEC, CategoryView::id,
+                Identifier.STREAM_CODEC, CategoryView::icon,
+                Identifier.STREAM_CODEC, CategoryView::background,
+                CategoryView::new);
+    }
+
+    /** A place in a category's tree, and the chapters it draws lines from. */
+    public record Node(Identifier category, int x, int y, List<Identifier> requires) {
+        static final StreamCodec<RegistryFriendlyByteBuf, Node> STREAM_CODEC = StreamCodec.composite(
+                Identifier.STREAM_CODEC, Node::category,
+                ByteBufCodecs.VAR_INT, Node::x,
+                ByteBufCodecs.VAR_INT, Node::y,
+                Identifier.STREAM_CODEC.apply(ByteBufCodecs.list()), Node::requires,
+                Node::new);
+    }
 
     /** One condition, already worded with the player's progress. */
     public record ConditionLine(Component text, boolean met) {
@@ -26,10 +46,12 @@ public record ResearchView(List<ChapterView> chapters, int closed) {
     }
 
     /** @param unlocks the items the chapter's recipes make */
-    public record ChapterView(Identifier id, Identifier icon, boolean complete, List<ConditionLine> conditions, List<Identifier> unlocks) {
+    public record ChapterView(Identifier id, Identifier icon, Node node, boolean complete, List<ConditionLine> conditions,
+            List<Identifier> unlocks) {
         static final StreamCodec<RegistryFriendlyByteBuf, ChapterView> STREAM_CODEC = StreamCodec.composite(
                 Identifier.STREAM_CODEC, ChapterView::id,
                 Identifier.STREAM_CODEC, ChapterView::icon,
+                Node.STREAM_CODEC, ChapterView::node,
                 ByteBufCodecs.BOOL, ChapterView::complete,
                 ConditionLine.STREAM_CODEC.apply(ByteBufCodecs.list()), ChapterView::conditions,
                 Identifier.STREAM_CODEC.apply(ByteBufCodecs.list()), ChapterView::unlocks,
@@ -37,7 +59,8 @@ public record ResearchView(List<ChapterView> chapters, int closed) {
     }
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ResearchView> STREAM_CODEC = StreamCodec.composite(
+            CategoryView.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchView::categories,
             ChapterView.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchView::chapters,
-            ByteBufCodecs.VAR_INT, ResearchView::closed,
+            Node.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchView::unknown,
             ResearchView::new);
 }

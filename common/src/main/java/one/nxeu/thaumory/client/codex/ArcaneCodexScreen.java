@@ -3,6 +3,7 @@ package one.nxeu.thaumory.client.codex;
 import dev.architectury.networking.NetworkManager;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,14 +35,16 @@ import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
 import one.nxeu.thaumory.network.TranscribePayload;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge.CircleOutcome;
+import one.nxeu.thaumory.research.Category;
 import one.nxeu.thaumory.research.Chapter;
 import one.nxeu.thaumory.research.Hint;
 import one.nxeu.thaumory.research.ResearchView;
 
 /**
  * The Arcane Codex, drawn as an open book (requirements §7.3): bookmarks along the top edge pick a
- * tab, and the pages turn with the arrows in their bottom corners or the mouse wheel. On the
- * chapter tab the left page lists the chapters and the right page shows the one picked. Reads the
+ * tab, and the pages turn with the arrows in their bottom corners or the mouse wheel. The chapter
+ * tab draws each category's chapters as a tree across the spread, dragged about with the mouse;
+ * bookmarks down the left edge pick the category, and a chapter opens as pages of its own. Reads the
  * client's copy of the player's knowledge and research.
  */
 public final class ArcaneCodexScreen extends Screen {
@@ -58,8 +61,14 @@ public final class ArcaneCodexScreen extends Screen {
     /** Rows of text on a page, leaving the bottom line for the page arrows. */
     private static final int LINES_PER_PAGE = (PAGE_HEIGHT - PAD * 2 - LINE) / LINE;
     private static final int ICON = 18;
-    /** Chapters listed on the left page at a time, leaving the bottom line for the page arrows. */
-    private static final int CHAPTER_ROWS = (PAGE_HEIGHT - PAD * 2 - LINE) / ICON;
+    /** The chapter tree: grid cells, the node frames in them, and the category bookmarks. */
+    private static final int CELL = 30;
+    private static final int NODE = 22;
+    private static final int TREE_MARGIN = 12;
+    private static final int CATEGORY_TAB = 22;
+    private static final int LINE_COLOR = 0xFFD8C8A8;
+    private static final int LINE_DONE = 0xFFE0B040;
+    private static final int TILE = 16;
     /** Aspect icons in the aspects tab, drawn at three times the text size. */
     private static final int ASPECT_ICON = 24;
     private static final int ASPECT_CELL = 29;
@@ -81,16 +90,19 @@ public final class ArcaneCodexScreen extends Screen {
 
     /** Remembered while the game runs, so the book reopens where it was left. */
     private static Tab lastTab = Tab.CHAPTERS;
-    private static Optional<Identifier> lastChapter = Optional.empty();
+    private static Optional<Identifier> lastCategory = Optional.empty();
+    /** The chapter open as pages, if any; the tree shows otherwise. */
+    private static Optional<Identifier> lastReading = Optional.empty();
+    /** How far each category's tree is dragged, kept while the game runs. */
+    private static final Map<Identifier, int[]> PANS = new HashMap<>();
 
     private Tab tab = lastTab;
     /** Which pair of pages is open: pages {@code 2 * spread} and {@code 2 * spread + 1}. */
     private int spread;
-    private Optional<Identifier> chapter = lastChapter;
-    /** Which page of the chosen chapter the right page shows. */
-    private int chapterPage;
-    /** Which page of the chapter list the left page shows; starts at the chosen chapter's. */
-    private int listPage = -1;
+    private Optional<Identifier> reading = lastReading;
+    /** Where a press on the tree began, and how far it has dragged since: a short one is a click. */
+    private boolean pressedOnTree;
+    private double dragged;
     private int left;
     private int top;
     /** What the "transcribe" button would copy: a known aspect or a working circle picked in its tab. */
@@ -131,9 +143,9 @@ public final class ArcaneCodexScreen extends Screen {
         picked = Optional.empty();
     }
 
-    private void choose(Identifier id) {
-        chapter = lastChapter = Optional.of(id);
-        chapterPage = 0;
+    private void read(Optional<Identifier> id) {
+        reading = lastReading = id;
+        spread = 0;
     }
 
     // Layout
@@ -204,7 +216,12 @@ public final class ArcaneCodexScreen extends Screen {
         }
         PlayerKnowledge knowledge = ClientKnowledge.get();
         switch (tab) {
-            case CHAPTERS -> drawChapters(graphics, ClientResearch.get(), mouseX, mouseY);
+            case CHAPTERS -> {
+                drawChapters(graphics, ClientResearch.get(), mouseX, mouseY);
+                if (reading.isEmpty()) {
+                    drawCategoryBookmarks(graphics, ClientResearch.get(), mouseX, mouseY);
+                }
+            }
             case SCANNED -> drawScanned(graphics, knowledge, mouseX, mouseY);
             case ASPECTS -> drawAspects(graphics, knowledge, mouseX, mouseY);
             case CIRCLES -> drawCircles(graphics, knowledge, mouseX, mouseY);
@@ -265,70 +282,220 @@ public final class ArcaneCodexScreen extends Screen {
 
     // Chapters
 
-    private Optional<ResearchView.ChapterView> chosen(ResearchView view) {
-        Optional<ResearchView.ChapterView> picked = chapter.flatMap(id -> view.chapters().stream().filter(c -> c.id().equals(id)).findFirst());
-        if (picked.isPresent()) {
-            return picked;
-        }
-        // The first chapter still open, or else the last one.
-        return view.chapters().stream().filter(c -> !c.complete()).findFirst()
-                .or(() -> view.chapters().isEmpty() ? Optional.empty() : Optional.of(view.chapters().getLast()));
+    /** The category shown: the last one picked if it still has anything to show, or else the first. */
+    private Optional<ResearchView.CategoryView> category(ResearchView view) {
+        return lastCategory.flatMap(id -> view.categories().stream().filter(c -> c.id().equals(id)).findFirst())
+                .or(() -> view.categories().stream().findFirst());
     }
 
     private void drawChapters(GuiGraphicsExtractor graphics, ResearchView view, int mouseX, int mouseY) {
-        Optional<ResearchView.ChapterView> picked = chosen(view);
-        int listPages = Math.max(1, (view.chapters().size() + CHAPTER_ROWS - 1) / CHAPTER_ROWS);
-        if (listPage < 0) {
-            listPage = picked.map(view.chapters()::indexOf).map(index -> index / CHAPTER_ROWS).orElse(0);
+        Optional<ResearchView.ChapterView> open = reading.flatMap(id -> view.chapters().stream().filter(c -> c.id().equals(id)).findFirst());
+        if (open.isPresent()) {
+            drawPages(graphics, wrap(chapterLines(open.get())));
+            boolean hovered = onBack(mouseX, mouseY);
+            graphics.text(font, Component.translatable("codex.thaumory.chapter.back"), textX(1), arrowY(), hovered ? GOLD : FADED, false);
+            return;
         }
-        listPage = Math.clamp(listPage, 0, listPages - 1);
-        int y = textY();
-        int first = listPage * CHAPTER_ROWS;
-        for (ResearchView.ChapterView each : view.chapters().subList(first, Math.min(first + CHAPTER_ROWS, view.chapters().size()))) {
-            boolean hovered = mouseX >= textX(0) - 2 && mouseX < textX(0) + TEXT_WIDTH && mouseY >= y - 1 && mouseY < y + ICON - 1;
-            boolean isPicked = picked.filter(each::equals).isPresent();
-            if (isPicked || hovered) {
-                graphics.fill(textX(0) - 2, y - 1, textX(0) + TEXT_WIDTH, y + ICON - 1, isPicked ? 0x40806040 : 0x20806040);
-            }
-            int rowY = y;
-            BuiltInRegistries.ITEM.getOptional(each.icon()).ifPresent(item -> graphics.item(new ItemStack(item), textX(0), rowY));
-            Component title = Component.translatable(Chapter.titleKey(each.id()));
-            String mark = each.complete() ? "✔ " : "";
-            graphics.text(font, font.substrByWidth(Component.literal(mark).append(title), TEXT_WIDTH - 20).getString(), textX(0) + 20, y + 4,
-                    each.complete() ? GOLD : INK, false);
-            y += ICON;
-        }
-        if (listPage > 0) {
-            graphics.text(font, "◀", textX(0), arrowY(), FADED, false);
-        }
-        if (listPage + 1 < listPages) {
-            graphics.text(font, "▶", pageX(0) + PAGE_WIDTH - PAD - 8, arrowY(), FADED, false);
-        }
-        if (view.closed() > 0) {
-            // Between the list's arrows.
-            graphics.text(font, font.substrByWidth(Component.translatable("codex.thaumory.chapters.closed", view.closed()), TEXT_WIDTH - 24).getString(),
-                    textX(0) + 12, arrowY(), FADED, false);
-        }
+        reading = lastReading = Optional.empty();
+        category(view).ifPresent(shown -> drawTree(graphics, view, shown, mouseX, mouseY));
+    }
 
-        List<FormattedCharSequence> detail = picked.map(each -> wrap(chapterLines(each))).orElse(List.of());
-        int pages = Math.max(1, (detail.size() + LINES_PER_PAGE - 1) / LINES_PER_PAGE);
-        chapterPage = Math.clamp(chapterPage, 0, pages - 1);
-        for (int row = 0; row < LINES_PER_PAGE; row++) {
-            int index = chapterPage * LINES_PER_PAGE + row;
-            if (index >= detail.size()) {
-                break;
+    // The tree fills the spread inside the pages' margins.
+    private int treeLeft() {
+        return pageX(0) + 4;
+    }
+
+    private int treeTop() {
+        return pageY() + 4;
+    }
+
+    private int treeRight() {
+        return pageX(1) + PAGE_WIDTH - 4;
+    }
+
+    private int treeBottom() {
+        return pageY() + PAGE_HEIGHT - 4;
+    }
+
+    private static List<ResearchView.Node> nodesIn(ResearchView view, Identifier category) {
+        List<ResearchView.Node> nodes = new ArrayList<>();
+        view.chapters().stream().map(ResearchView.ChapterView::node).filter(n -> n.category().equals(category)).forEach(nodes::add);
+        view.unknown().stream().filter(n -> n.category().equals(category)).forEach(nodes::add);
+        return nodes;
+    }
+
+    /**
+     * How far the tree is dragged, kept inside the bounds that leave some of it in view. A tree
+     * narrower or shorter than the spread stays centred that way.
+     */
+    private int[] pan(ResearchView view, Identifier category) {
+        List<ResearchView.Node> nodes = nodesIn(view, category);
+        int minX = nodes.stream().mapToInt(ResearchView.Node::x).min().orElse(0) * CELL;
+        int maxX = nodes.stream().mapToInt(ResearchView.Node::x).max().orElse(0) * CELL + NODE;
+        int minY = nodes.stream().mapToInt(ResearchView.Node::y).min().orElse(0) * CELL;
+        int maxY = nodes.stream().mapToInt(ResearchView.Node::y).max().orElse(0) * CELL + NODE;
+        int[] pan = PANS.computeIfAbsent(category, c -> new int[] {Integer.MIN_VALUE, Integer.MIN_VALUE});
+        pan[0] = fit(pan[0], minX, maxX, treeRight() - treeLeft());
+        pan[1] = fit(pan[1], minY, maxY, treeBottom() - treeTop());
+        return pan;
+    }
+
+    private static int fit(int pan, int min, int max, int room) {
+        if (max - min <= room - TREE_MARGIN * 2) {
+            return (room - (max - min)) / 2 - min;
+        }
+        int low = room - TREE_MARGIN - max;
+        int high = TREE_MARGIN - min;
+        return pan == Integer.MIN_VALUE ? high : Math.clamp(pan, low, high);
+    }
+
+    private int nodeX(ResearchView.Node node, int[] pan) {
+        return treeLeft() + pan[0] + node.x() * CELL;
+    }
+
+    private int nodeY(ResearchView.Node node, int[] pan) {
+        return treeTop() + pan[1] + node.y() * CELL;
+    }
+
+    private void drawTree(GuiGraphicsExtractor graphics, ResearchView view, ResearchView.CategoryView shown, int mouseX, int mouseY) {
+        int[] pan = pan(view, shown.id());
+        Map<Identifier, ResearchView.ChapterView> byId = new HashMap<>();
+        view.chapters().forEach(each -> byId.put(each.id(), each));
+        List<ResearchView.Node> nodes = nodesIn(view, shown.id());
+        boolean inTree = mouseX >= treeLeft() && mouseX < treeRight() && mouseY >= treeTop() && mouseY < treeBottom();
+
+        graphics.enableScissor(treeLeft(), treeTop(), treeRight(), treeBottom());
+        drawBackground(graphics, shown, pan);
+        for (ResearchView.Node node : nodes) {
+            for (Identifier parent : node.requires()) {
+                ResearchView.ChapterView from = byId.get(parent);
+                if (from != null && from.node().category().equals(shown.id())) {
+                    boolean done = from.complete() && view.chapters().stream().anyMatch(c -> c.node() == node && c.complete());
+                    drawLink(graphics, from.node(), node, pan, done ? LINE_DONE : LINE_COLOR);
+                }
             }
-            graphics.text(font, detail.get(index), textX(1), textY() + row * LINE, INK, false);
         }
-        if (chapterPage > 0) {
-            graphics.text(font, "◀", textX(1), arrowY(), FADED, false);
+        Optional<Component> tooltip = Optional.empty();
+        for (ResearchView.Node node : nodes) {
+            int x = nodeX(node, pan);
+            int y = nodeY(node, pan);
+            Optional<ResearchView.ChapterView> chapter = view.chapters().stream().filter(c -> c.node() == node).findFirst();
+            boolean hovered = inTree && mouseX >= x && mouseX < x + NODE && mouseY >= y && mouseY < y + NODE;
+            if (chapter.isPresent()) {
+                boolean complete = chapter.get().complete();
+                graphics.fill(x, y, x + NODE, y + NODE, hovered ? 0xFFF6EDD2 : 0xFFEADBB8);
+                graphics.outline(x, y, NODE, NODE, complete ? LINE_DONE : INK);
+                if (complete) {
+                    graphics.outline(x + 1, y + 1, NODE - 2, NODE - 2, LINE_DONE);
+                }
+                Identifier icon = chapter.get().icon();
+                BuiltInRegistries.ITEM.getOptional(icon).ifPresent(item -> graphics.item(new ItemStack(item), x + 3, y + 3));
+                if (hovered) {
+                    Component title = Component.translatable(Chapter.titleKey(chapter.get().id()));
+                    tooltip = Optional.of(complete ? Component.translatable("codex.thaumory.chapter.complete", title) : title);
+                }
+            } else {
+                graphics.fill(x, y, x + NODE, y + NODE, 0x40EADBB8);
+                graphics.outline(x, y, NODE, NODE, 0x807A6650);
+                graphics.text(font, "?", x + (NODE - font.width("?")) / 2, y + 7, FADED, false);
+                if (hovered) {
+                    tooltip = Optional.of(Component.translatable("codex.thaumory.chapter.unknown"));
+                }
+            }
         }
-        if (chapterPage + 1 < pages) {
-            graphics.text(font, "▶", pageX(1) + PAGE_WIDTH - PAD - 8, arrowY(), FADED, false);
+        graphics.disableScissor();
+        tooltip.ifPresent(text -> graphics.setTooltipForNextFrame(font, text, mouseX, mouseY));
+    }
+
+    /** The category's tiles over the whole tree area, moving with the tree, a little darkened; a thin frame round them. */
+    private void drawBackground(GuiGraphicsExtractor graphics, ResearchView.CategoryView shown, int[] pan) {
+        Identifier texture = shown.background().withPath(path -> "textures/" + path + ".png");
+        int startX = treeLeft() + Math.floorMod(pan[0], TILE) - TILE;
+        int startY = treeTop() + Math.floorMod(pan[1], TILE) - TILE;
+        for (int x = startX; x < treeRight(); x += TILE) {
+            for (int y = startY; y < treeBottom(); y += TILE) {
+                graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0.0f, 0.0f, TILE, TILE, TILE, TILE);
+            }
+        }
+        graphics.fill(treeLeft(), treeTop(), treeRight(), treeBottom(), 0x40000000);
+        graphics.outline(treeLeft(), treeTop(), treeRight() - treeLeft(), treeBottom() - treeTop(), 0xFF3A2A1C);
+    }
+
+    /** Across from the parent's right side, then down or up, then on to the child's left side. */
+    private void drawLink(GuiGraphicsExtractor graphics, ResearchView.Node from, ResearchView.Node to, int[] pan, int color) {
+        int x0 = nodeX(from, pan) + NODE;
+        int y0 = nodeY(from, pan) + NODE / 2;
+        int x1 = nodeX(to, pan);
+        int y1 = nodeY(to, pan) + NODE / 2;
+        if (x1 <= x0) {
+            // A child beside or behind its parent: straight from the parent's foot.
+            int xs = nodeX(from, pan) + NODE / 2;
+            graphics.fill(xs, nodeY(from, pan) + NODE, xs + 1, y1 + 1, color);
+            graphics.fill(Math.min(xs, x1 + NODE), y1, Math.max(xs, x1 + NODE) + 1, y1 + 1, color);
+            return;
+        }
+        int middle = (x0 + x1) / 2;
+        graphics.fill(x0, y0, middle + 1, y0 + 1, color);
+        graphics.fill(middle, Math.min(y0, y1), middle + 1, Math.max(y0, y1) + 1, color);
+        graphics.fill(middle, y1, x1, y1 + 1, color);
+    }
+
+    /** The chapter under the cursor in the tree; "?" chapters cannot be opened. */
+    private Optional<Identifier> chapterAt(ResearchView view, double mouseX, double mouseY) {
+        Optional<ResearchView.CategoryView> shown = category(view);
+        if (shown.isEmpty() || mouseX < treeLeft() || mouseX >= treeRight() || mouseY < treeTop() || mouseY >= treeBottom()) {
+            return Optional.empty();
+        }
+        int[] pan = pan(view, shown.get().id());
+        return view.chapters().stream()
+                .filter(c -> c.node().category().equals(shown.get().id()))
+                .filter(c -> mouseX >= nodeX(c.node(), pan) && mouseX < nodeX(c.node(), pan) + NODE
+                        && mouseY >= nodeY(c.node(), pan) && mouseY < nodeY(c.node(), pan) + NODE)
+                .map(ResearchView.ChapterView::id)
+                .findFirst();
+    }
+
+    private boolean onBack(double x, double y) {
+        Component back = Component.translatable("codex.thaumory.chapter.back");
+        return x >= textX(1) - 2 && x < textX(1) + font.width(back) + 2 && y >= arrowY() - 2 && y < arrowY() + 10;
+    }
+
+    // The category bookmarks stick out of the book's left edge.
+    private int categoryX(boolean selected) {
+        return left - CATEGORY_TAB + (selected ? -3 : 1);
+    }
+
+    private int categoryY(int index) {
+        return top + 10 + index * (CATEGORY_TAB + 2);
+    }
+
+    private void drawCategoryBookmarks(GuiGraphicsExtractor graphics, ResearchView view, int mouseX, int mouseY) {
+        Optional<ResearchView.CategoryView> shown = category(view);
+        for (int i = 0; i < view.categories().size(); i++) {
+            ResearchView.CategoryView each = view.categories().get(i);
+            boolean selected = shown.filter(each::equals).isPresent();
+            int x = categoryX(selected);
+            int y = categoryY(i);
+            graphics.fill(x, y, left + 2, y + CATEGORY_TAB, selected ? Tab.CHAPTERS.color : darker(Tab.CHAPTERS.color));
+            graphics.outline(x, y, left + 2 - x, CATEGORY_TAB, 0xFF3A2A1C);
+            BuiltInRegistries.ITEM.getOptional(each.icon()).ifPresent(item -> graphics.item(new ItemStack(item), x + 3, y + 3));
+            if (mouseX >= x && mouseX < left && mouseY >= y && mouseY < y + CATEGORY_TAB) {
+                graphics.setTooltipForNextFrame(font, Component.translatable(Category.nameKey(each.id())), mouseX, mouseY);
+            }
         }
     }
 
-    /** The chosen chapter's title, text, conditions and what it unlocks. */
+    private Optional<ResearchView.CategoryView> categoryAt(ResearchView view, double mouseX, double mouseY) {
+        for (int i = 0; i < view.categories().size(); i++) {
+            int y = categoryY(i);
+            if (mouseX >= categoryX(true) && mouseX < left && mouseY >= y && mouseY < y + CATEGORY_TAB) {
+                return Optional.of(view.categories().get(i));
+            }
+        }
+        return Optional.empty();
+    }
+
+    /** The open chapter's title, text, conditions and what it unlocks. */
     private static List<Component> chapterLines(ResearchView.ChapterView chapter) {
         List<Component> lines = new ArrayList<>();
         lines.add(Component.translatable(Chapter.titleKey(chapter.id())).withColor(chapter.complete() ? GOLD : INK));
@@ -591,30 +758,30 @@ public final class ArcaneCodexScreen extends Screen {
         boolean onRightArrow = onArrowRow && x >= pageX(1) + PAGE_WIDTH - PAD - 10 && x < pageX(1) + PAGE_WIDTH - PAD + 2;
         if (tab == Tab.CHAPTERS) {
             ResearchView view = ClientResearch.get();
-            int row = (int) Math.floor((y - textY() + 1) / ICON);
-            int index = listPage * CHAPTER_ROWS + row;
-            if (x >= textX(0) - 2 && x < textX(0) + TEXT_WIDTH && y >= textY() - 1 && row >= 0 && row < CHAPTER_ROWS
-                    && index < view.chapters().size()) {
-                choose(view.chapters().get(index).id());
-                return true;
-            }
-            if (onLeftArrow) {
-                listPage = Math.max(0, listPage - 1);
-                return true;
-            }
-            boolean onListForward = onArrowRow && x >= pageX(0) + PAGE_WIDTH - PAD - 10 && x < pageX(0) + PAGE_WIDTH - PAD + 2;
-            if (onListForward) {
-                listPage++;
-                return true;
-            }
-            boolean onDetailBack = onArrowRow && x >= textX(1) - 2 && x < textX(1) + 10;
-            if (onDetailBack) {
-                chapterPage--;
-                return true;
-            }
-            if (onRightArrow) {
-                chapterPage++;
-                return true;
+            if (reading.isPresent()) {
+                if (onBack(x, y)) {
+                    read(Optional.empty());
+                    return true;
+                }
+                if (onLeftArrow) {
+                    spread--;
+                    return true;
+                }
+                if (onRightArrow) {
+                    spread++;
+                    return true;
+                }
+            } else {
+                Optional<ResearchView.CategoryView> picked = categoryAt(view, x, y);
+                if (picked.isPresent()) {
+                    lastCategory = Optional.of(picked.get().id());
+                    return true;
+                }
+                if (x >= treeLeft() && x < treeRight() && y >= treeTop() && y < treeBottom()) {
+                    pressedOnTree = true;
+                    dragged = 0;
+                    return true;
+                }
             }
         } else if (onTranscribe(x, y)) {
             NetworkManager.sendToServer(new TranscribePayload(picked.get()));
@@ -635,6 +802,36 @@ public final class ArcaneCodexScreen extends Screen {
         return super.mouseClicked(event, doubleClick);
     }
 
+    @Override
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+        if (!pressedOnTree) {
+            return super.mouseDragged(event, dx, dy);
+        }
+        dragged += Math.abs(dx) + Math.abs(dy);
+        category(ClientResearch.get()).ifPresent(shown -> {
+            int[] pan = pan(ClientResearch.get(), shown.id());
+            pan[0] += (int) Math.round(dx);
+            pan[1] += (int) Math.round(dy);
+        });
+        return true;
+    }
+
+    /** A press on the tree that hardly moved opens the chapter it was on. */
+    @Override
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (!pressedOnTree) {
+            return super.mouseReleased(event);
+        }
+        pressedOnTree = false;
+        if (dragged < 3) {
+            Optional<Identifier> clicked = chapterAt(ClientResearch.get(), event.x(), event.y());
+            if (clicked.isPresent()) {
+                read(clicked);
+            }
+        }
+        return true;
+    }
+
     /** Picking what is already picked lets it go. */
     private void pick(Transcript transcript) {
         picked = picked.equals(Optional.of(transcript)) ? Optional.empty() : Optional.of(transcript);
@@ -643,10 +840,9 @@ public final class ArcaneCodexScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         int step = scrollY > 0 ? -1 : 1;
-        if (tab == Tab.CHAPTERS && mouseX < pageX(1)) {
-            listPage = Math.max(0, listPage + step);
-        } else if (tab == Tab.CHAPTERS) {
-            chapterPage += step;
+        if (tab == Tab.CHAPTERS && reading.isEmpty()) {
+            // The wheel moves the tree up and down.
+            category(ClientResearch.get()).ifPresent(shown -> pan(ClientResearch.get(), shown.id())[1] -= step * CELL / 2);
         } else {
             spread += step;
         }

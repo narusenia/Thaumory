@@ -27,10 +27,11 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.circle.effect.ThaumoryCircleEffects;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.research.Chapter;
+import one.nxeu.thaumory.research.Category;
 import one.nxeu.thaumory.research.Hint;
 import one.nxeu.thaumory.research.ResearchCondition;
 
-/** The built-in chapters and hints (requirements §6.2). */
+/** The built-in chapters, categories and hints (requirements §6.2). */
 final class ResearchProvider {
     static final Identifier BEGINNING = Thaumory.id("beginning");
     static final Identifier ASPECTS = Thaumory.id("aspects");
@@ -43,6 +44,11 @@ final class ResearchProvider {
     static final Identifier AETHER_SILVER = Thaumory.id("aether_silver");
     static final Identifier MONOCLE = Thaumory.id("monocle");
 
+    static final Identifier BASICS = Chapter.BASICS;
+    static final Identifier ALCHEMY = Thaumory.id("alchemy");
+    static final Identifier CIRCLES_CATEGORY = Thaumory.id("circles");
+    static final Identifier METALS = Thaumory.id("metals");
+
     private ResearchProvider() {}
 
     /** Writes {@code data/thaumory/thaumory/research/chapter/*.json}. */
@@ -53,37 +59,37 @@ final class ResearchProvider {
 
         @Override
         protected void configure(BiConsumer<Identifier, Chapter> output, HolderLookup.Provider registries) {
-            output.accept(BEGINNING, chapter(ThaumoryItems.ARCANE_CODEX.get(), 0, List.of(), List.of(), List.of()));
-            output.accept(ASPECTS, chapter(ThaumoryItems.ARCANE_LOUPE.get(), 1, List.of(BEGINNING),
+            output.accept(BEGINNING, chapter(ThaumoryItems.ARCANE_CODEX.get(), BASICS, 0, 0, List.of(), List.of(), List.of()));
+            output.accept(ASPECTS, chapter(ThaumoryItems.ARCANE_LOUPE.get(), BASICS, 1, 0, List.of(BEGINNING),
                     List.of(ResearchCondition.Aspects.count(1)), List.of()));
-            output.accept(CRUCIBLE, chapter(ThaumoryItems.CRUCIBLE.get(), 2, List.of(BEGINNING),
+            output.accept(CRUCIBLE, chapter(ThaumoryItems.CRUCIBLE.get(), ALCHEMY, 0, 0, List.of(BEGINNING),
                     List.of(ResearchCondition.Scanned.item(key(ThaumoryItems.CRUCIBLE.get()))), List.of()));
-            output.accept(RUNES, chapter(ThaumoryItems.BLANK_RUNE.get(), 3, List.of(ASPECTS, CRUCIBLE),
+            output.accept(RUNES, chapter(ThaumoryItems.BLANK_RUNE.get(), ALCHEMY, 1, 0, List.of(ASPECTS, CRUCIBLE),
                     List.of(ResearchCondition.Aspects.count(3)), List.of(alchemy("blank_rune"), alchemy("chalk"))));
-            output.accept(CIRCLES, chapter(ThaumoryItems.CIRCLE_CORE.get(), 4, List.of(RUNES),
+            output.accept(CIRCLES, chapter(ThaumoryItems.CIRCLE_CORE.get(), CIRCLES_CATEGORY, 0, 0, List.of(RUNES),
                     List.of(new ResearchCondition.Circles(true, 1, Optional.empty())),
                     List.of(alchemy("amplifying_chalk"), alchemy("extending_chalk"), alchemy("economizing_chalk"), alchemy("stabilizing_chalk"),
                             alchemy("blank_scroll"))));
-            output.accept(FLUX, chapter(ThaumoryItems.POLLUTED_SOIL.get(), 5, List.of(CIRCLES),
+            output.accept(FLUX, chapter(ThaumoryItems.POLLUTED_SOIL.get(), CIRCLES_CATEGORY, 1, 0, List.of(CIRCLES),
                     List.of(new ResearchCondition.Circles(false, 1, Optional.empty())), List.of()));
-            output.accept(INQUIRY, chapter(ThaumoryItems.WAND.get(), 6, List.of(ASPECTS),
+            output.accept(INQUIRY, chapter(ThaumoryItems.WAND.get(), BASICS, 2, 0, List.of(ASPECTS),
                     List.of(ResearchCondition.Aspects.count(12)), List.of()));
-            output.accept(ARCANE_METALS, chapter(ThaumoryItems.ARCANE_IRON.ingot().get(), 7, List.of(CIRCLES),
+            output.accept(ARCANE_METALS, chapter(ThaumoryItems.ARCANE_IRON.ingot().get(), METALS, 0, 0, List.of(CIRCLES),
                     List.of(ResearchCondition.Scanned.item(key(Items.IRON_INGOT))), List.of(alchemy("arcane_iron_ingot"))));
-            output.accept(AETHER_SILVER, chapter(ThaumoryItems.AETHER_SILVER.ingot().get(), 8, List.of(ARCANE_METALS),
+            output.accept(AETHER_SILVER, chapter(ThaumoryItems.AETHER_SILVER.ingot().get(), METALS, 1, 0, List.of(ARCANE_METALS),
                     List.of(ResearchCondition.Scanned.item(key(ThaumoryItems.ARCANE_IRON.ingot().get())),
                             ResearchCondition.Aspects.all(List.of(AER.id(), LUX.id()))),
                     List.of(alchemy("aether_silver_ingot"))));
-            output.accept(MONOCLE, chapter(ThaumoryItems.MONOCLE.get(), 9, List.of(ASPECTS, CRUCIBLE),
+            output.accept(MONOCLE, chapter(ThaumoryItems.MONOCLE.get(), BASICS, 2, 1, List.of(ASPECTS, CRUCIBLE),
                     List.of(ResearchCondition.Aspects.all(List.of(LUX.id(), ARCANUM.id()))), List.of(alchemy("monocle"))));
         }
 
-        private static Chapter chapter(ItemLike icon, int order, List<Identifier> requires, List<ResearchCondition> conditions,
-                List<Identifier> unlocks) {
-            return new Chapter(key(icon), order, requires, conditions, unlocks);
+        private static Chapter chapter(ItemLike icon, Identifier category, int x, int y, List<Identifier> requires,
+                List<ResearchCondition> conditions, List<Identifier> unlocks) {
+            return new Chapter(key(icon), category, Optional.of(x), Optional.of(y), requires, conditions, unlocks);
         }
 
-        private static Identifier key(ItemLike item) {
+        static Identifier key(ItemLike item) {
             return BuiltInRegistries.ITEM.getKey(item.asItem());
         }
 
@@ -94,6 +100,30 @@ final class ResearchProvider {
         @Override
         public String getName() {
             return "Thaumory research chapters";
+        }
+    }
+
+    /** Writes {@code data/thaumory/thaumory/research/category/*.json}. */
+    static final class Categories extends FabricCodecDataProvider<Category> {
+        Categories(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+            super(output, registries, PackOutput.Target.DATA_PACK, "thaumory/research/category", Category.CODEC);
+        }
+
+        @Override
+        protected void configure(BiConsumer<Identifier, Category> output, HolderLookup.Provider registries) {
+            output.accept(BASICS, new Category(Chapters.key(ThaumoryItems.ARCANE_CODEX.get()), 0, block("dark_oak_planks")));
+            output.accept(ALCHEMY, new Category(Chapters.key(ThaumoryItems.CRUCIBLE.get()), 1, block("polished_blackstone_bricks")));
+            output.accept(CIRCLES_CATEGORY, new Category(Chapters.key(ThaumoryItems.CIRCLE_CORE.get()), 2, block("end_stone")));
+            output.accept(METALS, new Category(Chapters.key(ThaumoryItems.ARCANE_IRON.ingot().get()), 3, block("iron_block")));
+        }
+
+        private static Identifier block(String name) {
+            return Identifier.withDefaultNamespace("block/" + name);
+        }
+
+        @Override
+        public String getName() {
+            return "Thaumory research categories";
         }
     }
 

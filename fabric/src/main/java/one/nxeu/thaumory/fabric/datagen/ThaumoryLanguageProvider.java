@@ -183,7 +183,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("codex.thaumory.chapter.complete", "✔ %s");
             builder.add("codex.thaumory.chapter.open", "◇ %s");
             builder.add("codex.thaumory.chapter.unlocks", "Unlocks: %s");
-            builder.add("codex.thaumory.chapters.closed", "%s chapters are still closed.");
+            builder.add("codex.thaumory.chapter.back", "↩ Back");
+            builder.add("codex.thaumory.chapter.unknown", "An unknown chapter");
+            builder.add("category.thaumory.basics", "Basics");
+            builder.add("category.thaumory.alchemy", "Alchemy");
+            builder.add("category.thaumory.circles", "Circles");
+            builder.add("category.thaumory.metals", "Metals and Equipment");
             builder.add("codex.thaumory.condition.met", "  ✔ %s");
             builder.add("codex.thaumory.condition.unmet", "  ・ %s");
             builder.add("codex.thaumory.condition.scan_item", "Scan %s");
@@ -407,7 +412,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("codex.thaumory.chapter.complete", "✔ %s");
             builder.add("codex.thaumory.chapter.open", "◇ %s");
             builder.add("codex.thaumory.chapter.unlocks", "開放: %s");
-            builder.add("codex.thaumory.chapters.closed", "まだ開いていない章が %s ある。");
+            builder.add("codex.thaumory.chapter.back", "↩ 戻る");
+            builder.add("codex.thaumory.chapter.unknown", "まだ知らない章");
+            builder.add("category.thaumory.basics", "基礎");
+            builder.add("category.thaumory.alchemy", "錬金術");
+            builder.add("category.thaumory.circles", "陣");
+            builder.add("category.thaumory.metals", "金属と装備");
             builder.add("codex.thaumory.condition.met", "  ✔ %s");
             builder.add("codex.thaumory.condition.unmet", "  ・ %s");
             builder.add("codex.thaumory.condition.scan_item", "%s をスキャンする");

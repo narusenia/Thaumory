@@ -95,6 +95,7 @@ public final class Thaumory {
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new PollutionRules(), id("pollution"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.chapterListener(), id("research_chapters"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.hintListener(), id("research_hints"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.categoryListener(), id("research_categories"));
         CommandRegistrationEvent.EVENT.register(
                 (dispatcher, context, selection) -> ThaumoryCommands.register(dispatcher, context, flux));
         AspectEstimation.registerEvents();

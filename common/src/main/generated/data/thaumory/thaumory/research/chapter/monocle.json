@@ -9,12 +9,13 @@
     }
   ],
   "icon": "thaumory:monocle",
-  "order": 9,
   "requires": [
     "thaumory:aspects",
     "thaumory:crucible"
   ],
   "unlocks": [
     "thaumory:alchemy/monocle"
-  ]
+  ],
+  "x": 2,
+  "y": 1
 }

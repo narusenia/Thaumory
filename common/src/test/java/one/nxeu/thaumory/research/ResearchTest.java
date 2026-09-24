@@ -58,17 +58,33 @@ class ResearchTest {
         }
     }
 
-    private static Chapter chapter(int order, List<Identifier> requires, List<ResearchCondition> conditions, List<Identifier> unlocks) {
-        return new Chapter(Identifier.withDefaultNamespace("book"), order, requires, conditions, unlocks);
+    private static final Identifier ALCHEMY = id("alchemy");
+
+    private static Chapter chapter(List<Identifier> requires, List<ResearchCondition> conditions, List<Identifier> unlocks) {
+        return chapter(Chapter.BASICS, requires, conditions, unlocks);
     }
 
+    private static Chapter chapter(Identifier category, List<Identifier> requires, List<ResearchCondition> conditions, List<Identifier> unlocks) {
+        return new Chapter(Identifier.withDefaultNamespace("book"), category, Optional.empty(), Optional.empty(), requires, conditions, unlocks);
+    }
+
+    private static Chapter at(Identifier category, int x, int y, List<Identifier> requires) {
+        return new Chapter(Identifier.withDefaultNamespace("book"), category, Optional.of(x), Optional.of(y), requires, List.of(), List.of());
+    }
+
+    private static final Map<Identifier, Category> CATEGORIES = Map.of(
+            Chapter.BASICS, new Category(Identifier.withDefaultNamespace("book"), 0, Category.DEFAULT_BACKGROUND),
+            ALCHEMY, new Category(Identifier.withDefaultNamespace("cauldron"), 1, Category.DEFAULT_BACKGROUND));
+
+    /** Beginning and aspects in the basics; crucible and runes in alchemy. */
     private static Research tree() {
         return new Research(Map.of(
-                BEGINNING, chapter(0, List.of(), List.of(), List.of()),
-                ASPECTS, chapter(1, List.of(BEGINNING), List.of(ResearchCondition.Aspects.count(1)), List.of()),
-                CRUCIBLE, chapter(2, List.of(BEGINNING), List.of(ResearchCondition.Scanned.item(CRUCIBLE_ITEM)), List.of()),
-                RUNES, chapter(3, List.of(ASPECTS, CRUCIBLE), List.of(ResearchCondition.Aspects.count(3)), List.of(BLANK_RUNE))),
-                Map.of(id("teleport"), new Hint(List.of(ResearchCondition.Aspects.all(List.of(id("arcanum"), id("aer")))))));
+                BEGINNING, chapter(List.of(), List.of(), List.of()),
+                ASPECTS, chapter(List.of(BEGINNING), List.of(ResearchCondition.Aspects.count(1)), List.of()),
+                CRUCIBLE, chapter(ALCHEMY, List.of(BEGINNING), List.of(ResearchCondition.Scanned.item(CRUCIBLE_ITEM)), List.of()),
+                RUNES, chapter(ALCHEMY, List.of(ASPECTS, CRUCIBLE), List.of(ResearchCondition.Aspects.count(3)), List.of(BLANK_RUNE))),
+                Map.of(id("teleport"), new Hint(List.of(ResearchCondition.Aspects.all(List.of(id("arcanum"), id("aer")))))),
+                CATEGORIES);
     }
 
     @Test
@@ -92,8 +108,7 @@ class ResearchTest {
         // No crucible scanned, so the runes chapter never opens.
         Research.Advance advance = tree().advance(facts, Set.of(), Set.of());
         assertEquals(List.of(BEGINNING, ASPECTS), advance.chapters());
-        assertEquals(1, tree().closedCount(Set.of(BEGINNING, ASPECTS)));
-        assertEquals(List.of(BEGINNING, ASPECTS, CRUCIBLE), tree().visible(Set.of(BEGINNING, ASPECTS)));
+        assertEquals(List.of(ASPECTS, BEGINNING, CRUCIBLE), tree().visible(Set.of(BEGINNING, ASPECTS)));
     }
 
     @Test
@@ -134,16 +149,53 @@ class ResearchTest {
     @Test
     void chapterFilesParseAndRejectAmbiguousConditions() {
         Chapter chapter = Chapter.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("""
-                {"icon": "minecraft:cauldron", "order": 3, "requires": ["thaumory:beginning"],
+                {"icon": "minecraft:cauldron", "category": "thaumory:alchemy", "x": 2, "y": 1, "requires": ["thaumory:beginning"],
                  "conditions": [{"type": "thaumory:scanned", "item": "thaumory:crucible"},
                                 {"type": "thaumory:circles", "outcome": "failure"}],
                  "unlocks": ["thaumory:blank_rune"]}""")).getOrThrow();
-        assertEquals(3, chapter.order());
+        assertEquals(Optional.of(new ChapterLayout.Cell(2, 1)), chapter.position());
+        assertEquals(ALCHEMY, chapter.category());
         assertEquals(List.of(ResearchCondition.Scanned.item(CRUCIBLE_ITEM), new ResearchCondition.Circles(false, 1, Optional.empty())),
                 chapter.conditions());
         assertTrue(Chapter.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("""
                 {"icon": "minecraft:cauldron", "conditions": [{"type": "thaumory:scanned", "item": "a:b", "count": 2}]}""")).isError());
         assertTrue(Chapter.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("""
                 {"icon": "minecraft:cauldron", "conditions": [{"type": "thaumory:nonsense"}]}""")).isError());
+    }
+
+    @Test
+    void chaptersNotOpenYetShowAsUnknownOnceOneOfTheirRequirementsIsDone() {
+        assertEquals(List.of(), tree().unknown(Set.of()));
+        // Runes needs aspects and crucible; with only aspects done it is a "?".
+        assertEquals(List.of(RUNES), tree().unknown(Set.of(BEGINNING, ASPECTS)));
+        assertEquals(List.of(), tree().unknown(Set.of(BEGINNING, ASPECTS, CRUCIBLE)));
+    }
+
+    @Test
+    void onlyCategoriesWithSomethingToShowGetABookmark() {
+        assertEquals(List.of(Chapter.BASICS), tree().shownCategories(Set.of()));
+        assertEquals(List.of(Chapter.BASICS, ALCHEMY), tree().shownCategories(Set.of(BEGINNING)));
+    }
+
+    @Test
+    void aChapterInAnUnknownCategoryIsFiledUnderTheBasics() {
+        Research research = new Research(Map.of(BEGINNING, chapter(id("nowhere"), List.of(), List.of(), List.of())), Map.of(), CATEGORIES);
+        assertEquals(Chapter.BASICS, research.categoryOf(BEGINNING));
+    }
+
+    @Test
+    void chaptersWithoutAPlaceGoRightOfTheirParentAndDownPastTakenCells() {
+        Research research = new Research(Map.of(
+                BEGINNING, at(Chapter.BASICS, 0, 0, List.of()),
+                ASPECTS, chapter(List.of(BEGINNING), List.of(), List.of()),
+                id("inquiry"), chapter(List.of(BEGINNING), List.of(), List.of()),
+                id("deeper"), chapter(List.of(ASPECTS), List.of(), List.of()),
+                // Its parent is in another category, so it starts at the origin of its own.
+                CRUCIBLE, chapter(ALCHEMY, List.of(BEGINNING), List.of(), List.of()),
+                RUNES, at(ALCHEMY, 0, 0, List.of())), Map.of(), CATEGORIES);
+        assertEquals(new ChapterLayout.Cell(1, 0), research.cell(ASPECTS));
+        assertEquals(new ChapterLayout.Cell(1, 1), research.cell(id("inquiry")));
+        assertEquals(new ChapterLayout.Cell(2, 0), research.cell(id("deeper")));
+        assertEquals(new ChapterLayout.Cell(0, 1), research.cell(CRUCIBLE));
     }
 }
