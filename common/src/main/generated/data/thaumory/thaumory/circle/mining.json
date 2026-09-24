@@ -1,6 +1,10 @@
 {
-  "capacity": 0,
+  "capacity": 3,
   "effect": "thaumory:mining",
+  "item_cost": 4,
+  "item_settings": {
+    "depth": 3.0
+  },
   "mode": "triggered",
   "runes": [
     "thaumory:bellum",

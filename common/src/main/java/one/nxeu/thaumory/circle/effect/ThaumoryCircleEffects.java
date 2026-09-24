@@ -34,9 +34,9 @@ public final class ThaumoryCircleEffects {
     public static final Identifier WITHERING = Thaumory.id("withering");
 
     /** How long the life circles' status effects outlast leaving the range, in ticks (requirements §17.4). */
-    private static final int SHORT_AURA = 60;
+    static final int SHORT_AURA = 60;
     /** Night vision flickers under 10 seconds left, so it is kept above that. */
-    private static final int NIGHT_VISION_AURA = 220;
+    static final int NIGHT_VISION_AURA = 220;
     /**
      * Wither hurts on durations that are multiples of 40; renewed to 80 every second, it bites once
      * a second.

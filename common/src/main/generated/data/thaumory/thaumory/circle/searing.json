@@ -1,7 +1,12 @@
 {
-  "capacity": 0,
+  "capacity": 2,
   "cost": 4,
   "effect": "thaumory:searing",
+  "item_settings": {
+    "burn_seconds": 3.0,
+    "damage_per_level": 4.0,
+    "radius": 4.0
+  },
   "mode": "triggered",
   "runes": [
     "thaumory:bellum",

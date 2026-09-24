@@ -141,7 +141,7 @@ final class MiningEffect implements CircleEffect {
     }
 
     /** Solid enough to dig, breakable, within an iron pickaxe's reach, and holding nothing. */
-    private static boolean diggable(ServerLevel level, BlockPos pos, BlockState state) {
+    static boolean diggable(ServerLevel level, BlockPos pos, BlockState state) {
         return !state.isAir() && state.getFluidState().isEmpty() && !state.hasBlockEntity()
                 && state.getDestroySpeed(level, pos) >= 0 && !state.is(BlockTags.INCORRECT_FOR_IRON_TOOL);
     }

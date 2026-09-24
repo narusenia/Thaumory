@@ -76,40 +76,48 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
                 Map.of("interval_seconds", 10.0, "max_per_kind", 16.0, "work_flux", 0.5), 0, Optional.empty(), Map.of());
         sustained(output, ThaumoryCircleEffects.MOISTURE, AQUA, HERBA, slot3(true), Map.of("columns_per_level", 8.0, "work_flux", 0.02), 0,
                 Optional.empty(), Map.of());
-        // So do the industrial ones until M2-23 burns mining into scrolls.
+        // So do the industrial ones, but for mining, used from an item or scroll (requirements §10.2).
         sustained(output, ThaumoryCircleEffects.SMELTING, IGNIS, METALLUM, slot3(true), Map.of("items_per_level", 4.0, "work_flux", 0.1), 0,
                 Optional.empty(), Map.of());
         triggered(output, ThaumoryCircleEffects.MINING, BELLUM, TERRA, slot3(true), 1,
-                Map.of("blocks_per_level", 4.0, "blocks_per_essentia", 8.0, "work_flux", 0.05), 0, Map.of());
+                Map.of("blocks_per_level", 4.0, "blocks_per_essentia", 8.0, "work_flux", 0.05), 3, Optional.of(4), Map.of("depth", 3.0));
         sustained(output, ThaumoryCircleEffects.SORTING, ORDO, TEMPESTAS, List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY),
                 Map.of("items_per_level", 4.0, "work_flux", 0.02), 0, Optional.empty(), Map.of());
         sustained(output, ThaumoryCircleEffects.MELTING, IGNIS, CHAOS, List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY),
                 Map.of("items_per_level", 4.0, "work_flux", 0.1), 0, Optional.empty(), Map.of());
-        // The life circles cannot be infused until M2-23.
-        sustained(output, ThaumoryCircleEffects.LIGHTNESS, AER, TERRA, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 0,
+        // Of the life circles, all but the safeguard work worn, on the wearer alone.
+        sustained(output, ThaumoryCircleEffects.LIGHTNESS, AER, TERRA, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 1,
                 Optional.empty(), Map.of());
-        sustained(output, ThaumoryCircleEffects.BREATH, AQUA, AER, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 0,
+        sustained(output, ThaumoryCircleEffects.BREATH, AQUA, AER, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 1,
                 Optional.empty(), Map.of());
-        sustained(output, ThaumoryCircleEffects.NIGHT_SIGHT, LUX, UMBRA, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 0,
+        sustained(output, ThaumoryCircleEffects.NIGHT_SIGHT, LUX, UMBRA, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 1,
                 Optional.empty(), Map.of());
         sustained(output, ThaumoryCircleEffects.SAFEGUARD, ORDO, TERRA, slot3(true), Map.of("work_flux", 0.2), 0, Optional.empty(),
                 Map.of());
-        // So can the defence circles.
+        // Of the defence circles, all but the lure: binding and withering on what the main hand hits, searing used.
         sustained(output, ThaumoryCircleEffects.LURE, BESTIA, VINCULUM, slot3(true, BESTIA, MORS, CHAOS),
                 Map.of("pull_per_level", 0.6, "work_flux", 0.01), 0,
                 Optional.empty(), Map.of());
-        sustained(output, ThaumoryCircleEffects.BINDING, UMBRA, VINCULUM, slot3(true, BESTIA, MORS, CHAOS), Map.of("work_flux", 0.02), 0,
-                Optional.empty(), Map.of());
+        sustained(output, ThaumoryCircleEffects.BINDING, UMBRA, VINCULUM, slot3(true, BESTIA, MORS, CHAOS), Map.of("work_flux", 0.02), 2,
+                Optional.empty(), Map.of("seconds", 2.0));
         triggered(output, ThaumoryCircleEffects.SEARING, BELLUM, IGNIS, slot3(true), 4,
-                Map.of("damage_per_level", 4.0, "burn_seconds", 3.0, "work_flux", 0.1), 0, Map.of());
-        sustained(output, ThaumoryCircleEffects.WITHERING, MORS, VENENUM, slot3(true), Map.of("work_flux", 0.02), 0, Optional.empty(),
-                Map.of());
+                Map.of("damage_per_level", 4.0, "burn_seconds", 3.0, "work_flux", 0.1), 2,
+                Map.of("radius", 4.0, "damage_per_level", 4.0, "burn_seconds", 3.0));
+        sustained(output, ThaumoryCircleEffects.WITHERING, MORS, VENENUM, slot3(true), Map.of("work_flux", 0.02), 2, Optional.empty(),
+                Map.of("seconds", 3.0));
     }
 
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
             List<String> slot3, int cost, Map<String, Double> settings, int capacity, Map<String, Double> itemSettings) {
+        triggered(output, effect, first, second, slot3, cost, settings, capacity, Optional.empty(), itemSettings);
+    }
+
+    /** {@code itemCost}, when set, is what one use from an item pays instead of the circle's {@code cost}. */
+    private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
+            List<String> slot3, int cost, Map<String, Double> settings, int capacity, Optional<Integer> itemCost,
+            Map<String, Double> itemSettings) {
         output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.TRIGGERED,
-                cost, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity, Optional.empty(), itemSettings));
+                cost, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity, itemCost, itemSettings));
     }
 
     private static void sustained(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,

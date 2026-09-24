@@ -1,6 +1,9 @@
 {
-  "capacity": 0,
+  "capacity": 2,
   "effect": "thaumory:binding",
+  "item_settings": {
+    "seconds": 2.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:umbra",

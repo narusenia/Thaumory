@@ -25,12 +25,17 @@ final class SearingEffect implements CircleEffect {
         float damage = (float) (context.setting("damage_per_level", 4) * context.strength());
         float burn = (float) context.setting("burn_seconds", 3);
         for (LivingEntity entity : targets(context)) {
-            entity.hurtServer(level, level.damageSources().inFire(), damage);
-            entity.igniteForSeconds(burn);
-            level.sendParticles(ParticleTypes.FLAME, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(),
-                    12, entity.getBbWidth() / 2, entity.getBbHeight() / 3, entity.getBbWidth() / 2, 0.02);
+            sear(level, entity, damage, burn);
             context.affected(entity);
         }
+    }
+
+    /** Fire damage and burning for one mob, with a burst of flame. The searing infusion does the same. */
+    static void sear(ServerLevel level, LivingEntity entity, float damage, float burnSeconds) {
+        entity.hurtServer(level, level.damageSources().inFire(), damage);
+        entity.igniteForSeconds(burnSeconds);
+        level.sendParticles(ParticleTypes.FLAME, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(),
+                12, entity.getBbWidth() / 2, entity.getBbHeight() / 3, entity.getBbWidth() / 2, 0.02);
     }
 
     private static List<LivingEntity> targets(CircleContext context) {

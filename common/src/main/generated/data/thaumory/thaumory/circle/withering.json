@@ -1,6 +1,9 @@
 {
-  "capacity": 0,
+  "capacity": 2,
   "effect": "thaumory:withering",
+  "item_settings": {
+    "seconds": 3.0
+  },
   "mode": "sustained",
   "runes": [
     "thaumory:mors",
