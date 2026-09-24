@@ -27,7 +27,7 @@ import net.minecraft.resources.Identifier;
  *     "thaumory:economizing_pattern": { "cost": -0.25, "strength": -0.25 },
  *     "thaumory:stabilizing_pattern": { "instability": -3 }
  *   },
- *   "infusion": { "base_failure": 0.1, "failure_per_point": 0.2, "flux_ratio": 0.5, "max_level": 5 }
+ *   "infusion": { "base_failure": 0.1, "failure_per_point": 0.2, "flux_ratio": 0.5, "max_level": 5, "item_essentia": 64 }
  * }
  * }</pre>
  */

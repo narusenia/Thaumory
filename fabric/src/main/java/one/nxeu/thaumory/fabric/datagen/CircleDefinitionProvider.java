@@ -19,6 +19,7 @@ import static one.nxeu.thaumory.aspect.ThaumoryAspects.VITA;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -57,13 +58,13 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
             List<String> slot3, int cost, int capacity) {
         output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.TRIGGERED,
-                cost, SUSTAINED_INTERVAL, Map.of(), InfusionCost.DEFAULT, capacity));
+                cost, SUSTAINED_INTERVAL, Map.of(), InfusionCost.DEFAULT, capacity, Optional.empty(), Map.of()));
     }
 
     private static void sustained(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
             List<String> slot3, Map<String, Double> settings, int capacity) {
         output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.SUSTAINED,
-                1, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity));
+                1, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity, Optional.empty(), Map.of()));
     }
 
     private static List<String> slot3(boolean empty, Aspect... aspects) {

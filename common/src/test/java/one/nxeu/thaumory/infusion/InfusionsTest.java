@@ -8,7 +8,9 @@ import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +19,10 @@ class InfusionsTest {
     private static final Identifier TELEPORT = Identifier.parse("thaumory:teleport");
     private static final Identifier LIGHT = Identifier.parse("thaumory:light");
     private static final Identifier TERRA = Identifier.parse("thaumory:terra");
+    private static final Identifier WEATHER = Identifier.parse("thaumory:weather");
+    private static final Identifier ARCANUM = Identifier.parse("thaumory:arcanum");
+    private static final Identifier AER = Identifier.parse("thaumory:aer");
+    private static final Identifier TEMPESTAS = Identifier.parse("thaumory:tempestas");
 
     @Test
     void theSameEffectIsReplacedAndOthersAdded() {
@@ -55,8 +61,22 @@ class InfusionsTest {
     }
 
     @Test
+    void anItemHoldsOneActiveEffect() {
+        Infusion teleport = new Infusion(TELEPORT, 1, Optional.of(TERRA), 3, Map.of(ARCANUM, 4, AER, 4));
+        Infusion weather = new Infusion(WEATHER, 1, Optional.of(TERRA), 3, Map.of(ARCANUM, 8, TEMPESTAS, 8));
+        Infusions infusions = Infusions.EMPTY.with(new Infusion(HEALING, 1, Optional.empty(), 2)).with(teleport);
+
+        assertEquals(Optional.of(teleport), infusions.active());
+        assertEquals(Set.of(ARCANUM, AER), infusions.storedAspects());
+        assertFalse(infusions.allowsActive(weather));
+        assertTrue(infusions.allowsActive(teleport));
+        assertTrue(infusions.allowsActive(new Infusion(LIGHT, 1, Optional.empty(), 1)));
+        assertEquals(Set.of(), Infusions.EMPTY.storedAspects());
+    }
+
+    @Test
     void roundTripsThroughCodecs() {
-        Infusions infusions = Infusions.EMPTY.with(new Infusion(TELEPORT, 2, Optional.of(TERRA), 3));
+        Infusions infusions = Infusions.EMPTY.with(new Infusion(TELEPORT, 2, Optional.of(TERRA), 3, Map.of(ARCANUM, 4, AER, 4)));
 
         var json = Infusions.CODEC.encodeStart(JsonOps.INSTANCE, infusions).getOrThrow();
         assertEquals(infusions, Infusions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow());

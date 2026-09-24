@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
 import net.minecraft.network.codec.StreamCodec;
@@ -36,6 +38,24 @@ public record Infusions(List<Infusion> list) {
     /** The capacity every effect but {@code effect} takes: what stays when {@code effect} is burnt in again. */
     public int usedBesides(Identifier effect) {
         return list.stream().filter(infusion -> !infusion.effect().equals(effect)).mapToInt(Infusion::capacity).sum();
+    }
+
+    /** The one active effect, if the item has one. */
+    public Optional<Infusion> active() {
+        return list.stream().filter(Infusion::active).findFirst();
+    }
+
+    /**
+     * Whether {@code next} may go in beside what is there: an item holds one active effect at most,
+     * though that one can be burnt in again.
+     */
+    public boolean allowsActive(Infusion next) {
+        return !next.active() || active().map(current -> current.effect().equals(next.effect())).orElse(true);
+    }
+
+    /** The aspects the item stores for its active effect. */
+    public Set<Identifier> storedAspects() {
+        return active().map(infusion -> infusion.useCost().keySet()).orElse(Set.of());
     }
 
     /** With {@code infusion} added; one of the same effect already there is replaced where it stood. */

@@ -37,7 +37,7 @@ public class InfusionGameTests {
         InfusionSettings infusion = current.infusion();
         CircleCoreBlockEntity.updateSettings(new CircleSettings(current.scanInterval(), current.instabilityThreshold(), current.instabilityFlux(),
                 current.undefinedFlux(), current.ringRadius(), current.essentiaCapacity(), current.patterns(),
-                new InfusionSettings(chance, infusion.failurePerPoint(), infusion.fluxRatio(), infusion.maxLevel())));
+                new InfusionSettings(chance, infusion.failurePerPoint(), infusion.fluxRatio(), infusion.maxLevel(), infusion.itemEssentia())));
     }
 
     private static void restore() {
