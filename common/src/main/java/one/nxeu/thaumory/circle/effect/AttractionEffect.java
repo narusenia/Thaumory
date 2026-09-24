@@ -29,12 +29,16 @@ final class AttractionEffect implements CircleEffect {
         Optional<Aspect> filter = context.parameter();
         Vec3 target = CircleRange.centre(context).add(0, 0.5, 0);
         double speed = Math.min(MAX_SPEED, SPEED * context.strength());
+        boolean mark = CircleRange.marksNow(context, PERIOD);
         for (ItemEntity item : context.level().getEntitiesOfClass(ItemEntity.class, CircleRange.box(context),
                 item -> filter.isEmpty() || ItemAspects.get(item.getItem()).contains(filter.get()))) {
             Vec3 towards = target.subtract(item.position());
             if (towards.length() > ARRIVED) {
                 Vec3 motion = towards.normalize().scale(speed);
                 item.setDeltaMovement(motion.x, Math.max(motion.y, 0.1), motion.z);
+                if (mark) {
+                    context.showAffected(item);
+                }
             }
         }
     }

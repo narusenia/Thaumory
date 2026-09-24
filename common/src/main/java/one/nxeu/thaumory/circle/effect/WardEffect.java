@@ -76,6 +76,7 @@ final class WardEffect implements CircleEffect {
 
         Vec3 centre = CircleRange.centre(context);
         double push = PUSH * context.strength();
+        boolean mark = CircleRange.marksNow(context, PERIOD);
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, box, e -> !(e instanceof Player) && target.get().test(e))) {
             Vec3 away = entity.position().subtract(centre).multiply(1, 0, 1);
             if (away.lengthSqr() < 1e-4) {
@@ -83,6 +84,9 @@ final class WardEffect implements CircleEffect {
             }
             away = away.normalize().scale(push);
             entity.push(away.x, 0.1, away.z);
+            if (mark) {
+                context.showAffected(entity);
+            }
         }
     }
 

@@ -3,7 +3,6 @@ package one.nxeu.thaumory.circle.effect;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +24,7 @@ final class PurificationEffect implements CircleEffect {
     private static final String POOL = "pool";
 
     /** Turns up to {@code limit} polluted blocks in {@code box} back into what they were. */
-    private static void restore(ServerLevel level, AABB box, int limit) {
+    private static void restore(CircleContext context, ServerLevel level, AABB box, int limit) {
         PollutionIndex index = PollutionIndex.of(level);
         int restored = 0;
         for (BlockPos pos : index.within(box)) {
@@ -42,7 +41,7 @@ final class PurificationEffect implements CircleEffect {
                 continue;
             }
             level.setBlockAndUpdate(pos, original.get().defaultBlockState());
-            level.sendParticles(ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 2, 0.25, 0.1, 0.25, 0.01);
+            context.showAffected(pos);
             restored++;
         }
     }
@@ -58,7 +57,7 @@ final class PurificationEffect implements CircleEffect {
                 removed += ThaumoryApi.flux().remove(level, new ChunkPos(cx, cz), rate);
             }
         }
-        restore(level, box, (int) Math.ceil(context.setting("restore_per_second", 2) * context.strength()));
+        restore(context, level, box, (int) Math.ceil(context.setting("restore_per_second", 2) * context.strength()));
         Optional<Aspect> gather = context.parameter().filter(Aspect::isPrimal);
         if (gather.isEmpty() || removed <= 0) {
             return;

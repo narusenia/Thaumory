@@ -43,6 +43,7 @@ final class ChargingEffect implements CircleEffect {
         ItemStack charged = item.copy();
         InfusionRuntime.setStored(charged, fill.stored());
         core.setPedestalItem(charged);
+        context.showAffected(context.core());
         var pos = context.core();
         context.level().sendParticles(ParticleTypes.ENCHANT, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 6, 0.2, 0.2, 0.2, 0.4);
     }

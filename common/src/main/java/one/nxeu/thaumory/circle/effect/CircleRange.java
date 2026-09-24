@@ -22,6 +22,14 @@ final class CircleRange {
         return Vec3.atBottomCenterOf(context.core());
     }
 
+    /**
+     * Whether an effect that works every {@code period} ticks should mark what it reaches this
+     * time: about once a second, so fast effects do not bury their targets in motes.
+     */
+    static boolean marksNow(CircleContext context, int period) {
+        return context.level().getGameTime() % 20 < period;
+    }
+
     /** Visits {@code columns} random columns of the range, each at the Core's position offset sideways. */
     static void randomColumns(CircleContext context, int columns, Consumer<BlockPos> visit) {
         int radius = blocks(context);

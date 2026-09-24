@@ -43,6 +43,7 @@ final class LightEffect implements CircleEffect {
     private static void darken(CircleContext context) {
         for (LivingEntity entity : context.level().getEntitiesOfClass(LivingEntity.class, range(context))) {
             entity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, DARKNESS_TICKS, 0, true, false));
+            context.showAffected(entity);
         }
     }
 
@@ -59,6 +60,7 @@ final class LightEffect implements CircleEffect {
             if (spot != null && level.getBrightness(LightLayer.BLOCK, spot) <= DARK) {
                 level.setBlock(spot, LIGHT, Block.UPDATE_ALL);
                 placed.add(spot.asLong());
+                context.showAffected(spot);
                 added++;
             }
         }

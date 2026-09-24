@@ -30,6 +30,9 @@ final class GrowthEffect implements CircleEffect {
                 BlockState state = level.getBlockState(pos);
                 if (state.is(BlockTags.CROPS) && state.isRandomlyTicking()) {
                     state.randomTick(level, pos, level.getRandom());
+                    if (level.getBlockState(pos) != state) {
+                        context.showAffected(pos);
+                    }
                     return;
                 }
             }
@@ -40,6 +43,7 @@ final class GrowthEffect implements CircleEffect {
         int ticks = (int) Math.round(20 * context.strength());
         for (AgeableMob mob : context.level().getEntitiesOfClass(AgeableMob.class, CircleRange.box(context), mob -> mob.getAge() < 0)) {
             mob.setAge(Math.min(0, mob.getAge() + ticks));
+            context.showAffected(mob);
         }
     }
 }

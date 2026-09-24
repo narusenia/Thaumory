@@ -14,7 +14,10 @@ final class HealingEffect implements CircleEffect {
         float amount = (float) context.strength();
         for (LivingEntity entity : context.level().getEntitiesOfClass(LivingEntity.class, CircleRange.box(context),
                 e -> e.isAlive() && (!animalsOnly || e instanceof Animal))) {
-            entity.heal(amount);
+            if (entity.getHealth() < entity.getMaxHealth()) {
+                entity.heal(amount);
+                context.showAffected(entity);
+            }
         }
     }
 }

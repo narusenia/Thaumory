@@ -45,4 +45,13 @@ public interface CircleContext {
      * @return how much went in
      */
     int store(Aspect aspect, int amount);
+
+    /**
+     * Marks a block the effect has just worked on: motes in the colours of the circle's two runes
+     * rise from it. Call it for what the effect changed, not for everything it looked at.
+     */
+    void showAffected(BlockPos pos);
+
+    /** Marks a living thing or dropped item the effect has just worked on, as {@link #showAffected(BlockPos)}. */
+    void showAffected(Entity entity);
 }

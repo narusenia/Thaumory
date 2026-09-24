@@ -73,6 +73,7 @@ import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.particle.ThaumoryParticles;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
@@ -341,7 +342,12 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
     // The circle
 
-    private record Circle(CircleDefinitions.Definition definition, Optional<Aspect> parameter, CircleSettings.Multipliers multipliers) {}
+    private record Circle(CircleDefinitions.Definition definition, Optional<Aspect> parameter, CircleSettings.Multipliers multipliers) {
+        /** The aspects whose colours mark what the effect reaches: slots 1 and 2. */
+        List<Aspect> colours() {
+            return List.of(definition.first(), definition.second());
+        }
+    }
 
     /** The combination the runes and chalk make now, if the datapacks define it. */
     private Optional<Circle> circle() {
@@ -528,7 +534,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         CircleContext context = new Context(server, circle.flatMap(Circle::parameter),
                 circle.map(c -> c.multipliers().strength()).orElse(1.0),
                 circle.map(c -> settings.radius(scan.rings(), c.multipliers())).orElse(0.0), Optional.empty(),
-                circle.map(c -> c.definition().settings()).orElse(Map.of()));
+                circle.map(c -> c.definition().settings()).orElse(Map.of()), circle.map(Circle::colours).orElse(List.of()));
         effect(effectId).ifPresent(effect -> effect.stop(context));
         running = Optional.empty();
         runningEffect = null;
@@ -715,7 +721,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
     private CircleContext context(ServerLevel server, Circle circle, Optional<Entity> activator) {
         return new Context(server, circle.parameter(), circle.multipliers().strength(),
-                settings.radius(scan.rings(), circle.multipliers()), activator, circle.definition().settings());
+                settings.radius(scan.rings(), circle.multipliers()), activator, circle.definition().settings(), circle.colours());
     }
 
     private final class Context implements CircleContext {
@@ -725,15 +731,17 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         private final double radius;
         private final Optional<Entity> activator;
         private final Map<String, Double> numbers;
+        private final List<Aspect> colours;
 
         Context(ServerLevel level, Optional<Aspect> parameter, double strength, double radius, Optional<Entity> activator,
-                Map<String, Double> numbers) {
+                Map<String, Double> numbers, List<Aspect> colours) {
             this.level = level;
             this.parameter = parameter;
             this.strength = strength;
             this.radius = radius;
             this.activator = activator;
             this.numbers = numbers;
+            this.colours = colours;
         }
 
         @Override
@@ -786,6 +794,16 @@ public final class CircleCoreBlockEntity extends BlockEntity {
                 setEssentia(essentia.plus(AspectList.of(aspect, stored)));
             }
             return stored;
+        }
+
+        @Override
+        public void showAffected(BlockPos pos) {
+            ThaumoryParticles.motes(level, pos, colours);
+        }
+
+        @Override
+        public void showAffected(Entity entity) {
+            ThaumoryParticles.motes(level, entity, colours);
         }
     }
 
