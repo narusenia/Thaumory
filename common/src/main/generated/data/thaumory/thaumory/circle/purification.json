@@ -1,4 +1,5 @@
 {
+  "capacity": 2,
   "effect": "thaumory:purification",
   "mode": "sustained",
   "runes": [

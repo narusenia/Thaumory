@@ -1,4 +1,5 @@
 {
+  "capacity": 3,
   "cost": 4,
   "effect": "thaumory:teleport",
   "mode": "triggered",

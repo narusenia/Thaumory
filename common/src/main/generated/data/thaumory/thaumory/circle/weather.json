@@ -1,4 +1,5 @@
 {
+  "capacity": 3,
   "cost": 8,
   "effect": "thaumory:weather",
   "mode": "triggered",

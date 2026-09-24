@@ -620,7 +620,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return InfuseOutcome.of(InfuseResult.FAILED);
         }
         Infusion burnt = new Infusion(definition.effect(), InfusionRules.level(multipliers.strength(), infusion),
-                circle.get().parameter().map(Aspect::id));
+                circle.get().parameter().map(Aspect::id), definition.capacity());
         ItemStack infused = stack.copy();
         infused.set(ThaumoryComponents.INFUSIONS.get(),
                 infused.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).with(burnt));

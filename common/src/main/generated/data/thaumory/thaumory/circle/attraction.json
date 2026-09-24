@@ -1,4 +1,5 @@
 {
+  "capacity": 2,
   "effect": "thaumory:attraction",
   "mode": "sustained",
   "runes": [

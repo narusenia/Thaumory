@@ -19,16 +19,18 @@ import net.minecraft.resources.Identifier;
  *   "mode": "sustained",
  *   "interval": 200,
  *   "settings": { "flux_per_second": 0.5 },
- *   "infusion_cost": { "runes": 32, "parameter": 4 }
+ *   "infusion_cost": { "runes": 32, "parameter": 4 },
+ *   "capacity": 2
  * }
  * }</pre>
  *
  * {@code slot3} lists what slot 3 may hold: {@code "none"} for an empty slot, {@code "any"} for
  * any aspect, or an aspect id. A plain {@code "any"} instead of a list means any aspect but not
- * empty. A triggered effect takes {@code cost}, a sustained one {@code interval}.
+ * empty. A triggered effect takes {@code cost}, a sustained one {@code interval}. {@code capacity}
+ * is how much of an item's capacity the effect takes when infused.
  */
 public record CircleDefinitionFile(Identifier effect, List<Identifier> runes, List<String> slot3,
-        CircleMode mode, int cost, int interval, Map<String, Double> settings, InfusionCost infusionCost) {
+        CircleMode mode, int cost, int interval, Map<String, Double> settings, InfusionCost infusionCost, int capacity) {
     public static final String ANY = "any";
     public static final String NONE = "none";
 
@@ -43,6 +45,7 @@ public record CircleDefinitionFile(Identifier effect, List<Identifier> runes, Li
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("cost", 1).forGetter(CircleDefinitionFile::cost),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("interval", 200).forGetter(CircleDefinitionFile::interval),
             Codec.unboundedMap(Codec.STRING, Codec.DOUBLE).optionalFieldOf("settings", Map.of()).forGetter(CircleDefinitionFile::settings),
-            InfusionCost.CODEC.optionalFieldOf("infusion_cost", InfusionCost.DEFAULT).forGetter(CircleDefinitionFile::infusionCost)
+            InfusionCost.CODEC.optionalFieldOf("infusion_cost", InfusionCost.DEFAULT).forGetter(CircleDefinitionFile::infusionCost),
+            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("capacity", 1).forGetter(CircleDefinitionFile::capacity)
     ).apply(i, CircleDefinitionFile::new));
 }

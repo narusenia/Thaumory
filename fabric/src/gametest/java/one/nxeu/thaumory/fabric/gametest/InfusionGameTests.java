@@ -64,7 +64,7 @@ public class InfusionGameTests {
         } finally {
             restore();
         }
-        helper.assertValueEqual(infusions(core), List.of(new Infusion(Thaumory.id("healing"), 1, Optional.empty())), "infusions");
+        helper.assertValueEqual(infusions(core), List.of(new Infusion(Thaumory.id("healing"), 1, Optional.empty(), 2)), "infusions");
         helper.assertValueEqual(core.essentia(), AspectList.builder().add(ThaumoryAspects.VITA, 32).add(ThaumoryAspects.ORDO, 32).build(),
                 "Essentia left");
         helper.succeed();
@@ -82,7 +82,7 @@ public class InfusionGameTests {
         } finally {
             restore();
         }
-        helper.assertValueEqual(infusions(core), List.of(new Infusion(Thaumory.id("healing"), 2, Optional.empty())), "infusions");
+        helper.assertValueEqual(infusions(core), List.of(new Infusion(Thaumory.id("healing"), 2, Optional.empty(), 2)), "infusions");
         helper.assertValueEqual(core.essentia(), AspectList.builder().add(ThaumoryAspects.VITA, 16).add(ThaumoryAspects.ORDO, 16).build(),
                 "Essentia left");
         helper.succeed();
@@ -99,7 +99,7 @@ public class InfusionGameTests {
             restore();
         }
         helper.assertValueEqual(infusions(core),
-                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()))), "infusions");
+                List.of(new Infusion(Thaumory.id("teleport"), 1, Optional.of(ThaumoryAspects.TERRA.id()), 3)), "infusions");
         helper.assertValueEqual(core.essentia().amount(ThaumoryAspects.TERRA), CircleCoreBlockEntity.capacity() - 4, "Terra left");
         helper.succeed();
     }

@@ -147,6 +147,17 @@ class CircleRulesTest {
     }
 
     @Test
+    void capacityDefaultsToOne() {
+        CircleDefinitions table = definitions("thaumory:teleport", """
+                {"effect": "thaumory:teleport", "runes": ["thaumory:arcanum", "thaumory:aer"], "slot3": "any",
+                 "mode": "triggered", "capacity": 3}""", "thaumory:light", """
+                {"effect": "thaumory:light", "runes": ["thaumory:lux", "thaumory:ignis"], "mode": "sustained"}""");
+
+        assertEquals(3, table.find(AER, ARCANUM, Optional.of(LUX)).orElseThrow().capacity());
+        assertEquals(1, table.find(LUX, IGNIS, Optional.empty()).orElseThrow().capacity());
+    }
+
+    @Test
     void anyInAListAlsoAllowsTheListedEntries() {
         CircleDefinitions table = definitions("thaumory:attraction", """
                 {"effect": "thaumory:light", "runes": ["thaumory:lux", "thaumory:ignis"], "slot3": ["none", "any"],

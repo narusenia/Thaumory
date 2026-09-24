@@ -23,7 +23,7 @@ public final class CircleDefinitions {
      */
     public record Definition(Identifier id, Identifier effect, Aspect first, Aspect second, boolean anyParameter,
             Set<Optional<Aspect>> parameters, CircleMode mode, int cost, int interval, Map<String, Double> settings,
-            InfusionCost infusionCost) {
+            InfusionCost infusionCost, int capacity) {
         public boolean matches(Aspect a, Aspect b, Optional<Aspect> parameter) {
             boolean runes = (first.equals(a) && second.equals(b)) || (first.equals(b) && second.equals(a));
             return runes && ((anyParameter && parameter.isPresent()) || parameters.contains(parameter));
@@ -71,7 +71,8 @@ public final class CircleDefinitions {
                 }
             }
             definitions.add(new Definition(id, file.effect(), first.get(), second.get(), any,
-                    Set.copyOf(parameters), file.mode(), file.cost(), file.interval(), Map.copyOf(file.settings()), file.infusionCost()));
+                    Set.copyOf(parameters), file.mode(), file.cost(), file.interval(), Map.copyOf(file.settings()), file.infusionCost(),
+                    file.capacity()));
         });
         return new CircleDefinitions(List.copyOf(definitions.reversed()));
     }

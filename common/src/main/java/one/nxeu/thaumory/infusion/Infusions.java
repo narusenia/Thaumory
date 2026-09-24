@@ -19,6 +19,20 @@ public record Infusions(List<Infusion> list) {
         list = List.copyOf(list);
     }
 
+    /** The capacity these effects take together. */
+    public int used() {
+        return list.stream().mapToInt(Infusion::capacity).sum();
+    }
+
+    /**
+     * Whether {@code next} fits in an item of {@code capacity}. An effect already there is being
+     * replaced, so its old share does not count.
+     */
+    public boolean fits(Infusion next, int capacity) {
+        int kept = list.stream().filter(infusion -> !infusion.effect().equals(next.effect())).mapToInt(Infusion::capacity).sum();
+        return kept + next.capacity() <= capacity;
+    }
+
     /** With {@code infusion} added; one of the same effect already there is replaced where it stood. */
     public Infusions with(Infusion infusion) {
         List<Infusion> next = new ArrayList<>(list);
