@@ -175,6 +175,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.HARVEST.toLanguageKey("circle_effect"), "Harvest");
             builder.add(ThaumoryCircleEffects.BREEDING.toLanguageKey("circle_effect"), "Breeding");
             builder.add(ThaumoryCircleEffects.MOISTURE.toLanguageKey("circle_effect"), "Moisture");
+            builder.add(ThaumoryCircleEffects.SMELTING.toLanguageKey("circle_effect"), "Smelting");
+            builder.add(ThaumoryCircleEffects.MINING.toLanguageKey("circle_effect"), "Mining");
+            builder.add(ThaumoryCircleEffects.SORTING.toLanguageKey("circle_effect"), "Sorting");
+            builder.add(ThaumoryCircleEffects.MELTING.toLanguageKey("circle_effect"), "Melting");
             builder.add("hud.thaumory.core.essentia", "Essentia (up to %s each)");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
@@ -235,6 +239,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.harvest", "Where Herba meets Mors, what has ripened is reaped.");
             builder.add("hint.thaumory.breeding", "Bestia and Vita bring the beasts together.");
             builder.add("hint.thaumory.moisture", "Aqua and Herba soak the furrows and quench the flame.");
+            builder.add("hint.thaumory.smelting", "Ignis over Metallum works like a forge.");
+            builder.add("hint.thaumory.mining", "Bellum and Terra break open the ground beneath.");
+            builder.add("hint.thaumory.sorting", "Ordo steers Tempestas; what is scattered finds its place.");
+            builder.add("hint.thaumory.melting", "Ignis and Chaos unmake things into their aspects.");
             builder.add("codex.thaumory.tab.chapters", "Chapters");
             builder.add("codex.thaumory.tab.aspects", "Aspects");
             builder.add("codex.thaumory.tab.scanned", "Scanned");
@@ -410,6 +418,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.HARVEST.toLanguageKey("circle_effect"), "収穫");
             builder.add(ThaumoryCircleEffects.BREEDING.toLanguageKey("circle_effect"), "繁殖");
             builder.add(ThaumoryCircleEffects.MOISTURE.toLanguageKey("circle_effect"), "潤い");
+            builder.add(ThaumoryCircleEffects.SMELTING.toLanguageKey("circle_effect"), "精錬");
+            builder.add(ThaumoryCircleEffects.MINING.toLanguageKey("circle_effect"), "採掘");
+            builder.add(ThaumoryCircleEffects.SORTING.toLanguageKey("circle_effect"), "仕分け");
+            builder.add(ThaumoryCircleEffects.MELTING.toLanguageKey("circle_effect"), "溶解");
             builder.add("hud.thaumory.core.essentia", "Essentia（各 %s まで）");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
@@ -470,6 +482,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.harvest", "Herba が Mors に出会うとき、実りは刈り取られる。");
             builder.add("hint.thaumory.breeding", "Bestia と Vita は、獣を番わせる。");
             builder.add("hint.thaumory.moisture", "Aqua と Herba は、畝を潤し、炎を鎮める。");
+            builder.add("hint.thaumory.smelting", "Metallum に重なる Ignis は、炉のように働く。");
+            builder.add("hint.thaumory.mining", "Bellum と Terra は、足元の地を割り開く。");
+            builder.add("hint.thaumory.sorting", "Ordo が Tempestas を導くとき、散らばったものは居場所を得る。");
+            builder.add("hint.thaumory.melting", "Ignis と Chaos は、ものをアスペクトへとほどく。");
             builder.add("codex.thaumory.tab.chapters", "章");
             builder.add("codex.thaumory.tab.aspects", "アスペクト");
             builder.add("codex.thaumory.tab.scanned", "スキャン済み");

@@ -18,6 +18,10 @@ public final class ThaumoryCircleEffects {
     public static final Identifier HARVEST = Thaumory.id("harvest");
     public static final Identifier BREEDING = Thaumory.id("breeding");
     public static final Identifier MOISTURE = Thaumory.id("moisture");
+    public static final Identifier SMELTING = Thaumory.id("smelting");
+    public static final Identifier MINING = Thaumory.id("mining");
+    public static final Identifier SORTING = Thaumory.id("sorting");
+    public static final Identifier MELTING = Thaumory.id("melting");
 
     private ThaumoryCircleEffects() {}
 
@@ -34,6 +38,10 @@ public final class ThaumoryCircleEffects {
         registry.register(HARVEST, new HarvestEffect());
         registry.register(BREEDING, new BreedingEffect());
         registry.register(MOISTURE, new MoistureEffect());
+        registry.register(SMELTING, new SmeltingEffect());
+        registry.register(MINING, new MiningEffect());
+        registry.register(SORTING, new SortingEffect());
+        registry.register(MELTING, new MeltingEffect());
         WardEffect.registerEvents();
     }
 }

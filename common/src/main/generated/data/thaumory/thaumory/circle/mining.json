@@ -1,0 +1,10 @@
+{
+  "capacity": 0,
+  "cost": 4,
+  "effect": "thaumory:mining",
+  "mode": "triggered",
+  "runes": [
+    "thaumory:bellum",
+    "thaumory:terra"
+  ]
+}

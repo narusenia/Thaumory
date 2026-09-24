@@ -71,6 +71,10 @@ public final class CrucibleBlockEntity extends BlockEntity {
         settings = newSettings;
     }
 
+    public static CrucibleSettings settings() {
+        return settings;
+    }
+
     /**
      * For pipes and other mods: any aspect comes out, and what goes in stops at the capacity
      * without spilling (requirements §8.2).

@@ -1,7 +1,11 @@
 package one.nxeu.thaumory.circle.effect;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.item.ItemEntity;
 import one.nxeu.thaumory.circle.ColumnSweep;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -19,6 +23,19 @@ final class CircleRange {
 
     static int blocks(CircleContext context) {
         return (int) Math.floor(context.radius());
+    }
+
+    /** Up to {@code items_per_level} × strength, rounded up: how many items an item-handling circle deals with a second. */
+    static int itemsPerCall(CircleContext context) {
+        return (int) Math.ceil(context.setting("items_per_level", 4) * context.strength());
+    }
+
+    /** Dropped items in range that are still there, nearest the Core first. */
+    static List<ItemEntity> items(CircleContext context, Predicate<ItemEntity> filter) {
+        Vec3 centre = centre(context);
+        return context.level().getEntitiesOfClass(ItemEntity.class, box(context), item -> item.isAlive() && filter.test(item)).stream()
+                .sorted(Comparator.comparingDouble(item -> item.distanceToSqr(centre)))
+                .toList();
     }
 
     static Vec3 centre(CircleContext context) {

@@ -3,11 +3,13 @@ package one.nxeu.thaumory.fabric.datagen;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AER;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AQUA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.BELLUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.BESTIA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.CHAOS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.HERBA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.IGNIS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.LUX;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.METALLUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.MORS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TEMPESTAS;
@@ -71,6 +73,14 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
                 Map.of("interval_seconds", 10.0, "max_per_kind", 16.0), 0, Optional.empty(), Map.of());
         sustained(output, ThaumoryCircleEffects.MOISTURE, AQUA, HERBA, slot3(true), Map.of("columns_per_level", 8.0), 0, Optional.empty(),
                 Map.of());
+        // So do the industrial ones until M2-23 burns mining into scrolls.
+        sustained(output, ThaumoryCircleEffects.SMELTING, IGNIS, METALLUM, slot3(true), Map.of("items_per_level", 4.0), 0, Optional.empty(),
+                Map.of());
+        triggered(output, ThaumoryCircleEffects.MINING, BELLUM, TERRA, slot3(true), 4, 0, Map.of());
+        sustained(output, ThaumoryCircleEffects.SORTING, ORDO, TEMPESTAS, List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY),
+                Map.of("items_per_level", 4.0), 0, Optional.empty(), Map.of());
+        sustained(output, ThaumoryCircleEffects.MELTING, IGNIS, CHAOS, List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY),
+                Map.of("items_per_level", 4.0), 0, Optional.empty(), Map.of());
     }
 
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,

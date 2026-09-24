@@ -17,7 +17,8 @@
       "one.nxeu.thaumory.fabric.gametest.CrystalGameTests",
       "one.nxeu.thaumory.fabric.gametest.OldCircleGameTests",
       "one.nxeu.thaumory.fabric.gametest.MonocleGameTests",
-      "one.nxeu.thaumory.fabric.gametest.FarmCircleGameTests"
+      "one.nxeu.thaumory.fabric.gametest.FarmCircleGameTests",
+      "one.nxeu.thaumory.fabric.gametest.IndustryCircleGameTests"
     ]
   },
   "depends": {

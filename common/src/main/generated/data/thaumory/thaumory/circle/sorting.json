@@ -1,0 +1,16 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:sorting",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:ordo",
+    "thaumory:tempestas"
+  ],
+  "settings": {
+    "items_per_level": 4.0
+  },
+  "slot3": [
+    "none",
+    "any"
+  ]
+}

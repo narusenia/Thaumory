@@ -3,13 +3,17 @@ package one.nxeu.thaumory.fabric.datagen;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AER;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AQUA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.BELLUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.BESTIA;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.CHAOS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.HERBA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.IGNIS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.LUX;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.METALLUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.MORS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TEMPESTAS;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.TERRA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VINCULUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VITA;
 
@@ -150,6 +154,10 @@ final class ResearchProvider {
             hint(output, ThaumoryCircleEffects.HARVEST, HERBA, MORS);
             hint(output, ThaumoryCircleEffects.BREEDING, BESTIA, VITA);
             hint(output, ThaumoryCircleEffects.MOISTURE, AQUA, HERBA);
+            hint(output, ThaumoryCircleEffects.SMELTING, IGNIS, METALLUM);
+            hint(output, ThaumoryCircleEffects.MINING, BELLUM, TERRA);
+            hint(output, ThaumoryCircleEffects.SORTING, ORDO, TEMPESTAS);
+            hint(output, ThaumoryCircleEffects.MELTING, IGNIS, CHAOS);
         }
 
         private static void hint(BiConsumer<Identifier, Hint> output, Identifier effect, Aspect first, Aspect second) {
