@@ -4,7 +4,9 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.networking.NetworkManager;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +19,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
@@ -30,7 +33,7 @@ import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.network.UseInfusionPayload;
 
 /**
- * Infused items at work on players (requirements §10.2): passive effects while equipped, the main-hand
+ * Infused items at work on players (requirements §10.2): passive effects while equipped or on an amulet, the main-hand
  * item's effects when its wearer hits something, and active effects when the key is pressed.
  */
 public final class InfusionRuntime {
@@ -91,21 +94,42 @@ public final class InfusionRuntime {
         });
     }
 
-    /** Each passive effect equipped, at the highest level among the items that carry it. */
+    /**
+     * Each passive effect equipped or on an amulet anywhere in the inventory, at the highest level among
+     * the items that carry it.
+     */
     private static Map<Identifier, Working> passives(ServerPlayer player) {
         Map<Identifier, Working> found = new HashMap<>();
-        ServerLevel level = player.level();
         for (EquipmentSlot slot : EQUIPPED) {
-            ItemStack stack = player.getItemBySlot(slot);
-            for (Infusion infusion : equipped(stack).list()) {
-                Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(infusion.effect()).filter(e -> !e.active());
-                Working current = found.get(infusion.effect());
-                if (effect.isPresent() && (current == null || current.context().infusion().level() < infusion.level())) {
-                    found.put(infusion.effect(), new Working(effect.get(), new Context(level, player, stack, infusion)));
-                }
-            }
+            addPassives(player, player.getItemBySlot(slot), found);
+        }
+        for (ItemStack stack : amulets(player)) {
+            addPassives(player, stack, found);
         }
         return found;
+    }
+
+    private static void addPassives(ServerPlayer player, ItemStack stack, Map<Identifier, Working> found) {
+        for (Infusion infusion : equipped(stack).list()) {
+            Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(infusion.effect()).filter(e -> !e.active());
+            Working current = found.get(infusion.effect());
+            if (effect.isPresent() && (current == null || current.context().infusion().level() < infusion.level())) {
+                found.put(infusion.effect(), new Working(effect.get(), new Context(player.level(), player, stack, infusion)));
+            }
+        }
+    }
+
+    /** The amulets in the player's inventory, in slot order. */
+    private static List<ItemStack> amulets(ServerPlayer player) {
+        List<ItemStack> amulets = new ArrayList<>();
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(ThaumoryItems.AMULET.get())) {
+                amulets.add(stack);
+            }
+        }
+        return amulets;
     }
 
     /** The effects an item carries as equipment. A scroll's effect works only when the scroll is used up. */
@@ -143,11 +167,20 @@ public final class InfusionRuntime {
         }
     }
 
-    /** Uses the active effect of the main-hand item, or else of the first worn piece that has one. */
+    /**
+     * Uses the active effect of the main-hand item, or else of the first worn piece that has one, or
+     * else of the first amulet in the inventory that has one.
+     */
     public static UseResult tryUse(ServerPlayer player) {
         UseResult result = useIn(player, player.getMainHandItem());
         for (int i = 0; i < ARMOR.length && result == UseResult.NONE; i++) {
             result = useIn(player, player.getItemBySlot(ARMOR[i]));
+        }
+        for (ItemStack amulet : amulets(player)) {
+            if (result != UseResult.NONE) {
+                break;
+            }
+            result = useIn(player, amulet);
         }
         return result;
     }

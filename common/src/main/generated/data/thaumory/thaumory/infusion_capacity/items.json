@@ -11,6 +11,10 @@
     {
       "capacity": 3,
       "target": "thaumory:blank_scroll"
+    },
+    {
+      "capacity": 2,
+      "target": "thaumory:amulet"
     }
   ]
 }

@@ -39,6 +39,8 @@ public final class ThaumoryItems {
     public static final RegistrySupplier<Item> BLANK_RUNE = register("blank_rune", Item::new, new Item.Properties());
     /** Takes one infusion and turns into a {@link #SCROLL} (requirements §10.3). */
     public static final RegistrySupplier<Item> BLANK_SCROLL = register("blank_scroll", Item::new, new Item.Properties().stacksTo(16));
+    /** Works from anywhere in its owner's inventory (requirements §10.3); "empty" until something is burnt into it. */
+    public static final RegistrySupplier<Item> AMULET = register("amulet", Item::new, new Item.Properties().stacksTo(1));
     /** Made from a blank scroll by infusion only, so it is not in the creative tab. */
     public static final RegistrySupplier<ScrollItem> SCROLL = register("scroll", ScrollItem::new, new Item.Properties().stacksTo(16));
     public static final RegistrySupplier<RuneItem> RUNE = register("rune", RuneItem::new, new Item.Properties());
@@ -94,7 +96,7 @@ public final class ThaumoryItems {
 
     /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL,
+            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
             Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();

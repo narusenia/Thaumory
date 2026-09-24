@@ -90,6 +90,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.PEDESTAL.get(), "Pedestal");
             builder.add(ThaumoryItems.BLANK_SCROLL.get(), "Blank Scroll");
             builder.add(ThaumoryItems.SCROLL.get(), "Scroll");
+            builder.add(ThaumoryItems.AMULET.get(), "Amulet");
             builder.add("message.thaumory.scroll.nothing", "The scroll finds nothing to act on");
             equipment(builder, ThaumoryItems.ARCANE_IRON, "Arcane Iron");
             equipment(builder, ThaumoryItems.AETHER_SILVER, "Aether Silver");
@@ -306,6 +307,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.PEDESTAL.get(), "台座");
             builder.add(ThaumoryItems.BLANK_SCROLL.get(), "白紙の巻物");
             builder.add(ThaumoryItems.SCROLL.get(), "巻物");
+            builder.add(ThaumoryItems.AMULET.get(), "護符");
             builder.add("message.thaumory.scroll.nothing", "巻物の力の向かう先が無い");
             equipment(builder, ThaumoryItems.ARCANE_IRON, "魔鉄");
             equipment(builder, ThaumoryItems.AETHER_SILVER, "天銀");

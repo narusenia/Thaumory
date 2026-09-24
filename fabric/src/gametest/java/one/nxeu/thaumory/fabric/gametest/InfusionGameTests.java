@@ -266,6 +266,27 @@ public class InfusionGameTests {
         helper.succeed();
     }
 
+    /** An amulet deep in the inventory is used by the key when nothing in hand or worn has an active effect. Checks its chunk's Flux. */
+    @GameTest(padding = 24)
+    public void theKeyFindsAnAmuletInTheInventory(GameTestHelper helper) {
+        Circles.floor(helper);
+        ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+        player.setPos(helper.absoluteVec(new Vec3(2.5, 2, 2.5)));
+        ItemStack amulet = new ItemStack(ThaumoryItems.AMULET.get());
+        amulet.set(ThaumoryComponents.INFUSIONS.get(),
+                Infusions.EMPTY.with(new Infusion(Thaumory.id("purification"), 1, Optional.empty(), 2, PURIFICATION_COST)));
+        amulet.set(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.builder().add(ThaumoryAspects.ORDO, 4).add(ThaumoryAspects.LUX, 4).build());
+        player.getInventory().setItem(20, amulet);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ThaumoryItems.ARCANE_IRON.sword().get()));
+        ChunkPos chunk = ChunkPos.containing(player.blockPosition());
+        Thaumory.flux().set(helper.getLevel(), chunk, 30);
+
+        helper.assertValueEqual(InfusionRuntime.tryUse(player), InfusionRuntime.UseResult.USED, "use");
+        helper.assertValueInBetween(19.9, Thaumory.flux().get(helper.getLevel(), chunk), 20.0, "Flux");
+        helper.assertTrue(player.getInventory().getItem(20).get(ThaumoryComponents.STORED_ESSENTIA.get()) == null, "the amulet did not pay");
+        helper.succeed();
+    }
+
     /** Kept apart from other tests, since it checks the Flux of its whole chunk. */
     @GameTest(padding = 24)
     public void aFailureLosesTheEssentiaToFlux(GameTestHelper helper) {
