@@ -33,6 +33,7 @@ import one.nxeu.thaumory.client.entity.VoidRemnantRenderer;
 import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.network.FluxReadingPayload;
 import one.nxeu.thaumory.network.KnowledgeSyncPayload;
+import one.nxeu.thaumory.network.PipeReadingPayload;
 import one.nxeu.thaumory.network.ResearchViewPayload;
 import org.slf4j.Logger;
 
@@ -55,12 +56,15 @@ public final class ThaumoryClient {
                 }));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, FluxReadingPayload.TYPE, FluxReadingPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> ClientFlux.replace(payload)));
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, PipeReadingPayload.TYPE, PipeReadingPayload.STREAM_CODEC,
+                (payload, context) -> context.queue(() -> ClientPipeReading.replace(payload)));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ResearchViewPayload.TYPE, ResearchViewPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> ClientResearch.replace(payload.view())));
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register(player -> {
             ClientItemAspects.clear();
             ClientKnowledge.clear();
             ClientFlux.clear();
+            ClientPipeReading.clear();
             ClientResearch.clear();
         });
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);

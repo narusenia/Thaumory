@@ -27,6 +27,9 @@ import one.nxeu.thaumory.block.core.CoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
+import one.nxeu.thaumory.block.pipe.ValveBlock;
+import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
+import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.circle.CircleMode;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.crucible.CrucibleTank;
@@ -60,6 +63,7 @@ final class LoupeHud {
             case CrucibleBlockEntity crucible -> crucibleLines(crucible);
             case JarBlockEntity jar -> jarLines(jar);
             case CoreBlockEntity core -> coreLines(core);
+            case PipeBlockEntity pipe -> pipeLines(pipe);
             case null, default -> blockLines(minecraft.level.getBlockState(hit.getBlockPos()));
         };
 
@@ -109,6 +113,32 @@ final class LoupeHud {
         List<Component> lines = new ArrayList<>();
         lines.add(jar.getBlockState().getBlock().getName().withColor(WHITE));
         lines.addAll(JarText.describe(jar.contents(), OptionalInt.of(jar.displayCapacity()), ClientKnowledge.get()));
+        return lines;
+    }
+
+    /** The pipe's network, as the server last told it; the filter and valve are known here already. */
+    private static List<Component> pipeLines(PipeBlockEntity pipe) {
+        PlayerKnowledge knowledge = ClientKnowledge.get();
+        BlockState state = pipe.getBlockState();
+        List<Component> lines = new ArrayList<>();
+        lines.add(state.getBlock().getName().withColor(WHITE));
+        if (state.getBlock() instanceof FilterPipeBlock) {
+            lines.add(pipe.filter()
+                    .map(aspect -> Component.translatable("hud.thaumory.pipe.filter", AspectText.name(aspect, knowledge.knowsAspect(aspect.id()))))
+                    .orElseGet(() -> Component.translatable("hud.thaumory.pipe.no_filter")).withColor(GRAY));
+        }
+        if (state.getBlock() instanceof ValveBlock valve) {
+            lines.add(valve.carries(state)
+                    ? Component.translatable("hud.thaumory.pipe.open").withColor(0xFF55FF88)
+                    : Component.translatable("hud.thaumory.pipe.closed").withColor(0xFFFF5555));
+        }
+        ClientPipeReading.at(pipe.getBlockPos()).ifPresent(reading -> {
+            lines.add(Component.translatable("hud.thaumory.pipe.network", reading.pipes(), reading.containers()).withColor(GRAY));
+            lines.add(Component.translatable("hud.thaumory.pipe.carried", reading.carried().total(), reading.capacity()).withColor(GRAY));
+            for (AspectStack stack : reading.carried().sortedByAmount()) {
+                lines.add(Component.literal(" ").append(AspectText.stack(stack, knowledge.knowsAspect(stack.aspect().id()))));
+            }
+        });
         return lines;
     }
 

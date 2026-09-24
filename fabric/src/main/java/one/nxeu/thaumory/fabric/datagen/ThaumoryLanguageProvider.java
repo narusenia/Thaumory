@@ -188,6 +188,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.scan.revealed", "Worked out a new aspect: %s");
             builder.add(ThaumoryBlocks.CRUCIBLE.get(), "Crucible");
             builder.add("hud.thaumory.crucible.water", "Water %s/%s");
+            builder.add("hud.thaumory.pipe.filter", "Filter: %s");
+            builder.add("hud.thaumory.pipe.no_filter", "No filter");
+            builder.add("hud.thaumory.pipe.open", "Open");
+            builder.add("hud.thaumory.pipe.closed", "Closed");
+            builder.add("hud.thaumory.pipe.network", "%s pipes, %s containers");
+            builder.add("hud.thaumory.pipe.carried", "In transit %s/%s");
             builder.add("hud.thaumory.crucible.boiling", "Boiling");
             builder.add("hud.thaumory.crucible.not_boiling", "Not boiling");
             builder.add("hud.thaumory.crucible.essentia", "Essentia %s/%s");
@@ -354,6 +360,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.scan.revealed", "新しいアスペクトが判明した: %s");
             builder.add(ThaumoryBlocks.CRUCIBLE.get(), "るつぼ");
             builder.add("hud.thaumory.crucible.water", "水 %s/%s");
+            builder.add("hud.thaumory.pipe.filter", "フィルタ: %s");
+            builder.add("hud.thaumory.pipe.no_filter", "フィルタなし");
+            builder.add("hud.thaumory.pipe.open", "開いている");
+            builder.add("hud.thaumory.pipe.closed", "閉じている");
+            builder.add("hud.thaumory.pipe.network", "パイプ %s 本・容器 %s");
+            builder.add("hud.thaumory.pipe.carried", "運び中 %s/%s");
             builder.add("hud.thaumory.crucible.boiling", "沸騰中");
             builder.add("hud.thaumory.crucible.not_boiling", "沸騰していない");
             builder.add("hud.thaumory.crucible.essentia", "Essentia %s/%s");

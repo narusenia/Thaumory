@@ -26,6 +26,7 @@ import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
 import one.nxeu.thaumory.essentia.EssentiaHandle;
+import one.nxeu.thaumory.network.PipeReadingPayload;
 
 /**
  * The pipe networks of one level (requirements §8.2). A network is worked out once, when its
@@ -92,6 +93,16 @@ public final class PipeNetworks {
         }
         byPipe.remove(pos);
         return network.detach(pos);
+    }
+
+    /** What the loupe shows for the pipe at {@code pos}: its network, or on its own what the pipe keeps. */
+    public Optional<PipeReadingPayload> reading(BlockPos pos) {
+        Network network = byPipe.get(pos);
+        if (network != null) {
+            return Optional.of(new PipeReadingPayload(pos, network.buffer, network.pipes.size() * settings.bufferPerPipe(),
+                    network.pipes.size(), network.endpoints.size()));
+        }
+        return pipeEntityAt(pos).map(pipe -> new PipeReadingPayload(pos, pipe.share(), settings.bufferPerPipe(), 1, 0));
     }
 
     /** This pipe's share of what its network carries, while it is part of one. */

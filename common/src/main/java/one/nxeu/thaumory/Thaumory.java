@@ -36,6 +36,7 @@ import one.nxeu.thaumory.item.TranscriptItem;
 import one.nxeu.thaumory.jar.JarSettings;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.pipe.PipeNetworks;
+import one.nxeu.thaumory.pipe.PipeReadings;
 import one.nxeu.thaumory.pipe.PipeSettings;
 import one.nxeu.thaumory.research.ResearchData;
 import one.nxeu.thaumory.research.ResearchProgress;
@@ -97,6 +98,7 @@ public final class Thaumory {
         ItemScanner.register();
         TranscriptItem.register();
         PipeNetworks.register();
+        PipeReadings.register();
         FluxReadings.register();
         new FluxWorldEffects(flux).register();
     }
