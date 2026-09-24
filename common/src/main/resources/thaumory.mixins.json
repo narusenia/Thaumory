@@ -9,6 +9,9 @@
   ],
   "mixins": [
     "CropBlockMixin",
+    "GameRulesMixin",
+    "ServerExplosionMixin",
+    "ServerLevelMixin",
     "ShapedRecipeAccessor",
     "ShapelessRecipeAccessor",
     "SingleItemRecipeAccessor",

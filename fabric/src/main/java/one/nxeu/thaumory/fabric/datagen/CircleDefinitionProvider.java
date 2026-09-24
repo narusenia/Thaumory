@@ -84,6 +84,15 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
                 Map.of("items_per_level", 4.0, "work_flux", 0.02), 0, Optional.empty(), Map.of());
         sustained(output, ThaumoryCircleEffects.MELTING, IGNIS, CHAOS, List.of(CircleDefinitionFile.NONE, CircleDefinitionFile.ANY),
                 Map.of("items_per_level", 4.0, "work_flux", 0.1), 0, Optional.empty(), Map.of());
+        // The life circles cannot be infused until M2-23.
+        sustained(output, ThaumoryCircleEffects.LIGHTNESS, AER, TERRA, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 0,
+                Optional.empty(), Map.of());
+        sustained(output, ThaumoryCircleEffects.BREATH, AQUA, AER, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 0,
+                Optional.empty(), Map.of());
+        sustained(output, ThaumoryCircleEffects.NIGHT_SIGHT, LUX, UMBRA, slot3(true, BESTIA, CHAOS), Map.of("work_flux", 0.02), 0,
+                Optional.empty(), Map.of());
+        sustained(output, ThaumoryCircleEffects.SAFEGUARD, ORDO, TERRA, slot3(true), Map.of("work_flux", 0.2), 0, Optional.empty(),
+                Map.of());
     }
 
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,

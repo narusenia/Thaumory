@@ -1,6 +1,7 @@
 package one.nxeu.thaumory.circle.effect;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.effect.MobEffects;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.circle.CircleEffectRegistry;
 
@@ -22,6 +23,15 @@ public final class ThaumoryCircleEffects {
     public static final Identifier MINING = Thaumory.id("mining");
     public static final Identifier SORTING = Thaumory.id("sorting");
     public static final Identifier MELTING = Thaumory.id("melting");
+    public static final Identifier LIGHTNESS = Thaumory.id("lightness");
+    public static final Identifier BREATH = Thaumory.id("breath");
+    public static final Identifier NIGHT_SIGHT = Thaumory.id("night_sight");
+    public static final Identifier SAFEGUARD = Thaumory.id("safeguard");
+
+    /** How long the life circles' status effects outlast leaving the range, in ticks (requirements §17.4). */
+    private static final int SHORT_AURA = 60;
+    /** Night vision flickers under 10 seconds left, so it is kept above that. */
+    private static final int NIGHT_VISION_AURA = 220;
 
     private ThaumoryCircleEffects() {}
 
@@ -42,6 +52,13 @@ public final class ThaumoryCircleEffects {
         registry.register(MINING, new MiningEffect());
         registry.register(SORTING, new SortingEffect());
         registry.register(MELTING, new MeltingEffect());
+        registry.register(LIGHTNESS, new AuraEffect(true, new AuraEffect.Aura(MobEffects.SPEED, SHORT_AURA, true)));
+        registry.register(BREATH, new AuraEffect(false, new AuraEffect.Aura(MobEffects.WATER_BREATHING, SHORT_AURA, false),
+                new AuraEffect.Aura(MobEffects.DOLPHINS_GRACE, SHORT_AURA, false)));
+        registry.register(NIGHT_SIGHT, new AuraEffect(false, new AuraEffect.Aura(MobEffects.NIGHT_VISION, NIGHT_VISION_AURA, false)));
+        registry.register(SAFEGUARD, new SafeguardEffect());
         WardEffect.registerEvents();
+        AuraEffect.registerEvents();
+        SafeguardEffect.registerEvents();
     }
 }

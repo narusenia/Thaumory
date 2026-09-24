@@ -1,0 +1,17 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:breath",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:aqua",
+    "thaumory:aer"
+  ],
+  "settings": {
+    "work_flux": 0.02
+  },
+  "slot3": [
+    "none",
+    "thaumory:bestia",
+    "thaumory:chaos"
+  ]
+}

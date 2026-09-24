@@ -1,0 +1,12 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:safeguard",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:ordo",
+    "thaumory:terra"
+  ],
+  "settings": {
+    "work_flux": 0.2
+  }
+}
