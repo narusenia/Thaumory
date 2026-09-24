@@ -22,6 +22,7 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.pipe.PipeDisplay;
 import one.nxeu.thaumory.pipe.PipeNetworks;
 
 /**
@@ -35,6 +36,8 @@ public final class PipeBlockEntity extends BlockEntity {
     private AspectList share = AspectList.empty();
     /** Kept as an id, so a filter whose addon was removed comes back with it. */
     private Optional<Identifier> filter = Optional.empty();
+    /** What the client draws inside the glass; worked out by the network, never saved. */
+    private PipeDisplay display = PipeDisplay.EMPTY;
 
     public PipeBlockEntity(BlockPos pos, BlockState state) {
         super(ThaumoryBlocks.PIPE_ENTITY.get(), pos, state);
@@ -60,6 +63,20 @@ public final class PipeBlockEntity extends BlockEntity {
         if (level instanceof ServerLevel server) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             PipeNetworks.of(server).invalidate(worldPosition);
+        }
+    }
+
+    public PipeDisplay display() {
+        return display;
+    }
+
+    /** Sent to the client only when it changes. */
+    public void setDisplay(PipeDisplay next) {
+        if (!next.equals(display)) {
+            display = next;
+            if (level instanceof ServerLevel) {
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            }
         }
     }
 
@@ -121,6 +138,7 @@ public final class PipeBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         share = input.read("share", CODEC).orElse(AspectList.empty());
+        display = new PipeDisplay(input.getIntOr("fill_color", PipeDisplay.EMPTY.color()), input.getIntOr("fill_level", 0));
         Optional<Identifier> loaded = input.read("filter", Identifier.CODEC);
         boolean changed = !loaded.equals(filter);
         filter = loaded;
@@ -130,11 +148,15 @@ public final class PipeBlockEntity extends BlockEntity {
         }
     }
 
-    /** Only the filter goes to the client; the share is the server's business. */
+    /** Only the filter and what to draw go to the client; the share is the server's business. */
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
         filter.ifPresent(id -> tag.putString("filter", id.toString()));
+        if (display.level() > 0) {
+            tag.putInt("fill_color", display.color());
+            tag.putInt("fill_level", display.level());
+        }
         return tag;
     }
 

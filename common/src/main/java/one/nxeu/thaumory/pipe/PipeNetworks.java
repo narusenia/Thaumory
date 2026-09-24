@@ -169,7 +169,11 @@ public final class PipeNetworks {
             BlockPos pos = network.pipes.get(i);
             byPipe.remove(pos);
             int index = i;
-            pipeEntityAt(pos).ifPresent(pipe -> pipe.setShare(shares.get(index)));
+            // A pipe left on its own (a closed valve) shows what it keeps; a new network soon shows its own.
+            pipeEntityAt(pos).ifPresent(pipe -> {
+                pipe.setShare(shares.get(index));
+                pipe.setDisplay(PipeDisplay.of(shares.get(index), settings.bufferPerPipe()));
+            });
         }
     }
 
@@ -208,6 +212,7 @@ public final class PipeNetworks {
                         level.getBlockEntity(end.getKey()) instanceof CrucibleBlockEntity))));
         Network network = new Network(List.copyOf(pipes), List.copyOf(endpoints), buffer);
         pipes.forEach(pos -> byPipe.put(pos, network));
+        network.show();
     }
 
     /** A container next to the network: the face it is reached through, and the filter of each pipe touching it. */
@@ -261,6 +266,7 @@ public final class PipeNetworks {
         private final List<PipeEndpoint> endpoints;
         private AspectList buffer;
         private List<AspectList> shares;
+        private PipeDisplay display;
 
         Network(List<BlockPos> pipes, List<PipeEndpoint> endpoints, AspectList buffer) {
             this.pipes = new ArrayList<>(pipes);
@@ -315,6 +321,16 @@ public final class PipeNetworks {
                 shares = null;
                 // So the chunks save the new shares.
                 pipes.forEach(pos -> pipeAt(pos).ifPresent(PipeBlockEntity::setChanged));
+                show();
+            }
+        }
+
+        /** Tells the pipes what to show, only when it visibly changes. */
+        void show() {
+            PipeDisplay next = PipeDisplay.of(buffer, pipes.size() * settings.bufferPerPipe());
+            if (!next.equals(display)) {
+                display = next;
+                pipes.forEach(pos -> pipeAt(pos).ifPresent(pipe -> pipe.setDisplay(next)));
             }
         }
     }

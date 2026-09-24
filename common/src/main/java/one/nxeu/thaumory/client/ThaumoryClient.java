@@ -70,6 +70,7 @@ public final class ThaumoryClient {
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CORE_ENTITY.get(), CoreRenderer::new);
+        BlockEntityRendererRegistry.register(ThaumoryBlocks.PIPE_ENTITY.get(), PipeRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
         RuneTint.register();
         FilterPipeTint.register();
