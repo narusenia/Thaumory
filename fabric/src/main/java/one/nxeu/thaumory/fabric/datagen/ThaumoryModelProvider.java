@@ -1,6 +1,7 @@
 package one.nxeu.thaumory.fabric.datagen;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -30,6 +31,7 @@ import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.block.pipe.PumpBlock;
 import one.nxeu.thaumory.block.pipe.ValveBlock;
 import one.nxeu.thaumory.client.RuneTint;
+import one.nxeu.thaumory.item.EquipmentSet;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
@@ -204,6 +206,12 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         for (var chalk : List.of(ThaumoryItems.CHALK, ThaumoryItems.AMPLIFYING_CHALK, ThaumoryItems.EXTENDING_CHALK,
                 ThaumoryItems.ECONOMIZING_CHALK, ThaumoryItems.STABILIZING_CHALK)) {
             generators.generateFlatItem(chalk.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        }
+        for (EquipmentSet set : List.of(ThaumoryItems.ARCANE_IRON, ThaumoryItems.AETHER_SILVER)) {
+            generators.generateFlatItem(set.ingot().get(), ModelTemplates.FLAT_ITEM);
+            set.tools().forEach(tool -> generators.generateFlatItem(tool.get(), ModelTemplates.FLAT_HANDHELD_ITEM));
+            generators.generateTrimmableArmorSet(set.helmet().get(), set.chestplate().get(), set.leggings().get(), set.boots().get(),
+                    false, Map.of());
         }
     }
 }

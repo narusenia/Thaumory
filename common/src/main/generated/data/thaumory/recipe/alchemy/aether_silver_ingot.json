@@ -1,0 +1,11 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:aer": 16,
+    "thaumory:lux": 16
+  },
+  "catalyst": "thaumory:arcane_iron_ingot",
+  "result": {
+    "id": "thaumory:aether_silver_ingot"
+  }
+}

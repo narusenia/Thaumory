@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:arcanum": 8
+  },
+  "catalyst": "minecraft:iron_ingot",
+  "result": {
+    "id": "thaumory:arcane_iron_ingot"
+  }
+}

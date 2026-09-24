@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "thaumory:arcane_iron_ingot"
+    },
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:aer",
+        "thaumory:lux"
+      ]
+    }
+  ],
+  "icon": "thaumory:aether_silver_ingot",
+  "order": 8,
+  "requires": [
+    "thaumory:arcane_metals"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/aether_silver_ingot"
+  ]
+}

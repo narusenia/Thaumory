@@ -1,0 +1,16 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "icon": "thaumory:arcane_iron_ingot",
+  "order": 7,
+  "requires": [
+    "thaumory:circles"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/arcane_iron_ingot"
+  ]
+}

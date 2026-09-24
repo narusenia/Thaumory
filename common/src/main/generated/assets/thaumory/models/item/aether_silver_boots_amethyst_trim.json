@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "thaumory:item/aether_silver_boots",
+    "layer1": "minecraft:trims/items/boots_trim_amethyst"
+  }
+}

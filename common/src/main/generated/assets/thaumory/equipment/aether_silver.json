@@ -1,0 +1,19 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "thaumory:aether_silver"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "thaumory:aether_silver"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "thaumory:aether_silver"
+      }
+    ]
+  }
+}

@@ -6,6 +6,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
@@ -14,6 +15,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
@@ -77,23 +81,33 @@ public final class ThaumoryItems {
             register("polluted_stone", properties -> new BlockItem(ThaumoryBlocks.POLLUTED_STONE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
+    public static final EquipmentSet ARCANE_IRON = equipment("arcane_iron", ThaumoryMaterials.ARCANE_IRON_TOOL,
+            ThaumoryMaterials.ARCANE_IRON_ARMOR, 6.0F, -3.1F, -2.0F, -1.0F);
+    public static final EquipmentSet AETHER_SILVER = equipment("aether_silver", ThaumoryMaterials.AETHER_SILVER_TOOL,
+            ThaumoryMaterials.AETHER_SILVER_ARMOR, 5.0F, -3.0F, -3.0F, 0.0F);
+
     private ThaumoryItems() {}
 
     /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
             ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
+    private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
+            Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();
 
     public static final RegistrySupplier<CreativeModeTab> TAB = TABS.register("thaumory", () -> CreativeTabRegistry.create(builder -> builder
             .title(Component.translatable("itemGroup.thaumory"))
             .icon(() -> new ItemStack(ARCANE_CODEX.get()))
-            .displayItems((parameters, output) -> TAB_ORDER.forEach(item -> {
-                if (item == RUNE) {
-                    ThaumoryApi.aspects().all().forEach(aspect -> output.accept(RuneItem.of(aspect)));
-                } else {
-                    output.accept(item.get());
-                }
-            }))));
+            .displayItems((parameters, output) -> {
+                TAB_ORDER.forEach(item -> {
+                    if (item == RUNE) {
+                        ThaumoryApi.aspects().all().forEach(aspect -> output.accept(RuneItem.of(aspect)));
+                    } else {
+                        output.accept(item.get());
+                    }
+                });
+                TAB_ORDER_EQUIPMENT.forEach(item -> output.accept(item.get()));
+            })));
 
     public static void register() {
         ITEMS.register();
@@ -103,6 +117,22 @@ public final class ThaumoryItems {
     /** Draws a pattern for magic circles; each block drawn costs one durability. */
     private static RegistrySupplier<ChalkItem> chalk(String name, Supplier<ChalkPatternBlock> pattern) {
         return register(name, properties -> new ChalkItem(pattern, properties), new Item.Properties().durability(64));
+    }
+
+    /** An ingot and its gear. Swords, pickaxes and shovels share vanilla's baselines; axes and hoes differ per tier. */
+    private static EquipmentSet equipment(String metal, ToolMaterial tool, ArmorMaterial armor,
+            float axeDamage, float axeSpeed, float hoeDamage, float hoeSpeed) {
+        return new EquipmentSet(
+                register(metal + "_ingot", Item::new, new Item.Properties()),
+                register(metal + "_sword", Item::new, new Item.Properties().sword(tool, 3.0F, -2.4F)),
+                register(metal + "_pickaxe", Item::new, new Item.Properties().pickaxe(tool, 1.0F, -2.8F)),
+                register(metal + "_axe", Item::new, new Item.Properties().axe(tool, axeDamage, axeSpeed)),
+                register(metal + "_shovel", Item::new, new Item.Properties().shovel(tool, 1.5F, -3.0F)),
+                register(metal + "_hoe", Item::new, new Item.Properties().hoe(tool, hoeDamage, hoeSpeed)),
+                register(metal + "_helmet", Item::new, new Item.Properties().humanoidArmor(armor, ArmorType.HELMET)),
+                register(metal + "_chestplate", Item::new, new Item.Properties().humanoidArmor(armor, ArmorType.CHESTPLATE)),
+                register(metal + "_leggings", Item::new, new Item.Properties().humanoidArmor(armor, ArmorType.LEGGINGS)),
+                register(metal + "_boots", Item::new, new Item.Properties().humanoidArmor(armor, ArmorType.BOOTS)));
     }
 
     private static <I extends Item> RegistrySupplier<I> register(String name, Function<Item.Properties, I> factory, Item.Properties properties) {

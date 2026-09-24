@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_aether_silver_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "thaumory:aether_silver_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "thaumory:aether_silver_axe"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_aether_silver_ingot"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "thaumory:aether_silver_axe"
+    ]
+  }
+}

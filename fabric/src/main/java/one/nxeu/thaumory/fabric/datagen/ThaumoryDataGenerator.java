@@ -31,6 +31,7 @@ public final class ThaumoryDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ThaumoryBlockLootProvider::new);
         pack.addProvider(ThaumoryRecipeProvider::new);
         pack.addProvider(ThaumoryModelProvider::new);
+        pack.addProvider(EquipmentAssetProvider::new);
     }
 
     /**

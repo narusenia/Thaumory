@@ -10,6 +10,7 @@ import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.circle.effect.ThaumoryCircleEffects;
+import one.nxeu.thaumory.item.EquipmentSet;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 /** Every user-facing string, in English and Japanese. Aspect names stay Latin in both. */
@@ -29,7 +30,24 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
 
     protected abstract void translations(TranslationBuilder builder);
 
+    /** Names an ingot and its gear after the metal, word order and all. */
+    protected abstract void equipment(TranslationBuilder builder, EquipmentSet set, String metal);
+
     static final class English extends ThaumoryLanguageProvider {
+        @Override
+        protected void equipment(TranslationBuilder builder, EquipmentSet set, String metal) {
+            builder.add(set.ingot().get(), metal + " Ingot");
+            builder.add(set.sword().get(), metal + " Sword");
+            builder.add(set.pickaxe().get(), metal + " Pickaxe");
+            builder.add(set.axe().get(), metal + " Axe");
+            builder.add(set.shovel().get(), metal + " Shovel");
+            builder.add(set.hoe().get(), metal + " Hoe");
+            builder.add(set.helmet().get(), metal + " Helmet");
+            builder.add(set.chestplate().get(), metal + " Chestplate");
+            builder.add(set.leggings().get(), metal + " Leggings");
+            builder.add(set.boots().get(), metal + " Boots");
+        }
+
         English(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
             super(output, "en_us", registries);
         }
@@ -70,6 +88,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryBlocks.JAR.get(), "Jar");
             builder.add(ThaumoryBlocks.PIPE.get(), "Essentia Pipe");
             builder.add(ThaumoryItems.PEDESTAL.get(), "Pedestal");
+            equipment(builder, ThaumoryItems.ARCANE_IRON, "Arcane Iron");
+            equipment(builder, ThaumoryItems.AETHER_SILVER, "Aether Silver");
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "Infused:");
             builder.add("message.thaumory.infusion.infused", "Infused: %s");
@@ -167,6 +187,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.flux.text", "A circle that fails to answer, or one that runs wild, spills Flux. Flux stagnates in the land, eats it away, and at last takes shape. There are said to be ways to clear it.");
             builder.add("chapter.thaumory.inquiry", "Inquiry");
             builder.add("chapter.thaumory.inquiry.text", "One who knows twelve aspects begins to hear what their combinations whisper.");
+            builder.add("chapter.thaumory.arcane_metals", "Arcane Metals");
+            builder.add("chapter.thaumory.arcane_metals.text", "Iron steeped in Arcanum turns into Arcane Iron. Tools and armor forged from it are no stronger than iron, but they have room to take in a circle's effect.");
+            builder.add("chapter.thaumory.aether_silver", "Aether Silver");
+            builder.add("chapter.thaumory.aether_silver.text", "Steep Arcane Iron again, deep in Aer and Lux, and it pales into Aether Silver. It holds more of a circle's effect than Arcane Iron can.");
             builder.add("hint.thaumory.teleport", "Arcanum, bound with Aer, bends space.");
             builder.add("hint.thaumory.light", "Where Lux lies over Ignis, darkness gives way.");
             builder.add("hint.thaumory.purification", "Ordo and Lux clear what has stagnated.");
@@ -209,6 +233,20 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
     }
 
     static final class Japanese extends ThaumoryLanguageProvider {
+        @Override
+        protected void equipment(TranslationBuilder builder, EquipmentSet set, String metal) {
+            builder.add(set.ingot().get(), metal + "インゴット");
+            builder.add(set.sword().get(), metal + "の剣");
+            builder.add(set.pickaxe().get(), metal + "のツルハシ");
+            builder.add(set.axe().get(), metal + "の斧");
+            builder.add(set.shovel().get(), metal + "のシャベル");
+            builder.add(set.hoe().get(), metal + "のクワ");
+            builder.add(set.helmet().get(), metal + "のヘルメット");
+            builder.add(set.chestplate().get(), metal + "のチェストプレート");
+            builder.add(set.leggings().get(), metal + "のレギンス");
+            builder.add(set.boots().get(), metal + "のブーツ");
+        }
+
         Japanese(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
             super(output, "ja_jp", registries);
         }
@@ -249,6 +287,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryBlocks.JAR.get(), "瓶");
             builder.add(ThaumoryBlocks.PIPE.get(), "Essentia のパイプ");
             builder.add(ThaumoryItems.PEDESTAL.get(), "台座");
+            equipment(builder, ThaumoryItems.ARCANE_IRON, "魔鉄");
+            equipment(builder, ThaumoryItems.AETHER_SILVER, "天銀");
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "焼き付けた効果:");
             builder.add("message.thaumory.infusion.infused", "注入した: %s");
@@ -346,6 +386,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.flux.text", "応えぬ陣、乱れた陣は Flux を吐く。Flux は土地に淀み、やがて地を蝕み、ついには形を得る。それを澄ませる術もあるという。");
             builder.add("chapter.thaumory.inquiry", "探究");
             builder.add("chapter.thaumory.inquiry.text", "十二のアスペクトを知る者は、その組み合わせの囁きを聞き分けはじめる。");
+            builder.add("chapter.thaumory.arcane_metals", "魔術の金属");
+            builder.add("chapter.thaumory.arcane_metals.text", "鉄に Arcanum を沁ませれば魔鉄となる。魔鉄で鍛えた道具と防具は鉄より強くはないが、陣の効果を受け入れる余地を持つ。");
+            builder.add("chapter.thaumory.aether_silver", "天の銀");
+            builder.add("chapter.thaumory.aether_silver.text", "魔鉄をさらに Aer と Lux にたっぷりと浸せば、色が抜けて天銀となる。魔鉄より多くの陣の効果を抱える。");
             builder.add("hint.thaumory.teleport", "Arcanum は、Aer と結びつくとき、空間を歪める。");
             builder.add("hint.thaumory.light", "Lux が Ignis に重なるとき、闇は退く。");
             builder.add("hint.thaumory.purification", "Ordo と Lux は、淀みを澄ませる。");

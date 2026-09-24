@@ -8,8 +8,11 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
+import one.nxeu.thaumory.item.EquipmentSet;
 import one.nxeu.thaumory.item.ThaumoryItems;
+import one.nxeu.thaumory.item.ThaumoryMaterials;
 
 final class ThaumoryItemTagProvider extends FabricTagsProvider<Item> {
     ThaumoryItemTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
@@ -23,7 +26,27 @@ final class ThaumoryItemTagProvider extends FabricTagsProvider<Item> {
         for (var item : List.of(ThaumoryItems.WAND, ThaumoryItems.JAR, ThaumoryItems.ARCANE_LOUPE, ThaumoryItems.ARCANE_CODEX,
                 ThaumoryItems.RUNE, ThaumoryItems.PEDESTAL, ThaumoryItems.CHALK, ThaumoryItems.AMPLIFYING_CHALK, ThaumoryItems.EXTENDING_CHALK,
                 ThaumoryItems.ECONOMIZING_CHALK, ThaumoryItems.STABILIZING_CHALK)) {
-            ignored.add(ResourceKey.create(Registries.ITEM, BuiltInRegistries.ITEM.getKey(item.get())));
+            ignored.add(key(item.get()));
         }
+
+        builder(ThaumoryMaterials.REPAIRS_ARCANE_IRON).add(key(ThaumoryItems.ARCANE_IRON.ingot().get()));
+        builder(ThaumoryMaterials.REPAIRS_AETHER_SILVER).add(key(ThaumoryItems.AETHER_SILVER.ingot().get()));
+        // Vanilla's tags carry enchantability, trims and the like over to the gear.
+        for (EquipmentSet set : List.of(ThaumoryItems.ARCANE_IRON, ThaumoryItems.AETHER_SILVER)) {
+            builder(ItemTags.SWORDS).add(key(set.sword().get()));
+            builder(ItemTags.PICKAXES).add(key(set.pickaxe().get()));
+            builder(ItemTags.CLUSTER_MAX_HARVESTABLES).add(key(set.pickaxe().get()));
+            builder(ItemTags.AXES).add(key(set.axe().get()));
+            builder(ItemTags.SHOVELS).add(key(set.shovel().get()));
+            builder(ItemTags.HOES).add(key(set.hoe().get()));
+            builder(ItemTags.HEAD_ARMOR).add(key(set.helmet().get()));
+            builder(ItemTags.CHEST_ARMOR).add(key(set.chestplate().get()));
+            builder(ItemTags.LEG_ARMOR).add(key(set.leggings().get()));
+            builder(ItemTags.FOOT_ARMOR).add(key(set.boots().get()));
+        }
+    }
+
+    private static ResourceKey<Item> key(Item item) {
+        return ResourceKey.create(Registries.ITEM, BuiltInRegistries.ITEM.getKey(item));
     }
 }

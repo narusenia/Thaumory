@@ -12,6 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -21,12 +22,14 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import net.minecraft.world.item.crafting.Recipe;
+import one.nxeu.thaumory.item.EquipmentSet;
 import one.nxeu.thaumory.item.ThaumoryItems;
 
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AER;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AQUA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.IGNIS;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.LUX;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VINCULUM;
 
@@ -62,6 +65,11 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 alchemy("extending_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.EXTENDING_CHALK.get(), new AspectStack(AER, 8));
                 alchemy("economizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.ECONOMIZING_CHALK.get(), new AspectStack(VINCULUM, 4));
                 alchemy("stabilizing_chalk", ThaumoryItems.CHALK.get(), ThaumoryItems.STABILIZING_CHALK.get(), new AspectStack(ORDO, 4));
+                alchemy("arcane_iron_ingot", Items.IRON_INGOT, ThaumoryItems.ARCANE_IRON.ingot().get(), new AspectStack(ARCANUM, 8));
+                alchemy("aether_silver_ingot", ThaumoryItems.ARCANE_IRON.ingot().get(), ThaumoryItems.AETHER_SILVER.ingot().get(),
+                        new AspectStack(AER, 16), new AspectStack(LUX, 16));
+                equipment(ThaumoryItems.ARCANE_IRON);
+                equipment(ThaumoryItems.AETHER_SILVER);
                 shaped(RecipeCategory.BREWING, ThaumoryItems.PIPE.get(), 8)
                         .pattern("NGN")
                         .pattern("NGN")
@@ -127,6 +135,32 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .requires(Items.GOLD_INGOT)
                         .unlockedBy(getHasName(Items.CAULDRON), has(Items.CAULDRON))
                         .save(output);
+            }
+
+            /** The gear in vanilla's shapes, with sticks for handles. */
+            private void equipment(EquipmentSet set) {
+                Item ingot = set.ingot().get();
+                gear(RecipeCategory.COMBAT, set.sword().get(), ingot, " I ", " I ", " S ");
+                gear(RecipeCategory.TOOLS, set.pickaxe().get(), ingot, "III", " S ", " S ");
+                gear(RecipeCategory.TOOLS, set.axe().get(), ingot, "II", "IS", " S");
+                gear(RecipeCategory.TOOLS, set.shovel().get(), ingot, "I", "S", "S");
+                gear(RecipeCategory.TOOLS, set.hoe().get(), ingot, "II", " S", " S");
+                gear(RecipeCategory.COMBAT, set.helmet().get(), ingot, "III", "I I");
+                gear(RecipeCategory.COMBAT, set.chestplate().get(), ingot, "I I", "III", "III");
+                gear(RecipeCategory.COMBAT, set.leggings().get(), ingot, "III", "I I", "I I");
+                gear(RecipeCategory.COMBAT, set.boots().get(), ingot, "I I", "I I");
+            }
+
+            private void gear(RecipeCategory category, Item result, Item ingot, String... rows) {
+                var recipe = shaped(category, result);
+                for (String row : rows) {
+                    recipe.pattern(row);
+                }
+                recipe.define('I', ingot);
+                if (String.join("", rows).contains("S")) {
+                    recipe.define('S', Items.STICK);
+                }
+                recipe.unlockedBy(getHasName(ingot), has(ingot)).save(output);
             }
 
             /** Alchemy recipes live under {@code recipe/alchemy/}. They have no advancement: nothing unlocks them in a recipe book. */

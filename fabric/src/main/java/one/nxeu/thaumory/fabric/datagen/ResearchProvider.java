@@ -20,6 +20,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.Aspect;
@@ -38,6 +39,8 @@ final class ResearchProvider {
     static final Identifier CIRCLES = Thaumory.id("circles");
     static final Identifier FLUX = Thaumory.id("flux");
     static final Identifier INQUIRY = Thaumory.id("inquiry");
+    static final Identifier ARCANE_METALS = Thaumory.id("arcane_metals");
+    static final Identifier AETHER_SILVER = Thaumory.id("aether_silver");
 
     private ResearchProvider() {}
 
@@ -63,6 +66,12 @@ final class ResearchProvider {
                     List.of(new ResearchCondition.Circles(false, 1, Optional.empty())), List.of()));
             output.accept(INQUIRY, chapter(ThaumoryItems.WAND.get(), 6, List.of(ASPECTS),
                     List.of(ResearchCondition.Aspects.count(12)), List.of()));
+            output.accept(ARCANE_METALS, chapter(ThaumoryItems.ARCANE_IRON.ingot().get(), 7, List.of(CIRCLES),
+                    List.of(ResearchCondition.Scanned.item(key(Items.IRON_INGOT))), List.of(alchemy("arcane_iron_ingot"))));
+            output.accept(AETHER_SILVER, chapter(ThaumoryItems.AETHER_SILVER.ingot().get(), 8, List.of(ARCANE_METALS),
+                    List.of(ResearchCondition.Scanned.item(key(ThaumoryItems.ARCANE_IRON.ingot().get())),
+                            ResearchCondition.Aspects.all(List.of(AER.id(), LUX.id()))),
+                    List.of(alchemy("aether_silver_ingot"))));
         }
 
         private static Chapter chapter(ItemLike icon, int order, List<Identifier> requires, List<ResearchCondition> conditions,
