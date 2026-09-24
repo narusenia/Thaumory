@@ -159,6 +159,14 @@ public class InfusionGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ThaumoryItems.WAND.get()));
         helper.useBlock(CORE, player);
         helper.assertValueEqual(core.pedestalItem().getItem(), Items.IRON_SWORD, "item on the pedestal after a wand's click");
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        helper.useBlock(CORE, player);
+        helper.assertTrue(core.pedestalItem().isEmpty(), "an empty hand did not take the item");
+        // The wand's click infused the sword, so look for any sword.
+        helper.assertTrue(player.getInventory().hasAnyMatching(stack -> stack.is(Items.IRON_SWORD)), "the sword did not come to the hand");
+        player.getInventory().clearContent();
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+        helper.useBlock(CORE, player);
 
         core.removePedestal(player);
         helper.assertBlockProperty(CORE, CircleCoreBlock.PEDESTAL, false);

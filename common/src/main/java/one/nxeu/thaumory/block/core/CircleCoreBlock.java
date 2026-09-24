@@ -91,8 +91,8 @@ public final class CircleCoreBlock extends BaseEntityBlock {
         }
         Identifier aspect = stack.is(ThaumoryItems.RUNE.get()) ? stack.get(ThaumoryComponents.RUNE_ASPECT.get()) : null;
         if (aspect == null) {
-            // Leave the item to do its own work (the wand, a jar); taking off the pedestal is for an empty hand only.
-            return InteractionResult.PASS;
+            // An empty hand goes on to take the item off the pedestal; anything else (the wand, a jar) does its own work.
+            return stack.isEmpty() ? InteractionResult.TRY_WITH_EMPTY_HAND : InteractionResult.PASS;
         }
         if (core.runes().size() >= CircleCoreBlockEntity.SLOTS) {
             player.sendOverlayMessage(Component.translatable("message.thaumory.core.full"));
