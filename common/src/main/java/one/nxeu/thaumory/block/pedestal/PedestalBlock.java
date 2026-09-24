@@ -25,7 +25,7 @@ import one.nxeu.thaumory.item.ThaumoryItems;
  * its own work.
  */
 public final class PedestalBlock extends BaseEntityBlock {
-    private static final VoxelShape SHAPE = Shapes.or(box(4, 0, 4, 12, 12, 12), box(2, 12, 2, 14, 14, 14));
+    private static final VoxelShape SHAPE = Shapes.or(box(3, 0, 3, 13, 2, 13), box(6, 2, 6, 10, 10, 10), box(4, 10, 4, 12, 12, 12));
 
     public PedestalBlock(Properties properties) {
         super(properties);

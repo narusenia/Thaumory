@@ -53,9 +53,6 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     private static final ModelTemplate CHALK_PATTERN = new ModelTemplate(Optional.of(Thaumory.id("block/template_chalk_pattern")),
             Optional.empty(), PATTERN);
 
-    private static final ModelTemplate PEDESTAL = new ModelTemplate(Optional.of(Thaumory.id("block/template_pedestal")),
-            Optional.empty(), TextureSlot.SIDE, TextureSlot.TOP);
-
     private static final TextureSlot PIPE = TextureSlot.create("pipe");
     private static final TextureSlot ARM = TextureSlot.create("arm");
     private static final ModelTemplate PIPE_CENTER = new ModelTemplate(Optional.of(Thaumory.id("block/template_pipe_center")),
@@ -65,6 +62,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     private static final ModelTemplate PIPE_ITEM = new ModelTemplate(Optional.of(Thaumory.id("block/template_pipe_item")),
             Optional.of("_inventory"), PIPE, ARM);
     private static final TextureSlot BAND = TextureSlot.create("band");
+    private static final ModelTemplate PEDESTAL = new ModelTemplate(Optional.of(Thaumory.id("block/template_pedestal")),
+            Optional.empty(), TextureSlot.SIDE, TextureSlot.TOP, BAND);
     private static final ModelTemplate FILTER_PIPE_CENTER = new ModelTemplate(Optional.of(Thaumory.id("block/template_pipe_filter_center")),
             Optional.of("_center"), PIPE, BAND);
 
@@ -116,7 +115,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         PedestalBlock pedestal = ThaumoryBlocks.PEDESTAL.get();
         Identifier pedestalModel = PEDESTAL.create(pedestal, new TextureMapping()
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(pedestal, "_side"))
-                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(pedestal, "_top")), generators.modelOutput);
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(pedestal, "_top"))
+                .put(BAND, TextureMapping.getBlockTexture(pedestal, "_band")), generators.modelOutput);
         generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(pedestal, BlockModelGenerators.plainVariant(pedestalModel)));
         generators.registerSimpleItemModel(pedestal, pedestalModel);
 
