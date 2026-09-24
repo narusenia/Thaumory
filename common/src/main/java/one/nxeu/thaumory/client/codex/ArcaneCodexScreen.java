@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -39,6 +41,7 @@ import one.nxeu.thaumory.research.Category;
 import one.nxeu.thaumory.research.Chapter;
 import one.nxeu.thaumory.research.Hint;
 import one.nxeu.thaumory.research.ResearchView;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 
 /**
  * The Arcane Codex, drawn as an open book (requirements §7.3): bookmarks along the top edge pick a
@@ -107,6 +110,8 @@ public final class ArcaneCodexScreen extends Screen {
     private int top;
     /** What the "transcribe" button would copy: a known aspect or a working circle picked in its tab. */
     private Optional<Transcript> picked = Optional.empty();
+    /** What was open when last drawn, so turning to something else can rustle the pages. */
+    private Opened opened;
 
     private enum Tab {
         CHAPTERS(0xFFB0453A), ASPECTS(0xFF4A7AB0), SCANNED(0xFF5A9A4A), CIRCLES(0xFF8A5AB0), HINTS(0xFFC09A3A);
@@ -229,6 +234,18 @@ public final class ArcaneCodexScreen extends Screen {
         }
         drawTranscribeButton(graphics, knowledge, mouseX, mouseY);
         drawFluxWarning(graphics);
+        turnPages();
+    }
+
+    /** The tab, chapter, category and pages open; the arrows can ask for pages past the end, so this is taken after drawing. */
+    private record Opened(Tab tab, Optional<Identifier> reading, Optional<Identifier> category, int spread) {}
+
+    private void turnPages() {
+        Opened now = new Opened(tab, reading, lastCategory, spread);
+        if (opened != null && !opened.equals(now)) {
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(ThaumorySounds.CODEX_PAGE.get(), 1.0f));
+        }
+        opened = now;
     }
 
     /** Wraps lines to the page width. */

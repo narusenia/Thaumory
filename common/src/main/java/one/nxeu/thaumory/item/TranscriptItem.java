@@ -6,6 +6,7 @@ import java.util.Optional;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,6 +27,7 @@ import one.nxeu.thaumory.knowledge.Transcript;
 import one.nxeu.thaumory.knowledge.Transcript.AspectTranscript;
 import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
 import one.nxeu.thaumory.network.TranscribePayload;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 import one.nxeu.thaumory.text.ThaumoryText;
 import org.slf4j.Logger;
 
@@ -78,6 +80,8 @@ public final class TranscriptItem extends Item {
             inventory.removeItem(ink, 1);
         }
         player.getInventory().placeItemBackInInventory(of(transcript), Prediction.SERVER_ONLY);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ThaumorySounds.TRANSCRIBE.get(), SoundSource.PLAYERS,
+                1.0f, 1.0f);
         player.sendOverlayMessage(Component.translatable("message.thaumory.transcript.written", describe(transcript, true)));
     }
 

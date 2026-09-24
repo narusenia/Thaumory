@@ -1,6 +1,7 @@
 package one.nxeu.thaumory.item;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.Level;
 import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.infusion.InfusionText;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
@@ -59,26 +61,26 @@ public final class WandItem extends Item {
             MutableComponent message = Component.translatable("message.thaumory.wand." + outcome.key);
             boolean shaken = outcome == Outcome.MISFIRED || outcome == Outcome.OVERLOADED;
             player.sendOverlayMessage(shaken ? ThaumoryText.withEffect(message, TextEffect.SHAKE) : message);
-            level.playSound(null, context.getClickedPos(), outcome.sound, SoundSource.BLOCKS, 0.8f, 1.0f);
+            level.playSound(null, context.getClickedPos(), outcome.sound.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
         }
         return InteractionResult.SUCCESS;
     }
 
     private enum Outcome {
-        STARTED("started", SoundEvents.BEACON_ACTIVATE),
-        STOPPED("stopped", SoundEvents.BEACON_DEACTIVATE),
-        TRIGGERED("triggered", SoundEvents.EVOKER_CAST_SPELL),
-        NO_RINGS("no_rings", SoundEvents.FIRE_EXTINGUISH),
-        NO_RESPONSE("no_response", SoundEvents.FIRE_EXTINGUISH),
-        MISFIRED("misfired", SoundEvents.FIRE_EXTINGUISH),
-        OVERLOADED("overloaded", SoundEvents.FIRE_EXTINGUISH),
-        NO_TARGET("no_target", SoundEvents.FIRE_EXTINGUISH),
-        NO_ESSENTIA("no_essentia", SoundEvents.FIRE_EXTINGUISH);
+        STARTED("started", ThaumorySounds.CIRCLE_ACTIVATE),
+        STOPPED("stopped", ThaumorySounds.CIRCLE_DEACTIVATE),
+        TRIGGERED("triggered", () -> SoundEvents.EVOKER_CAST_SPELL),
+        NO_RINGS("no_rings", () -> SoundEvents.FIRE_EXTINGUISH),
+        NO_RESPONSE("no_response", () -> SoundEvents.FIRE_EXTINGUISH),
+        MISFIRED("misfired", () -> SoundEvents.FIRE_EXTINGUISH),
+        OVERLOADED("overloaded", () -> SoundEvents.FIRE_EXTINGUISH),
+        NO_TARGET("no_target", () -> SoundEvents.FIRE_EXTINGUISH),
+        NO_ESSENTIA("no_essentia", () -> SoundEvents.FIRE_EXTINGUISH);
 
         final String key;
-        final SoundEvent sound;
+        final Supplier<SoundEvent> sound;
 
-        Outcome(String key, SoundEvent sound) {
+        Outcome(String key, Supplier<SoundEvent> sound) {
             this.key = key;
             this.sound = sound;
         }
@@ -103,7 +105,7 @@ public final class WandItem extends Item {
         };
         player.sendOverlayMessage(message);
         level.playSound(null, core.getBlockPos(), switch (outcome.result()) {
-            case INFUSED -> SoundEvents.ENCHANTMENT_TABLE_USE;
+            case INFUSED -> ThaumorySounds.CIRCLE_INFUSE.get();
             case FAILED -> SoundEvents.GENERIC_EXTINGUISH_FIRE;
             default -> SoundEvents.FIRE_EXTINGUISH;
         }, SoundSource.BLOCKS, 0.8f, 1.0f);

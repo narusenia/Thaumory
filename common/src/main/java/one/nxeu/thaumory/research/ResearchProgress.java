@@ -20,6 +20,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.alchemy.AlchemyRecipe;
 import one.nxeu.thaumory.api.ThaumoryApi;
@@ -28,6 +29,7 @@ import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.network.ResearchViewPayload;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
@@ -66,6 +68,8 @@ public final class ResearchProgress implements KnowledgeManager.Research {
         for (Identifier chapter : advance.chapters()) {
             result = result.withChapter(chapter);
             if (!research.chapters().get(chapter).conditions().isEmpty()) {
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ThaumorySounds.DISCOVERY.get(),
+                        SoundSource.PLAYERS, 0.8f, 1.0f);
                 player.sendSystemMessage(Component.translatable("message.thaumory.chapter.completed",
                         ThaumoryText.withEffect(Component.translatable(Chapter.titleKey(chapter)).withColor(0xE8C87A), TextEffect.STREAK)));
             }

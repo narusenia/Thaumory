@@ -30,6 +30,7 @@ import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
 import one.nxeu.thaumory.block.pipe.PumpBlock;
 import one.nxeu.thaumory.block.pipe.ValveBlock;
 import one.nxeu.thaumory.item.ThaumoryItems;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 
 /** Blocks and their block entities. Block items are registered in {@link one.nxeu.thaumory.item.ThaumoryItems}. */
 public final class ThaumoryBlocks {
@@ -42,7 +43,7 @@ public final class ThaumoryBlocks {
                     .strength(2.0f).sound(SoundType.METAL).noOcclusion());
 
     public static final RegistrySupplier<JarBlock> JAR = register("jar", JarBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f).sound(SoundType.GLASS).noOcclusion());
+            BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f).sound(ThaumorySounds.JAR).noOcclusion());
 
     public static final RegistrySupplier<EssentiaPipeBlock> PIPE = register("pipe", EssentiaPipeBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.3f).sound(SoundType.GLASS).noOcclusion());

@@ -4,7 +4,6 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
@@ -29,6 +28,7 @@ import one.nxeu.thaumory.infusion.ItemEssentia;
 import one.nxeu.thaumory.jar.EssentiaTransfer;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.rune.RuneInfusion;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 
 /**
  * A jar in hand. Right-clicking a Crucible, a placed jar or a circle's Core draws Essentia into it; sneaking pours
@@ -102,7 +102,7 @@ public final class JarItem extends BlockItem {
         } else {
             jar.set(ThaumoryComponents.JAR_CONTENTS.get(), updated);
         }
-        serverLevel.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0f, 1.0f);
+        serverLevel.playSound(null, player.blockPosition(), ThaumorySounds.JAR_USE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         return InteractionResult.SUCCESS;
     }
 
@@ -126,8 +126,8 @@ public final class JarItem extends BlockItem {
         }
         player.getOffhandItem().consume(1, player);
         player.getInventory().placeItemBackInInventory(RuneItem.of(result.get().aspect()), Prediction.SERVER_ONLY);
-        serverLevel.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0f, 1.0f);
-        serverLevel.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0f, 1.0f);
+        serverLevel.playSound(null, player.blockPosition(), ThaumorySounds.JAR_USE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+        serverLevel.playSound(null, player.blockPosition(), ThaumorySounds.RUNE_MADE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         return InteractionResult.SUCCESS;
     }
 
@@ -171,6 +171,6 @@ public final class JarItem extends BlockItem {
         if (result.flux() > 0) {
             ThaumoryApi.flux().add(level, ChunkPos.containing(pos), result.flux());
         }
-        level.playSound(null, pos, pour ? SoundEvents.BOTTLE_EMPTY : SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0f, 1.0f);
+        level.playSound(null, pos, ThaumorySounds.JAR_USE.get(), SoundSource.BLOCKS, 1.0f, pour ? 0.9f : 1.1f);
     }
 }

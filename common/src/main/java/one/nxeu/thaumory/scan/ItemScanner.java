@@ -27,6 +27,7 @@ import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 
 /** Scanning with the Arcane Loupe, on the server. */
 public final class ItemScanner {
@@ -80,7 +81,7 @@ public final class ItemScanner {
                 Component.translatable("message.thaumory.scan.revealed", AspectText.name(aspect, TextEffect.STREAK))));
 
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                result.revealed().isEmpty() ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.PLAYER_LEVELUP,
+                result.revealed().isEmpty() ? SoundEvents.AMETHYST_BLOCK_CHIME : ThaumorySounds.ASPECT_REVEALED.get(),
                 SoundSource.PLAYERS, 0.6f, 1.2f);
     }
 

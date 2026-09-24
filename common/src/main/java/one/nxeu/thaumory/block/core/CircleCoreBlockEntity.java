@@ -75,6 +75,7 @@ import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
@@ -420,6 +421,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         boolean known = Thaumory.knowledge().get(player).circle(combination).filter(PlayerKnowledge.CircleOutcome.SUCCESS::equals).isPresent();
         Thaumory.knowledge().update(player, k -> k.withCircle(combination, PlayerKnowledge.CircleOutcome.SUCCESS));
         if (!known) {
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ThaumorySounds.DISCOVERY.get(), SoundSource.PLAYERS,
+                    0.8f, 1.0f);
             player.sendSystemMessage(Component.translatable("message.thaumory.circle.discovered",
                     ThaumoryText.withEffect(Component.translatable(effect.toLanguageKey("circle_effect")).withColor(0xCC99FF), TextEffect.STREAK)));
         }
@@ -487,7 +490,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         ThaumoryApi.flux().add(server, ChunkPos.containing(worldPosition), amount);
         server.sendParticles(ParticleTypes.WITCH, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5,
                 12, 0.6, 0.2, 0.6, 0);
-        server.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.3f, 1.4f);
+        server.playSound(null, worldPosition, ThaumorySounds.CIRCLE_FLUX.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
     }
 
     public boolean isRunning() {

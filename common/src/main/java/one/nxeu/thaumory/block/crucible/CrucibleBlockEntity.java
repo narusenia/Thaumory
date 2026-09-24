@@ -45,6 +45,7 @@ import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.crucible.CrucibleTank;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.research.ResearchProgress;
+import one.nxeu.thaumory.sound.ThaumorySounds;
 
 /**
  * Heats up while there is water and a heat source below, then melts the items inside one at a
@@ -199,7 +200,7 @@ public final class CrucibleBlockEntity extends BlockEntity {
             }
             setTank(result.tank());
 
-            level.playSound(null, worldPosition, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.3f, 1.4f);
+            level.playSound(null, worldPosition, ThaumorySounds.CRUCIBLE_MELT.get(), SoundSource.BLOCKS, 0.5f, 0.9f + level.getRandom().nextFloat() * 0.2f);
             level.sendParticles(ParticleTypes.SPLASH, entity.getX(), entity.getY(), entity.getZ(), 6, 0.15, 0.05, 0.15, 0);
             return;
         }
@@ -233,7 +234,7 @@ public final class CrucibleBlockEntity extends BlockEntity {
         setTank(new CrucibleTank(tank.contents().minus(recipe.aspects()), tank.water(), tank.essentiaSinceWaterDrop()));
         popOut(level, result);
 
-        level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 0.8f, 1.2f);
+        level.playSound(null, worldPosition, ThaumorySounds.CRUCIBLE_ALCHEMY.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         level.sendParticles(ParticleTypes.ENCHANT, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
                 20, 0.3, 0.3, 0.3, 0.5);
     }

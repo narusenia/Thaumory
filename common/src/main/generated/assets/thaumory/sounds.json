@@ -1,0 +1,162 @@
+{
+  "block.circle_core.activate": {
+    "sounds": [
+      {
+        "name": "thaumory:circle/activate",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.circle_core.activate"
+  },
+  "block.circle_core.deactivate": {
+    "sounds": [
+      {
+        "name": "thaumory:circle/deactivate",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.circle_core.deactivate"
+  },
+  "block.circle_core.flux": {
+    "sounds": [
+      {
+        "name": "thaumory:circle/flux",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.circle_core.flux"
+  },
+  "block.circle_core.infuse": {
+    "sounds": [
+      {
+        "name": "thaumory:circle/infuse",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.circle_core.infuse"
+  },
+  "block.crucible.alchemy": {
+    "sounds": [
+      {
+        "name": "thaumory:crucible/alchemy",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.crucible.alchemy"
+  },
+  "block.crucible.melt": {
+    "sounds": [
+      {
+        "name": "thaumory:crucible/melt",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.crucible.melt"
+  },
+  "block.jar.break": {
+    "sounds": [
+      {
+        "name": "thaumory:jar/use1",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use2",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use3",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use4",
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.jar.break"
+  },
+  "block.jar.place": {
+    "sounds": [
+      {
+        "name": "thaumory:jar/use1",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use2",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use3",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use4",
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.thaumory.block.jar.place"
+  },
+  "item.arcane_codex.page": {
+    "sounds": [
+      "thaumory:codex/page1",
+      "thaumory:codex/page2"
+    ],
+    "subtitle": "subtitles.thaumory.item.arcane_codex.page"
+  },
+  "item.arcane_loupe.reveal": {
+    "sounds": [
+      {
+        "name": "thaumory:research/reveal",
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.thaumory.item.arcane_loupe.reveal"
+  },
+  "item.jar.use": {
+    "sounds": [
+      {
+        "name": "thaumory:jar/use1",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use2",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use3",
+        "volume": 0.4
+      },
+      {
+        "name": "thaumory:jar/use4",
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.thaumory.item.jar.use"
+  },
+  "item.rune.made": {
+    "sounds": [
+      {
+        "name": "thaumory:rune/made",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.item.rune.made"
+  },
+  "item.transcript.write": {
+    "sounds": [
+      {
+        "name": "thaumory:research/transcribe",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.item.transcript.write"
+  },
+  "research.discovery": {
+    "sounds": [
+      {
+        "name": "thaumory:research/discover",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.thaumory.research.discovery"
+  }
+}
