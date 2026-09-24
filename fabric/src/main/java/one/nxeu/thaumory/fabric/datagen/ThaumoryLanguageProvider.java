@@ -69,7 +69,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.rune.not_enough", "A rune takes %s Essentia of one aspect");
             builder.add(ThaumoryBlocks.JAR.get(), "Jar");
             builder.add(ThaumoryBlocks.PIPE.get(), "Essentia Pipe");
-            builder.add(ThaumoryBlocks.PEDESTAL.get(), "Pedestal");
+            builder.add(ThaumoryItems.PEDESTAL.get(), "Pedestal");
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "Infused:");
             builder.add("message.thaumory.infusion.infused", "Infused: %s");
@@ -248,7 +248,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.rune.not_enough", "ルーンには 1 種類のアスペクトの Essentia が %s 必要");
             builder.add(ThaumoryBlocks.JAR.get(), "瓶");
             builder.add(ThaumoryBlocks.PIPE.get(), "Essentia のパイプ");
-            builder.add(ThaumoryBlocks.PEDESTAL.get(), "台座");
+            builder.add(ThaumoryItems.PEDESTAL.get(), "台座");
             builder.add("infusion.thaumory.entry", "%s %s");
             builder.add("tooltip.thaumory.infusions", "焼き付けた効果:");
             builder.add("message.thaumory.infusion.infused", "注入した: %s");

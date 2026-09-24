@@ -1,7 +1,17 @@
 {
-  "variants": {
-    "": {
-      "model": "thaumory:block/circle_core"
+  "multipart": [
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core_pedestal"
+      },
+      "when": {
+        "pedestal": "true"
+      }
     }
-  }
+  ]
 }

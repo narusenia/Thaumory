@@ -15,14 +15,13 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
-import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
 import one.nxeu.thaumory.infusion.InfusionText;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
  * The working tool for magic circles. Right-clicking a Core starts or stops a sustained circle, or
  * sets off a triggered one once, and says how it went on the action bar. With an item on the
- * pedestal over the Core, it infuses that item instead; the pedestal can be clicked too.
+ * Core's pedestal, it infuses that item instead. A sneaking right click takes the pedestal out.
  */
 public final class WandItem extends Item {
     public WandItem(Properties properties) {
@@ -33,23 +32,27 @@ public final class WandItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();
         Level world = context.getLevel();
-        Optional<CircleCoreBlockEntity> clicked = world.getBlockEntity(pos) instanceof CircleCoreBlockEntity core ? Optional.of(core)
-                : world.getBlockEntity(pos) instanceof PedestalBlockEntity && world.getBlockEntity(pos.below()) instanceof CircleCoreBlockEntity below
-                        ? Optional.of(below) : Optional.empty();
-        if (clicked.isEmpty()) {
+        if (!(world.getBlockEntity(pos) instanceof CircleCoreBlockEntity core)) {
             return InteractionResult.PASS;
         }
-        CircleCoreBlockEntity core = clicked.get();
-        if (core.pedestal().filter(pedestal -> !pedestal.item().isEmpty()).isPresent()) {
-            if (world instanceof ServerLevel level && context.getPlayer() != null) {
-                infuse(level, core, context.getPlayer());
+        Player user = context.getPlayer();
+        if (user != null && user.isShiftKeyDown()) {
+            if (!core.hasPedestal()) {
+                return InteractionResult.PASS;
+            }
+            if (world instanceof ServerLevel level) {
+                core.removePedestal(user);
+                level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
             }
             return InteractionResult.SUCCESS;
         }
-        if (!(world.getBlockEntity(pos) instanceof CircleCoreBlockEntity)) {
-            return InteractionResult.PASS;
+        if (core.hasPedestal() && !core.pedestalItem().isEmpty()) {
+            if (world instanceof ServerLevel level && user != null) {
+                infuse(level, core, user);
+            }
+            return InteractionResult.SUCCESS;
         }
-        if (world instanceof ServerLevel level && context.getPlayer() != null) {
+        if (world instanceof ServerLevel level && user != null) {
             Player player = context.getPlayer();
             Outcome outcome = operate(core, player);
             MutableComponent message = Component.translatable("message.thaumory.wand." + outcome.key);

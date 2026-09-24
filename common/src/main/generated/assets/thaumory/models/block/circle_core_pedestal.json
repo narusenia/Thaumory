@@ -1,0 +1,8 @@
+{
+  "parent": "thaumory:block/template_pedestal",
+  "textures": {
+    "band": "thaumory:block/circle_core_pedestal_band",
+    "side": "thaumory:block/circle_core_pedestal_side",
+    "top": "thaumory:block/circle_core_pedestal_top"
+  }
+}

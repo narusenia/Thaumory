@@ -23,8 +23,6 @@ import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
-import one.nxeu.thaumory.block.pedestal.PedestalBlock;
-import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
@@ -55,10 +53,6 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<PumpBlock> PUMP = register("pump", PumpBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.5f).sound(SoundType.METAL).noOcclusion());
 
-    public static final RegistrySupplier<PedestalBlock> PEDESTAL = register("pedestal", PedestalBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
-                    .strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
-
     public static final RegistrySupplier<CircleCoreBlock> CIRCLE_CORE = register("circle_core", CircleCoreBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
                     .strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
@@ -86,9 +80,6 @@ public final class ThaumoryBlocks {
 
     public static final RegistrySupplier<BlockEntityType<PipeBlockEntity>> PIPE_ENTITY = BLOCK_ENTITIES.register(
             "pipe", () -> new BlockEntityType<>(PipeBlockEntity::new, Set.of(PIPE.get(), FILTER_PIPE.get(), VALVE.get(), PUMP.get())));
-
-    public static final RegistrySupplier<BlockEntityType<PedestalBlockEntity>> PEDESTAL_ENTITY = BLOCK_ENTITIES.register(
-            "pedestal", () -> new BlockEntityType<>(PedestalBlockEntity::new, Set.of(PEDESTAL.get())));
 
     private ThaumoryBlocks() {}
 

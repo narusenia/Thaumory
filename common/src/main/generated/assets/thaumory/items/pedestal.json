@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "thaumory:block/pedestal"
+    "model": "thaumory:block/circle_core_pedestal"
   }
 }

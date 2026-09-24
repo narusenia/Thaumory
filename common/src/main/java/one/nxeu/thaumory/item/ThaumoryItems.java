@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -60,9 +61,10 @@ public final class ThaumoryItems {
             register("pump", properties -> new BlockItem(ThaumoryBlocks.PUMP.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
-    public static final RegistrySupplier<BlockItem> PEDESTAL =
-            register("pedestal", properties -> new BlockItem(ThaumoryBlocks.PEDESTAL.get(), properties),
-                    new Item.Properties().useBlockDescriptionPrefix());
+    /** Built into a circle core rather than placed on its own (requirements §10.1). */
+    public static final RegistrySupplier<Item> PEDESTAL = register("pedestal", Item::new, new Item.Properties());
+    /** Thaumory's own tools, which keep working on a core with a pedestal instead of going onto it. */
+    public static final TagKey<Item> PEDESTAL_IGNORED = TagKey.create(Registries.ITEM, Thaumory.id("pedestal_ignored"));
 
     public static final RegistrySupplier<BlockItem> CIRCLE_CORE =
             register("circle_core", properties -> new BlockItem(ThaumoryBlocks.CIRCLE_CORE.get(), properties),

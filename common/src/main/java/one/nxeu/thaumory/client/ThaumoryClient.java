@@ -74,7 +74,6 @@ public final class ThaumoryClient {
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), CircleCoreRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.PIPE_ENTITY.get(), PipeRenderer::new);
-        BlockEntityRendererRegistry.register(ThaumoryBlocks.PEDESTAL_ENTITY.get(), PedestalRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
         RuneTint.register();
         FilterPipeTint.register();

@@ -23,9 +23,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -48,7 +50,6 @@ import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
-import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
 import one.nxeu.thaumory.circle.CircleDefinitionReloadListener;
 import one.nxeu.thaumory.circle.CircleDefinitions;
 import one.nxeu.thaumory.circle.CircleIndex;
@@ -65,6 +66,7 @@ import one.nxeu.thaumory.infusion.Infusion;
 import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.text.ThaumoryText;
@@ -130,6 +132,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
     private List<Identifier> runes = List.of();
     private AspectList essentia = AspectList.empty();
+    private ItemStack pedestalItem = ItemStack.EMPTY;
     private CircleScan scan = UNSCANNED;
     private int instability;
     /** The server's view, as last received. Only meaningful on the client. */
@@ -547,10 +550,37 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         return TriggerResult.TRIGGERED;
     }
 
-    /** The pedestal standing on this Core, if any. */
-    public Optional<PedestalBlockEntity> pedestal() {
-        return level != null && level.getBlockEntity(worldPosition.above()) instanceof PedestalBlockEntity pedestal
-                ? Optional.of(pedestal) : Optional.empty();
+    public boolean hasPedestal() {
+        return getBlockState().getValue(CircleCoreBlock.PEDESTAL);
+    }
+
+    /** The item on the built-in pedestal; empty without one. */
+    public ItemStack pedestalItem() {
+        return pedestalItem;
+    }
+
+    public void setPedestalItem(ItemStack stack) {
+        pedestalItem = stack;
+        setChanged();
+        sync();
+    }
+
+    public ItemStack takePedestalItem() {
+        ItemStack taken = pedestalItem;
+        setPedestalItem(ItemStack.EMPTY);
+        return taken;
+    }
+
+    /** Takes the pedestal out again, with whatever is on it; both go to {@code player}. */
+    public void removePedestal(Player player) {
+        if (level == null || !hasPedestal()) {
+            return;
+        }
+        if (!pedestalItem.isEmpty()) {
+            player.getInventory().placeItemBackInInventory(takePedestalItem(), Prediction.SERVER_ONLY);
+        }
+        player.getInventory().placeItemBackInInventory(new ItemStack(ThaumoryItems.PEDESTAL.get()), Prediction.SERVER_ONLY);
+        level.setBlock(worldPosition, getBlockState().setValue(CircleCoreBlock.PEDESTAL, false), Block.UPDATE_ALL);
     }
 
     /**
@@ -562,8 +592,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel server)) {
             return InfuseOutcome.of(InfuseResult.UNDEFINED);
         }
-        Optional<PedestalBlockEntity> pedestal = pedestal().filter(p -> !p.item().isEmpty());
-        if (pedestal.isEmpty()) {
+        if (!hasPedestal() || pedestalItem.isEmpty()) {
             return InfuseOutcome.of(InfuseResult.NO_ITEM);
         }
         if (scan.rings() == 0) {
@@ -573,7 +602,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (circle.isEmpty()) {
             return InfuseOutcome.of(misfire(server, activator) ? InfuseResult.MISFIRED : InfuseResult.UNDEFINED);
         }
-        ItemStack stack = pedestal.get().item();
+        ItemStack stack = pedestalItem;
         if (stack.isStackable()) {
             return InfuseOutcome.of(InfuseResult.STACKABLE);
         }
@@ -595,9 +624,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         ItemStack infused = stack.copy();
         infused.set(ThaumoryComponents.INFUSIONS.get(),
                 infused.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).with(burnt));
-        pedestal.get().setItem(infused);
-        BlockPos above = worldPosition.above();
-        server.sendParticles(ParticleTypes.ENCHANT, above.getX() + 0.5, above.getY() + 1.2, above.getZ() + 0.5, 40, 0.3, 0.3, 0.3, 0.6);
+        setPedestalItem(infused);
+        server.sendParticles(ParticleTypes.ENCHANT, worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,
+                40, 0.3, 0.3, 0.3, 0.6);
         recordSuccess(activator, definition.effect());
         return new InfuseOutcome(InfuseResult.INFUSED, Optional.of(burnt));
     }
@@ -738,6 +767,12 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             for (Identifier aspect : runes) {
                 Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, RuneItem.of(aspect));
             }
+            if (state.getValue(CircleCoreBlock.PEDESTAL)) {
+                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ThaumoryItems.PEDESTAL.get()));
+            }
+            if (!pedestalItem.isEmpty()) {
+                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, pedestalItem);
+            }
             if (essentia.total() > 0) {
                 ThaumoryApi.flux().add(server, ChunkPos.containing(pos), essentia.total());
             }
@@ -748,6 +783,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+        if (!pedestalItem.isEmpty()) {
+            output.store("pedestal_item", ItemStack.CODEC, pedestalItem);
+        }
         if (!runes.isEmpty()) {
             output.store("runes", RUNES_CODEC, runes);
         }
@@ -768,6 +806,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         super.loadAdditional(input);
         runes = input.read("runes", RUNES_CODEC).orElse(List.of());
         essentia = input.read("essentia", ESSENTIA_CODEC).orElse(AspectList.empty());
+        pedestalItem = input.read("pedestal_item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
         running = input.read("running", Identifier.CODEC);
         runningEffect = input.read("running_effect", Identifier.CODEC).orElse(null);
         runningRunes = input.read("running_runes", RUNES_CODEC).orElse(runes);

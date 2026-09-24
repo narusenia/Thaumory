@@ -25,7 +25,6 @@ import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CircleCoreBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.jar.JarBlock;
-import one.nxeu.thaumory.block.pedestal.PedestalBlock;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.block.pipe.PumpBlock;
@@ -110,15 +109,15 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         CircleCoreBlock core = ThaumoryBlocks.CIRCLE_CORE.get();
         Identifier coreModel = CHALK_PATTERN.create(core,
                 new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(core, "_center")), generators.modelOutput);
-        generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(core, BlockModelGenerators.plainVariant(coreModel)));
-
-        PedestalBlock pedestal = ThaumoryBlocks.PEDESTAL.get();
-        Identifier pedestalModel = PEDESTAL.create(pedestal, new TextureMapping()
-                .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(pedestal, "_side"))
-                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(pedestal, "_top"))
-                .put(BAND, TextureMapping.getBlockTexture(pedestal, "_band")), generators.modelOutput);
-        generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(pedestal, BlockModelGenerators.plainVariant(pedestalModel)));
-        generators.registerSimpleItemModel(pedestal, pedestalModel);
+        // A built-in pedestal stands over the mark as a slim altar.
+        Identifier pedestalModel = PEDESTAL.createWithSuffix(core, "_pedestal", new TextureMapping()
+                .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(core, "_pedestal_side"))
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(core, "_pedestal_top"))
+                .put(BAND, TextureMapping.getBlockTexture(core, "_pedestal_band")), generators.modelOutput);
+        generators.blockStateOutput.accept(MultiPartGenerator.multiPart(core)
+                .with(BlockModelGenerators.plainVariant(coreModel))
+                .with(new ConditionBuilder().term(CircleCoreBlock.PEDESTAL, true), BlockModelGenerators.plainVariant(pedestalModel)));
+        generators.itemModelOutput.accept(ThaumoryItems.PEDESTAL.get(), ItemModelUtils.plainModel(pedestalModel));
 
         EssentiaPipeBlock pipe = ThaumoryBlocks.PIPE.get();
         TextureMapping pipeTextures = pipeTextures(TextureMapping.getBlockTexture(pipe));
