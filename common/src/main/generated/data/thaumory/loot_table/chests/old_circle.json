@@ -1,0 +1,313 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:ignis"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:aer"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:vita"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:aqua"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:terra"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:mors"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:lux"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:ordo"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:herba"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "aspect",
+                "aspect": "thaumory:vinculum"
+              }
+            }
+          },
+          "name": "thaumory:transcript",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "circle",
+                "combination": {
+                  "first": "thaumory:ignis",
+                  "second": "thaumory:lux"
+                }
+              }
+            }
+          },
+          "name": "thaumory:transcript"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "circle",
+                "combination": {
+                  "first": "thaumory:ordo",
+                  "second": "thaumory:vita"
+                }
+              }
+            }
+          },
+          "name": "thaumory:transcript"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "thaumory:transcript": {
+                "type": "circle",
+                "combination": {
+                  "first": "thaumory:lux",
+                  "second": "thaumory:ordo"
+                }
+              }
+            }
+          },
+          "name": "thaumory:transcript"
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 2,
+        "min": 1
+      }
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 2,
+              "min": 1
+            }
+          },
+          "name": "thaumory:blank_rune",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_damage",
+            "damage": {
+              "type": "minecraft:uniform",
+              "max": 0.7,
+              "min": 0.3
+            }
+          },
+          "name": "thaumory:chalk",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:empty"
+        }
+      ],
+      "rolls": 2
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 4,
+              "min": 2
+            }
+          },
+          "name": "thaumory:arcane_crystal_shard"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 3,
+              "min": 1
+            }
+          },
+          "name": "minecraft:paper",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 2,
+              "min": 1
+            }
+          },
+          "name": "minecraft:ink_sac",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 6,
+              "min": 2
+            }
+          },
+          "name": "minecraft:gold_nugget",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 2,
+              "min": 1
+            }
+          },
+          "name": "minecraft:candle"
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 4,
+        "min": 2
+      }
+    }
+  ]
+}

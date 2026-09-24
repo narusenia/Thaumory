@@ -14,7 +14,8 @@
       "one.nxeu.thaumory.fabric.gametest.InfusionGameTests",
       "one.nxeu.thaumory.fabric.gametest.EquipmentGameTests",
       "one.nxeu.thaumory.fabric.gametest.WallCircleGameTests",
-      "one.nxeu.thaumory.fabric.gametest.CrystalGameTests"
+      "one.nxeu.thaumory.fabric.gametest.CrystalGameTests",
+      "one.nxeu.thaumory.fabric.gametest.OldCircleGameTests"
     ]
   },
   "depends": {
