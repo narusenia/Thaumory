@@ -34,6 +34,15 @@ public final class CircleUpkeep {
         return pay(stored, AspectList.builder().add(first, 1).add(second, 1).build());
     }
 
+    /**
+     * @return what the Core holds after an effect pays {@code amount}, scaled by the cost multiplier
+     *     and rounded (at least 1), from each effect rune for work it does, or empty if it cannot pay
+     */
+    public static Optional<AspectList> payWork(AspectList stored, Aspect first, Aspect second, int amount, double costMultiplier) {
+        int each = triggeredCost(amount, costMultiplier);
+        return pay(stored, AspectList.builder().add(first, each).add(second, each).build());
+    }
+
     private static Optional<AspectList> pay(AspectList stored, AspectList needed) {
         return stored.containsAll(needed) ? Optional.of(stored.minus(needed)) : Optional.empty();
     }

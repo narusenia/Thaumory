@@ -221,6 +221,15 @@ class CircleRulesTest {
     }
 
     @Test
+    void workPaysScaledAmountsFromBothRunesButNotSlot3() {
+        AspectList stored = AspectList.of(new AspectStack(ARCANUM, 3), new AspectStack(AER, 3), new AspectStack(LUX, 2));
+
+        assertEquals(AspectList.of(new AspectStack(ARCANUM, 1), new AspectStack(AER, 1), new AspectStack(LUX, 2)),
+                CircleUpkeep.payWork(stored, ARCANUM, AER, 1, 1.5).orElseThrow());
+        assertTrue(CircleUpkeep.payWork(stored, ARCANUM, AER, 4, 1.0).isEmpty(), "both run short");
+    }
+
+    @Test
     void sameAspectInBothSlotsPaysTwice() {
         assertTrue(CircleUpkeep.paySustained(AspectList.of(LUX, 1), LUX, LUX).isEmpty());
         assertEquals(AspectList.empty(), CircleUpkeep.paySustained(AspectList.of(LUX, 2), LUX, LUX).orElseThrow());
