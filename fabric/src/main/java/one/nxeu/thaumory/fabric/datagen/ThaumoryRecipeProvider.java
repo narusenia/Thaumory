@@ -90,7 +90,7 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .pattern(" G ")
                         .define('S', Items.STONE_BRICK_SLAB)
                         .define('G', Items.GOLD_INGOT)
-                        .unlockedBy(getHasName(ThaumoryItems.CORE.get()), has(ThaumoryItems.CORE.get()))
+                        .unlockedBy(getHasName(ThaumoryItems.CIRCLE_CORE.get()), has(ThaumoryItems.CIRCLE_CORE.get()))
                         .save(output);
                 shaped(RecipeCategory.BREWING, ThaumoryItems.JAR.get())
                         .pattern(" W ")
@@ -108,7 +108,7 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .define('S', Items.STICK)
                         .unlockedBy(getHasName(Items.GOLD_NUGGET), has(Items.GOLD_NUGGET))
                         .save(output);
-                shaped(RecipeCategory.MISC, ThaumoryItems.CORE.get())
+                shaped(RecipeCategory.MISC, ThaumoryItems.CIRCLE_CORE.get())
                         .pattern("SGS")
                         .pattern("GRG")
                         .pattern("SGS")

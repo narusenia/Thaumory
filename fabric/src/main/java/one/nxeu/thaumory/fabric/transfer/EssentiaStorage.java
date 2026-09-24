@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.essentia.EssentiaContainer;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import org.jspecify.annotations.Nullable;
@@ -34,6 +34,6 @@ public final class EssentiaStorage {
     public static void register() {
         SIDED.registerForBlockEntities((entity, side) -> of(((CrucibleBlockEntity) entity).container()), ThaumoryBlocks.CRUCIBLE_ENTITY.get());
         SIDED.registerForBlockEntities((entity, side) -> of(((JarBlockEntity) entity).container()), ThaumoryBlocks.JAR_ENTITY.get());
-        SIDED.registerForBlockEntities((entity, side) -> of(((CoreBlockEntity) entity).container()), ThaumoryBlocks.CORE_ENTITY.get());
+        SIDED.registerForBlockEntities((entity, side) -> of(((CircleCoreBlockEntity) entity).container()), ThaumoryBlocks.CIRCLE_CORE_ENTITY.get());
     }
 }

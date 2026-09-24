@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_core": {
+    "has_circle_core": {
       "conditions": {
         "items": [
           {
-            "items": "thaumory:core"
+            "items": "thaumory:circle_core"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_core"
+      "has_circle_core"
     ]
   ],
   "rewards": {

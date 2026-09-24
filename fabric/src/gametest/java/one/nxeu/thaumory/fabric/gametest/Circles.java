@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Blocks;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 
 /** Builds one-ring circles for GameTests: stone underfoot, a Core, its runes and a full store of Essentia. */
 final class Circles {
@@ -22,7 +22,7 @@ final class Circles {
     }
 
     /** A Core at {@code core} (relative) inside a ring of plain chalk, holding {@code runes} in slot order. */
-    static CoreBlockEntity build(GameTestHelper helper, BlockPos core, Aspect... runes) {
+    static CircleCoreBlockEntity build(GameTestHelper helper, BlockPos core, Aspect... runes) {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 helper.setBlock(core.offset(dx, -1, dz), Blocks.STONE);
@@ -31,12 +31,12 @@ final class Circles {
                 }
             }
         }
-        helper.setBlock(core, ThaumoryBlocks.CORE.get());
-        CoreBlockEntity entity = helper.getBlockEntity(core, CoreBlockEntity.class);
+        helper.setBlock(core, ThaumoryBlocks.CIRCLE_CORE.get());
+        CircleCoreBlockEntity entity = helper.getBlockEntity(core, CircleCoreBlockEntity.class);
         AspectList.Builder essentia = AspectList.builder();
         for (Aspect rune : runes) {
             entity.insert(rune.id());
-            essentia.add(rune, CoreBlockEntity.capacity());
+            essentia.add(rune, CircleCoreBlockEntity.capacity());
         }
         entity.setEssentia(essentia.build());
         entity.rescan();

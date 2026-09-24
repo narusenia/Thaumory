@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.jar.EssentiaTransfer;
@@ -40,7 +40,7 @@ public final class JarItem extends BlockItem {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockEntity target = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (!(target instanceof CrucibleBlockEntity) && !(target instanceof JarBlockEntity) && !(target instanceof CoreBlockEntity)) {
+        if (!(target instanceof CrucibleBlockEntity) && !(target instanceof JarBlockEntity) && !(target instanceof CircleCoreBlockEntity)) {
             Player player = context.getPlayer();
             if (player != null && pouringIntoRune(player, context.getHand())) {
                 return infuseRune(context.getLevel(), player, context.getItemInHand());
@@ -108,10 +108,10 @@ public final class JarItem extends BlockItem {
                     ? EssentiaTransfer.pour(held.aspects(), placed.aspects(), placed.label(), capacity, false, true, registry)
                     : EssentiaTransfer.draw(placed.aspects(), held.aspects(), held.label(), capacity, registry);
             jar.setContents(placed.withAspects(pour ? result.to() : result.from()));
-        } else if (target instanceof CoreBlockEntity core) {
+        } else if (target instanceof CircleCoreBlockEntity core) {
             // A Core keeps each aspect apart, so nothing cancels and only its runes' aspects go in.
             result = pour
-                    ? EssentiaTransfer.pourSeparated(held.aspects(), core.essentia(), core.acceptedAspects(), CoreBlockEntity.capacity())
+                    ? EssentiaTransfer.pourSeparated(held.aspects(), core.essentia(), core.acceptedAspects(), CircleCoreBlockEntity.capacity())
                     : EssentiaTransfer.draw(core.essentia(), held.aspects(), held.label(), capacity, registry);
             core.setEssentia(pour ? result.to() : result.from());
         } else {

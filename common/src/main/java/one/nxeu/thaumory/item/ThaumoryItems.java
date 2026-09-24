@@ -64,8 +64,8 @@ public final class ThaumoryItems {
             register("pedestal", properties -> new BlockItem(ThaumoryBlocks.PEDESTAL.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
-    public static final RegistrySupplier<BlockItem> CORE =
-            register("core", properties -> new BlockItem(ThaumoryBlocks.CORE.get(), properties),
+    public static final RegistrySupplier<BlockItem> CIRCLE_CORE =
+            register("circle_core", properties -> new BlockItem(ThaumoryBlocks.CIRCLE_CORE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
 
     public static final RegistrySupplier<BlockItem> POLLUTED_SOIL =
@@ -79,7 +79,7 @@ public final class ThaumoryItems {
 
     /** Every Thaumory item, in the order the creative tab shows them. Runes come once per aspect. */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CORE, PEDESTAL,
+            ARCANE_LOUPE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
 
     public static final RegistrySupplier<CreativeModeTab> TAB = TABS.register("thaumory", () -> CreativeTabRegistry.create(builder -> builder

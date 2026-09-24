@@ -31,7 +31,7 @@ final class ThaumoryBlockTagProvider extends FabricTagsProvider.BlockTagsProvide
                 ThaumoryBlocks.ECONOMIZING_PATTERN, ThaumoryBlocks.STABILIZING_PATTERN)) {
             patterns.add(key(pattern.get()));
         }
-        builder(BlockTags.MINEABLE_WITH_PICKAXE).add(key(ThaumoryBlocks.CRUCIBLE.get())).add(key(ThaumoryBlocks.CORE.get())).add(key(ThaumoryBlocks.PEDESTAL.get()))
+        builder(BlockTags.MINEABLE_WITH_PICKAXE).add(key(ThaumoryBlocks.CRUCIBLE.get())).add(key(ThaumoryBlocks.CIRCLE_CORE.get())).add(key(ThaumoryBlocks.PEDESTAL.get()))
                 .add(key(ThaumoryBlocks.POLLUTED_STONE.get()));
         builder(BlockTags.MINEABLE_WITH_SHOVEL).add(key(ThaumoryBlocks.POLLUTED_SOIL.get()));
     }

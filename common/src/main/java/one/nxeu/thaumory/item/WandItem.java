@@ -14,7 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import one.nxeu.thaumory.api.text.TextEffect;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
 import one.nxeu.thaumory.infusion.InfusionText;
 import one.nxeu.thaumory.text.ThaumoryText;
@@ -33,20 +33,20 @@ public final class WandItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();
         Level world = context.getLevel();
-        Optional<CoreBlockEntity> clicked = world.getBlockEntity(pos) instanceof CoreBlockEntity core ? Optional.of(core)
-                : world.getBlockEntity(pos) instanceof PedestalBlockEntity && world.getBlockEntity(pos.below()) instanceof CoreBlockEntity below
+        Optional<CircleCoreBlockEntity> clicked = world.getBlockEntity(pos) instanceof CircleCoreBlockEntity core ? Optional.of(core)
+                : world.getBlockEntity(pos) instanceof PedestalBlockEntity && world.getBlockEntity(pos.below()) instanceof CircleCoreBlockEntity below
                         ? Optional.of(below) : Optional.empty();
         if (clicked.isEmpty()) {
             return InteractionResult.PASS;
         }
-        CoreBlockEntity core = clicked.get();
+        CircleCoreBlockEntity core = clicked.get();
         if (core.pedestal().filter(pedestal -> !pedestal.item().isEmpty()).isPresent()) {
             if (world instanceof ServerLevel level && context.getPlayer() != null) {
                 infuse(level, core, context.getPlayer());
             }
             return InteractionResult.SUCCESS;
         }
-        if (!(world.getBlockEntity(pos) instanceof CoreBlockEntity)) {
+        if (!(world.getBlockEntity(pos) instanceof CircleCoreBlockEntity)) {
             return InteractionResult.PASS;
         }
         if (world instanceof ServerLevel level && context.getPlayer() != null) {
@@ -80,9 +80,9 @@ public final class WandItem extends Item {
         }
     }
 
-    private static void infuse(ServerLevel level, CoreBlockEntity core, Player player) {
+    private static void infuse(ServerLevel level, CircleCoreBlockEntity core, Player player) {
         core.rescan();
-        CoreBlockEntity.InfuseOutcome outcome = core.infuse(Optional.of(player));
+        CircleCoreBlockEntity.InfuseOutcome outcome = core.infuse(Optional.of(player));
         MutableComponent message = switch (outcome.result()) {
             case INFUSED -> Component.translatable("message.thaumory.infusion.infused", InfusionText.describe(outcome.infusion().orElseThrow()));
             case FAILED -> ThaumoryText.withEffect(Component.translatable("message.thaumory.infusion.failed"), TextEffect.SHAKE);
@@ -101,7 +101,7 @@ public final class WandItem extends Item {
         }, SoundSource.BLOCKS, 0.8f, 1.0f);
     }
 
-    private static Outcome operate(CoreBlockEntity core, Player player) {
+    private static Outcome operate(CircleCoreBlockEntity core, Player player) {
         if (core.isRunning()) {
             core.stop();
             return Outcome.STOPPED;

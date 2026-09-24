@@ -15,7 +15,7 @@ import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.fabric.transfer.EssentiaStorage;
@@ -117,16 +117,16 @@ public class EssentiaStorageGameTests {
 
     @GameTest
     public void coreTakesOnlyItsRunesAndGivesNothing(GameTestHelper helper) {
-        helper.setBlock(POS, ThaumoryBlocks.CORE.get());
-        CoreBlockEntity core = helper.getBlockEntity(POS, CoreBlockEntity.class);
+        helper.setBlock(POS, ThaumoryBlocks.CIRCLE_CORE.get());
+        CircleCoreBlockEntity core = helper.getBlockEntity(POS, CircleCoreBlockEntity.class);
         core.insert(ThaumoryAspects.LUX.id());
         core.insert(ThaumoryAspects.IGNIS.id());
         Storage<EssentiaVariant> storage = storage(helper);
 
-        helper.assertValueEqual(insert(storage, ThaumoryAspects.LUX, 1000), (long) CoreBlockEntity.capacity(), "Lux put in");
+        helper.assertValueEqual(insert(storage, ThaumoryAspects.LUX, 1000), (long) CircleCoreBlockEntity.capacity(), "Lux put in");
         helper.assertValueEqual(insert(storage, ThaumoryAspects.AQUA, 10), 0L, "Aqua put in");
         helper.assertValueEqual(extract(storage, ThaumoryAspects.LUX, 10), 0L, "Lux taken");
-        helper.assertValueEqual(core.essentia(), AspectList.of(ThaumoryAspects.LUX, CoreBlockEntity.capacity()), "contents");
+        helper.assertValueEqual(core.essentia(), AspectList.of(ThaumoryAspects.LUX, CircleCoreBlockEntity.capacity()), "contents");
         helper.succeed();
     }
 }

@@ -72,7 +72,7 @@ public final class ThaumoryClient {
         });
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
-        BlockEntityRendererRegistry.register(ThaumoryBlocks.CORE_ENTITY.get(), CoreRenderer::new);
+        BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), CircleCoreRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.PIPE_ENTITY.get(), PipeRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.PEDESTAL_ENTITY.get(), PedestalRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);

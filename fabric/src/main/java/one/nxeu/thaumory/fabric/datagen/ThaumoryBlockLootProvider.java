@@ -20,7 +20,7 @@ final class ThaumoryBlockLootProvider extends FabricBlockLootSubProvider {
     @Override
     public void generate() {
         dropSelf(ThaumoryBlocks.CRUCIBLE.get());
-        dropSelf(ThaumoryBlocks.CORE.get());
+        dropSelf(ThaumoryBlocks.CIRCLE_CORE.get());
         dropSelf(ThaumoryBlocks.PEDESTAL.get());
         dropSelf(ThaumoryBlocks.PIPE.get());
         dropSelf(ThaumoryBlocks.FILTER_PIPE.get());

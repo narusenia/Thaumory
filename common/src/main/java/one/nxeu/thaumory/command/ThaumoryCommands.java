@@ -30,7 +30,7 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.flux.FluxManager;
 import one.nxeu.thaumory.flux.FluxWorldEffects;
@@ -169,10 +169,10 @@ public final class ThaumoryCommands {
     }
 
     /** Rescans the Core at {@code pos}, runs {@code action} on it and prints the result, then the Core's state. */
-    private static int withCore(CommandContext<CommandSourceStack> context, java.util.function.Function<CoreBlockEntity, String> action)
+    private static int withCore(CommandContext<CommandSourceStack> context, java.util.function.Function<CircleCoreBlockEntity, String> action)
             throws CommandSyntaxException {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "pos");
-        if (!(context.getSource().getLevel().getBlockEntity(pos) instanceof CoreBlockEntity core)) {
+        if (!(context.getSource().getLevel().getBlockEntity(pos) instanceof CircleCoreBlockEntity core)) {
             context.getSource().sendFailure(Component.literal("No Core at " + pos.toShortString()));
             return 0;
         }
@@ -185,7 +185,7 @@ public final class ThaumoryCommands {
     /** Rescans the Core at {@code pos} now and prints what it sees. */
     private static int showCircle(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "pos");
-        if (!(context.getSource().getLevel().getBlockEntity(pos) instanceof CoreBlockEntity core)) {
+        if (!(context.getSource().getLevel().getBlockEntity(pos) instanceof CircleCoreBlockEntity core)) {
             context.getSource().sendFailure(Component.literal("No Core at " + pos.toShortString()));
             return 0;
         }
@@ -199,7 +199,7 @@ public final class ThaumoryCommands {
                 .collect(Collectors.joining(", "));
         context.getSource().sendSuccess(() -> Component.literal("Core at " + pos.toShortString() + ": runes " + core.runes()
                 + ", rings " + scan.rings() + ", nodes [" + nodes + "], ignored modifiers [" + ignored + "], instability "
-                + core.instability() + " (threshold " + CoreBlockEntity.settings().instabilityThreshold() + "), essentia " + core.essentia()
+                + core.instability() + " (threshold " + CircleCoreBlockEntity.settings().instabilityThreshold() + "), essentia " + core.essentia()
                 + ", upkeep " + core.upkeep().map(Object::toString).orElse("undefined") + ", running " + core.isRunning()), false);
         return scan.rings();
     }

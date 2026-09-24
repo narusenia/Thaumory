@@ -21,15 +21,15 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
-import one.nxeu.thaumory.block.core.CoreBlockEntity.StartResult;
-import one.nxeu.thaumory.block.core.CoreBlockEntity.TriggerResult;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity.StartResult;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity.TriggerResult;
 
 /** The eight MVP circle effects, one test per slot 3 behaviour (requirements §4.5). */
 public class CircleEffectGameTests {
     private static final BlockPos CORE = new BlockPos(4, 2, 4);
 
-    private static void start(GameTestHelper helper, CoreBlockEntity core) {
+    private static void start(GameTestHelper helper, CircleCoreBlockEntity core) {
         helper.assertValueEqual(core.start(Optional.empty()), StartResult.STARTED, "start");
     }
 
@@ -40,7 +40,7 @@ public class CircleEffectGameTests {
     @GameTest(maxTicks = 100)
     public void lightFillsDarkGroundAndClearsOnStop(GameTestHelper helper) {
         Circles.floor(helper);
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.LUX, ThaumoryAspects.IGNIS);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.LUX, ThaumoryAspects.IGNIS);
         start(helper, core);
         helper.startSequence()
                 .thenWaitUntil(() -> helper.assertTrue(lights(helper) > 0, "no light placed"))
@@ -63,7 +63,7 @@ public class CircleEffectGameTests {
 
     @GameTest(maxTicks = 60)
     public void lightWithUmbraDarkensTheLiving(GameTestHelper helper) {
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.LUX, ThaumoryAspects.IGNIS, ThaumoryAspects.UMBRA);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.LUX, ThaumoryAspects.IGNIS, ThaumoryAspects.UMBRA);
         Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, CORE.offset(2, 0, 0));
         start(helper, core);
         helper.succeedWhen(() -> helper.assertTrue(pig.hasEffect(MobEffects.DARKNESS), "pig is not in darkness"));
@@ -72,7 +72,7 @@ public class CircleEffectGameTests {
     @GameTest(maxTicks = 100)
     public void wardWithBestiaPushesAnimalsOut(GameTestHelper helper) {
         Circles.floor(helper);
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VINCULUM, ThaumoryAspects.ORDO, ThaumoryAspects.BESTIA);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VINCULUM, ThaumoryAspects.ORDO, ThaumoryAspects.BESTIA);
         Pig pig = helper.spawn(EntityTypes.PIG, CORE.offset(1, 0, 0));
         double before = pig.position().distanceTo(coreCentre(helper));
         start(helper, core);
@@ -83,7 +83,7 @@ public class CircleEffectGameTests {
     @GameTest(maxTicks = 100)
     public void attractionDrawsItemsIn(GameTestHelper helper) {
         Circles.floor(helper);
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.TEMPESTAS, ThaumoryAspects.VINCULUM);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.TEMPESTAS, ThaumoryAspects.VINCULUM);
         ItemEntity item = helper.spawnItem(Items.STONE, new BlockPos(7, 2, 4));
         start(helper, core);
         helper.succeedWhen(() -> helper.assertTrue(item.position().distanceTo(coreCentre(helper)) < 1.5,
@@ -101,7 +101,7 @@ public class CircleEffectGameTests {
                 }
             }
         }
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.HERBA, ThaumoryAspects.VITA, ThaumoryAspects.HERBA);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.HERBA, ThaumoryAspects.VITA, ThaumoryAspects.HERBA);
         start(helper, core);
         helper.succeedWhen(() -> {
             boolean grown = false;
@@ -117,7 +117,7 @@ public class CircleEffectGameTests {
 
     @GameTest(maxTicks = 60)
     public void growthWithBestiaRaisesYoungAnimals(GameTestHelper helper) {
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.HERBA, ThaumoryAspects.VITA, ThaumoryAspects.BESTIA);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.HERBA, ThaumoryAspects.VITA, ThaumoryAspects.BESTIA);
         Cow calf = helper.spawnWithNoFreeWill(EntityTypes.COW, CORE.offset(2, 0, 0));
         calf.setAge(-24000);
         start(helper, core);
@@ -126,7 +126,7 @@ public class CircleEffectGameTests {
 
     @GameTest(maxTicks = 60)
     public void healingHealsTheLiving(GameTestHelper helper) {
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VITA, ThaumoryAspects.ORDO);
         Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, CORE.offset(2, 0, 0));
         pig.setHealth(1);
         start(helper, core);
@@ -138,7 +138,7 @@ public class CircleEffectGameTests {
     public void purificationTakesFluxAndRestoresPollution(GameTestHelper helper) {
         BlockPos polluted = CORE.offset(2, -1, 0);
         helper.setBlock(polluted, ThaumoryBlocks.POLLUTED_SOIL.get());
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ORDO, ThaumoryAspects.LUX);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.ORDO, ThaumoryAspects.LUX);
         ChunkPos chunk = ChunkPos.containing(helper.absolutePos(CORE));
         Thaumory.flux().set(helper.getLevel(), chunk, 20);
         start(helper, core);
@@ -152,7 +152,7 @@ public class CircleEffectGameTests {
     public void teleportCarriesToTheMatchingCircle(GameTestHelper helper) {
         BlockPos from = new BlockPos(1, 2, 1);
         BlockPos to = new BlockPos(6, 2, 6);
-        CoreBlockEntity here = Circles.build(helper, from, ThaumoryAspects.ARCANUM, ThaumoryAspects.AER, ThaumoryAspects.TERRA);
+        CircleCoreBlockEntity here = Circles.build(helper, from, ThaumoryAspects.ARCANUM, ThaumoryAspects.AER, ThaumoryAspects.TERRA);
         Circles.build(helper, to, ThaumoryAspects.AER, ThaumoryAspects.ARCANUM, ThaumoryAspects.TERRA);
         Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, from);
         helper.assertValueEqual(here.trigger(Optional.of(pig)), TriggerResult.TRIGGERED, "trigger");
@@ -163,7 +163,7 @@ public class CircleEffectGameTests {
     public void weatherFollowsSlotThree(GameTestHelper helper) {
         var server = helper.getLevel().getServer();
         server.setWeatherParameters(6000, 0, false, false);
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.TEMPESTAS, ThaumoryAspects.ARCANUM, ThaumoryAspects.AQUA);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.TEMPESTAS, ThaumoryAspects.ARCANUM, ThaumoryAspects.AQUA);
         helper.assertValueEqual(core.trigger(Optional.empty()), TriggerResult.TRIGGERED, "trigger with Aqua");
         helper.assertTrue(server.getWeatherData().isRaining() && !server.getWeatherData().isThundering(), "Aqua did not bring rain");
 
@@ -178,16 +178,16 @@ public class CircleEffectGameTests {
     }
 
     /** A triggered circle pays from slot 3 too, so the new rune comes with its Essentia. */
-    private static void swapParameter(CoreBlockEntity core, Aspect parameter) {
+    private static void swapParameter(CircleCoreBlockEntity core, Aspect parameter) {
         core.removeLast();
         core.insert(parameter.id());
-        core.setEssentia(core.essentia().plus(AspectList.of(parameter, CoreBlockEntity.capacity())));
+        core.setEssentia(core.essentia().plus(AspectList.of(parameter, CircleCoreBlockEntity.capacity())));
     }
 
     @GameTest(maxTicks = 100)
     public void attractionWithAnAspectDrawsOnlyItemsHoldingIt(GameTestHelper helper) {
         Circles.floor(helper);
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.TEMPESTAS, ThaumoryAspects.VINCULUM, ThaumoryAspects.METALLUM);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.TEMPESTAS, ThaumoryAspects.VINCULUM, ThaumoryAspects.METALLUM);
         ItemEntity iron = helper.spawnItem(Items.IRON_INGOT, new BlockPos(7, 2, 3));
         ItemEntity stick = helper.spawnItem(Items.STICK, new BlockPos(7, 2, 5));
         double stickBefore = stick.position().distanceTo(coreCentre(helper));
@@ -201,7 +201,7 @@ public class CircleEffectGameTests {
     @GameTest(maxTicks = 100)
     public void wardWithMorsPushesTheUndeadOut(GameTestHelper helper) {
         Circles.floor(helper);
-        CoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VINCULUM, ThaumoryAspects.ORDO, ThaumoryAspects.MORS);
+        CircleCoreBlockEntity core = Circles.build(helper, CORE, ThaumoryAspects.VINCULUM, ThaumoryAspects.ORDO, ThaumoryAspects.MORS);
         Zombie zombie = helper.spawn(EntityTypes.ZOMBIE, CORE.offset(1, 0, 0));
         Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, CORE.offset(0, 0, 2));
         double before = zombie.position().distanceTo(coreCentre(helper));

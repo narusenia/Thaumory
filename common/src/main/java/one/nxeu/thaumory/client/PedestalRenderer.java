@@ -18,7 +18,7 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import one.nxeu.thaumory.Thaumory;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.pedestal.PedestalBlockEntity;
 
 /**
@@ -55,7 +55,7 @@ final class PedestalRenderer implements BlockEntityRenderer<PedestalBlockEntity,
         items.updateForTopItem(state.item, pedestal.item(), ItemDisplayContext.GROUND, pedestal.getLevel(), null,
                 (int) pedestal.getBlockPos().asLong());
         state.time = pedestal.getLevel() == null ? 0 : pedestal.getLevel().getGameTime() + partialTick;
-        state.onCore = pedestal.getLevel() != null && pedestal.getLevel().getBlockEntity(pedestal.getBlockPos().below()) instanceof CoreBlockEntity;
+        state.onCore = pedestal.getLevel() != null && pedestal.getLevel().getBlockEntity(pedestal.getBlockPos().below()) instanceof CircleCoreBlockEntity;
     }
 
     @Override

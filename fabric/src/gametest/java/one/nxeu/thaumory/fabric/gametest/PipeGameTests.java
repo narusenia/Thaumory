@@ -12,7 +12,7 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.ThaumoryAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
@@ -42,8 +42,8 @@ public class PipeGameTests {
     @GameTest(maxTicks = 100)
     public void unlabeledJarFeedsACore(GameTestHelper helper) {
         JarBlockEntity jar = jar(helper, FROM, new JarContents(AspectList.of(ThaumoryAspects.IGNIS, 20), Optional.empty()));
-        helper.setBlock(TO, ThaumoryBlocks.CORE.get());
-        CoreBlockEntity core = helper.getBlockEntity(TO, CoreBlockEntity.class);
+        helper.setBlock(TO, ThaumoryBlocks.CIRCLE_CORE.get());
+        CircleCoreBlockEntity core = helper.getBlockEntity(TO, CircleCoreBlockEntity.class);
         core.insert(ThaumoryAspects.IGNIS.id());
         core.insert(ThaumoryAspects.AQUA.id());
         pipes(helper);
@@ -160,8 +160,8 @@ public class PipeGameTests {
     public void aFilterPipeLetsOnlyItsAspectOut(GameTestHelper helper) {
         JarBlockEntity jar = jar(helper, FROM, new JarContents(
                 AspectList.builder().add(ThaumoryAspects.HERBA, 10).add(ThaumoryAspects.TERRA, 10).build(), Optional.empty()));
-        helper.setBlock(TO, ThaumoryBlocks.CORE.get());
-        CoreBlockEntity core = helper.getBlockEntity(TO, CoreBlockEntity.class);
+        helper.setBlock(TO, ThaumoryBlocks.CIRCLE_CORE.get());
+        CircleCoreBlockEntity core = helper.getBlockEntity(TO, CircleCoreBlockEntity.class);
         core.insert(ThaumoryAspects.HERBA.id());
         core.insert(ThaumoryAspects.TERRA.id());
         helper.setBlock(FROM.east(), ThaumoryBlocks.FILTER_PIPE.get());

@@ -23,7 +23,7 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
@@ -62,7 +62,7 @@ final class LoupeHud {
         List<Component> lines = switch (minecraft.level.getBlockEntity(hit.getBlockPos())) {
             case CrucibleBlockEntity crucible -> crucibleLines(crucible);
             case JarBlockEntity jar -> jarLines(jar);
-            case CoreBlockEntity core -> coreLines(core);
+            case CircleCoreBlockEntity core -> coreLines(core);
             case PipeBlockEntity pipe -> pipeLines(pipe);
             case null, default -> blockLines(minecraft.level.getBlockState(hit.getBlockPos()));
         };
@@ -143,14 +143,14 @@ final class LoupeHud {
     }
 
     /** The circle diagnosis: runes, rings, modifiers on the nodes and off them, and instability. */
-    private static List<Component> coreLines(CoreBlockEntity core) {
+    private static List<Component> coreLines(CircleCoreBlockEntity core) {
         PlayerKnowledge knowledge = ClientKnowledge.get();
         CircleScan scan = core.scan();
         List<Component> lines = new ArrayList<>();
         lines.add(core.getBlockState().getBlock().getName().withColor(WHITE));
 
         MutableComponent runes = Component.translatable("hud.thaumory.core.runes").withColor(GRAY);
-        for (int slot = 0; slot < CoreBlockEntity.SLOTS; slot++) {
+        for (int slot = 0; slot < CircleCoreBlockEntity.SLOTS; slot++) {
             runes.append(" ");
             if (slot < core.runes().size()) {
                 Identifier id = core.runes().get(slot);

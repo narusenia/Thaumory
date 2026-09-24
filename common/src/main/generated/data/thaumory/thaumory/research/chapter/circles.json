@@ -5,7 +5,7 @@
       "outcome": "success"
     }
   ],
-  "icon": "thaumory:core",
+  "icon": "thaumory:circle_core",
   "order": 4,
   "requires": [
     "thaumory:runes"

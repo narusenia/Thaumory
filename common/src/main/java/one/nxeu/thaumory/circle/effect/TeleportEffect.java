@@ -9,7 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import one.nxeu.thaumory.api.circle.CircleContext;
 import one.nxeu.thaumory.api.circle.CircleEffect;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.circle.CircleIndex;
 import one.nxeu.thaumory.knowledge.CircleCombination;
 
@@ -41,7 +41,7 @@ final class TeleportEffect implements CircleEffect {
     /** The nearest partner that really is still there and still working, dropping stale entries on the way. */
     private static Optional<BlockPos> destination(CircleContext context) {
         ServerLevel level = context.level();
-        if (!(level.getBlockEntity(context.core()) instanceof CoreBlockEntity here)) {
+        if (!(level.getBlockEntity(context.core()) instanceof CircleCoreBlockEntity here)) {
             return Optional.empty();
         }
         Optional<CircleCombination> combination = here.combination();
@@ -50,7 +50,7 @@ final class TeleportEffect implements CircleEffect {
         }
         CircleIndex index = CircleIndex.of(level);
         for (BlockPos pos : index.nearest(combination.get(), context.core())) {
-            if (level.getBlockEntity(pos) instanceof CoreBlockEntity there) {
+            if (level.getBlockEntity(pos) instanceof CircleCoreBlockEntity there) {
                 there.rescan();
                 if (there.combination().equals(combination) && there.effectId().isPresent()) {
                     return Optional.of(pos);

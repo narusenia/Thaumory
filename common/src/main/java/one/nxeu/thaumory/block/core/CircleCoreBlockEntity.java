@@ -81,7 +81,7 @@ import one.nxeu.thaumory.text.ThaumoryText;
  * unstable circle may release Flux too. Flux around the Core makes it less stable from
  * manifestation on, and at overload any payment may make it misfire and explode.
  */
-public final class CoreBlockEntity extends BlockEntity {
+public final class CircleCoreBlockEntity extends BlockEntity {
     public static final int SLOTS = 3;
     private static final Codec<List<Identifier>> RUNES_CODEC = Identifier.CODEC.listOf(0, SLOTS);
     private static final Codec<AspectList> ESSENTIA_CODEC = AspectCodecs.aspectList(ThaumoryApi.aspects());
@@ -146,8 +146,8 @@ public final class CoreBlockEntity extends BlockEntity {
     private long nextPayment;
     private CompoundTag effectData = new CompoundTag();
 
-    public CoreBlockEntity(BlockPos pos, BlockState state) {
-        super(ThaumoryBlocks.CORE_ENTITY.get(), pos, state);
+    public CircleCoreBlockEntity(BlockPos pos, BlockState state) {
+        super(ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), pos, state);
     }
 
     public static void updateSettings(CircleSettings newSettings) {
@@ -162,7 +162,7 @@ public final class CoreBlockEntity extends BlockEntity {
      * Rescans on the interval, and runs a sustained circle. The offset by position keeps many
      * Cores from scanning on the same tick.
      */
-    public static void serverTick(Level level, BlockPos pos, BlockState state, CoreBlockEntity core) {
+    public static void serverTick(Level level, BlockPos pos, BlockState state, CircleCoreBlockEntity core) {
         long time = level.getGameTime();
         if (Math.floorMod(time + pos.hashCode(), settings.scanInterval()) == 0) {
             core.rescan();

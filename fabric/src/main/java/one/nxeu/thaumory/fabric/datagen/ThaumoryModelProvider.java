@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
-import one.nxeu.thaumory.block.core.CoreBlock;
+import one.nxeu.thaumory.block.core.CircleCoreBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.pedestal.PedestalBlock;
@@ -106,8 +106,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                 .select(true, BlockModelGenerators.plainVariant(labeled))));
         generators.registerSimpleItemModel(jar, plain);
 
-        // Only the centre mark is a model; the rings turn, so CoreRenderer draws them.
-        CoreBlock core = ThaumoryBlocks.CORE.get();
+        // Only the centre mark is a model; the rings turn, so CircleCoreRenderer draws them.
+        CircleCoreBlock core = ThaumoryBlocks.CIRCLE_CORE.get();
         Identifier coreModel = CHALK_PATTERN.create(core,
                 new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(core, "_center")), generators.modelOutput);
         generators.blockStateOutput.accept(MultiVariantGenerator.dispatch(core, BlockModelGenerators.plainVariant(coreModel)));
@@ -192,7 +192,7 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.WAND.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CODEX.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_RUNE.get(), ModelTemplates.FLAT_ITEM);
-        generators.generateFlatItem(ThaumoryItems.CORE.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.CIRCLE_CORE.get(), ModelTemplates.FLAT_ITEM);
         // The blank rune with a glyph over it in the rune's aspect color.
         RuneItem rune = ThaumoryItems.RUNE.get();
         Identifier runeModel = ModelTemplates.TWO_LAYERED_ITEM.create(rune, TextureMapping.layered(

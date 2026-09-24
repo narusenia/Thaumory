@@ -17,8 +17,8 @@ import net.minecraft.world.level.material.PushReaction;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.flux.pollution.PollutedBlock;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
-import one.nxeu.thaumory.block.core.CoreBlock;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlock;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlock;
@@ -59,7 +59,7 @@ public final class ThaumoryBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
                     .strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
 
-    public static final RegistrySupplier<CoreBlock> CORE = register("core", CoreBlock::new,
+    public static final RegistrySupplier<CircleCoreBlock> CIRCLE_CORE = register("circle_core", CircleCoreBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
                     .strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
 
@@ -81,8 +81,8 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<BlockEntityType<CrucibleBlockEntity>> CRUCIBLE_ENTITY = BLOCK_ENTITIES.register(
             "crucible", () -> new BlockEntityType<>(CrucibleBlockEntity::new, Set.of(CRUCIBLE.get())));
 
-    public static final RegistrySupplier<BlockEntityType<CoreBlockEntity>> CORE_ENTITY = BLOCK_ENTITIES.register(
-            "core", () -> new BlockEntityType<>(CoreBlockEntity::new, Set.of(CORE.get())));
+    public static final RegistrySupplier<BlockEntityType<CircleCoreBlockEntity>> CIRCLE_CORE_ENTITY = BLOCK_ENTITIES.register(
+            "circle_core", () -> new BlockEntityType<>(CircleCoreBlockEntity::new, Set.of(CIRCLE_CORE.get())));
 
     public static final RegistrySupplier<BlockEntityType<PipeBlockEntity>> PIPE_ENTITY = BLOCK_ENTITIES.register(
             "pipe", () -> new BlockEntityType<>(PipeBlockEntity::new, Set.of(PIPE.get(), FILTER_PIPE.get(), VALVE.get(), PUMP.get())));

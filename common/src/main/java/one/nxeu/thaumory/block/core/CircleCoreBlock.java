@@ -30,10 +30,10 @@ import one.nxeu.thaumory.item.ThaumoryItems;
  * The centre of a magic circle, drawn flat on the ground; its rings are drawn by the client for each rune. A rune goes into the first empty slot with a right click; a
  * sneaking right click on an empty hand takes out the last one.
  */
-public final class CoreBlock extends BaseEntityBlock {
+public final class CircleCoreBlock extends BaseEntityBlock {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 1, 16);
 
-    public CoreBlock(Properties properties) {
+    public CircleCoreBlock(Properties properties) {
         super(properties);
     }
 
@@ -44,22 +44,22 @@ public final class CoreBlock extends BaseEntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new CoreBlockEntity(pos, state);
+        return new CircleCoreBlockEntity(pos, state);
     }
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, ThaumoryBlocks.CORE_ENTITY.get(), CoreBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), CircleCoreBlockEntity::serverTick);
     }
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
         Identifier aspect = stack.is(ThaumoryItems.RUNE.get()) ? stack.get(ThaumoryComponents.RUNE_ASPECT.get()) : null;
-        if (aspect == null || !(level.getBlockEntity(pos) instanceof CoreBlockEntity core)) {
+        if (aspect == null || !(level.getBlockEntity(pos) instanceof CircleCoreBlockEntity core)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
-        if (core.runes().size() >= CoreBlockEntity.SLOTS) {
+        if (core.runes().size() >= CircleCoreBlockEntity.SLOTS) {
             player.sendOverlayMessage(Component.translatable("message.thaumory.core.full"));
             return InteractionResult.FAIL;
         }
@@ -73,7 +73,7 @@ public final class CoreBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!player.isShiftKeyDown() || !(level.getBlockEntity(pos) instanceof CoreBlockEntity core) || core.runes().isEmpty()) {
+        if (!player.isShiftKeyDown() || !(level.getBlockEntity(pos) instanceof CircleCoreBlockEntity core) || core.runes().isEmpty()) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {

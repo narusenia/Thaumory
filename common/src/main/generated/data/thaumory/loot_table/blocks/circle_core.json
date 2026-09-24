@@ -8,7 +8,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "thaumory:core"
+          "name": "thaumory:circle_core"
         }
       ],
       "rolls": 1

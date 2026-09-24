@@ -19,17 +19,17 @@ import net.minecraft.world.phys.Vec3;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
-import one.nxeu.thaumory.block.core.CoreBlockEntity;
+import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 
 /**
  * Draws a ring around the Core's centre mark for each rune, in that rune's aspect color. The rings
  * glow and turn slowly, each the other way from the one inside it.
  */
-final class CoreRenderer implements BlockEntityRenderer<CoreBlockEntity, CoreRenderer.State> {
+final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEntity, CircleCoreRenderer.State> {
     private static final List<RenderType> RINGS = List.of(
-            RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/core_ring_1.png")),
-            RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/core_ring_2.png")),
-            RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/core_ring_3.png")));
+            RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/circle_core_ring_1.png")),
+            RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/circle_core_ring_2.png")),
+            RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/circle_core_ring_3.png")));
     /** Degrees per tick, inner ring first. */
     private static final float[] SPEEDS = {1.2f, -0.8f, 0.5f};
     /** For a rune whose aspect is no longer registered. */
@@ -43,7 +43,7 @@ final class CoreRenderer implements BlockEntityRenderer<CoreBlockEntity, CoreRen
         float time;
     }
 
-    CoreRenderer(BlockEntityRendererProvider.Context context) {}
+    CircleCoreRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override
     public State createRenderState() {
@@ -51,7 +51,7 @@ final class CoreRenderer implements BlockEntityRenderer<CoreBlockEntity, CoreRen
     }
 
     @Override
-    public void extractRenderState(CoreBlockEntity core, State state, float partialTick, Vec3 camera,
+    public void extractRenderState(CircleCoreBlockEntity core, State state, float partialTick, Vec3 camera,
             ModelFeatureRenderer.CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(core, state, partialTick, camera, crumbling);
         List<Identifier> runes = core.runes();

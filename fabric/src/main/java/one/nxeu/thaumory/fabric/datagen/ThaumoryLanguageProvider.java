@@ -99,7 +99,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "Extending Chalk");
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "Economizing Chalk");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "Stabilizing Chalk");
-            builder.add(ThaumoryBlocks.CORE.get(), "Circle Core");
+            builder.add(ThaumoryBlocks.CIRCLE_CORE.get(), "Circle Core");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "Polluted Soil");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "Polluted Stone");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "Void Remnant");
@@ -278,7 +278,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.EXTENDING_CHALK.get(), "延長のチョーク");
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "節約のチョーク");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "安定のチョーク");
-            builder.add(ThaumoryBlocks.CORE.get(), "陣の核");
+            builder.add(ThaumoryBlocks.CIRCLE_CORE.get(), "陣の核");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "汚染された土");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "汚染された石");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "虚空の残滓");
