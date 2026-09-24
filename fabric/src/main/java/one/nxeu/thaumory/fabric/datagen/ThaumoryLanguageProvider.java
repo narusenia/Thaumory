@@ -148,6 +148,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.side.east", "east");
             builder.add("hud.thaumory.core.side.south", "south");
             builder.add("hud.thaumory.core.side.west", "west");
+            builder.add("hud.thaumory.core.side.up", "top");
+            builder.add("hud.thaumory.core.side.down", "bottom");
             builder.add("hud.thaumory.core.ignored", "%s modifiers off the nodes (no effect)");
             builder.add("hud.thaumory.core.instability", "Instability %s/%s");
             builder.add("hud.thaumory.core.unstable", "Unstable: activations may release Flux");
@@ -365,6 +367,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.side.east", "東");
             builder.add("hud.thaumory.core.side.south", "南");
             builder.add("hud.thaumory.core.side.west", "西");
+            builder.add("hud.thaumory.core.side.up", "上");
+            builder.add("hud.thaumory.core.side.down", "下");
             builder.add("hud.thaumory.core.ignored", "節点の外の修飾 %s 個（効果なし）");
             builder.add("hud.thaumory.core.instability", "不安定度 %s/%s");
             builder.add("hud.thaumory.core.unstable", "不安定: 発動のたびに Flux が出るおそれがある");

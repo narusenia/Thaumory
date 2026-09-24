@@ -1,5 +1,7 @@
 package one.nxeu.thaumory.fabric.datagen;
 
+import com.mojang.math.OctahedralGroup;
+import com.mojang.math.Quadrant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +19,9 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.renderer.block.dispatch.VariantMutator;
 import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import one.nxeu.thaumory.Thaumory;
@@ -30,6 +34,7 @@ import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.block.pipe.PumpBlock;
 import one.nxeu.thaumory.block.pipe.ValveBlock;
+import one.nxeu.thaumory.circle.CirclePlane;
 import one.nxeu.thaumory.client.RuneTint;
 import one.nxeu.thaumory.item.EquipmentSet;
 import one.nxeu.thaumory.item.RuneItem;
@@ -116,8 +121,12 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(core, "_pedestal_side"))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(core, "_pedestal_top"))
                 .put(BAND, TextureMapping.getBlockTexture(core, "_pedestal_band")), generators.modelOutput);
-        generators.blockStateOutput.accept(MultiPartGenerator.multiPart(core)
-                .with(BlockModelGenerators.plainVariant(coreModel))
+        MultiPartGenerator coreParts = MultiPartGenerator.multiPart(core);
+        for (Direction front : Direction.values()) {
+            coreParts.with(new ConditionBuilder().term(CircleCoreBlock.FACING, front),
+                    BlockModelGenerators.plainVariant(coreModel).with(onFace(front, Quadrant.R0)));
+        }
+        generators.blockStateOutput.accept(coreParts
                 .with(new ConditionBuilder().term(CircleCoreBlock.PEDESTAL, true), BlockModelGenerators.plainVariant(pedestalModel)));
         generators.itemModelOutput.accept(ThaumoryItems.PEDESTAL.get(), ItemModelUtils.plainModel(pedestalModel));
 
@@ -172,19 +181,47 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                 .with(new ConditionBuilder().term(BlockStateProperties.DOWN, true), arm.with(BlockModelGenerators.X_ROT_90));
     }
 
-    /** A mark in the middle, and an arm towards each joined neighbor (the arm texture points north). */
+    /**
+     * A mark in the middle, and an arm towards each joined neighbor (the arm texture points north),
+     * the floor models turned onto the face the pattern is drawn on.
+     */
     private static void chalkPattern(BlockModelGenerators generators, ChalkPatternBlock pattern) {
         Identifier mark = CHALK_PATTERN.createWithSuffix(pattern, "_mark",
                 new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(pattern, "_mark")), generators.modelOutput);
         Identifier arm = CHALK_PATTERN.createWithSuffix(pattern, "_arm",
                 new TextureMapping().put(PATTERN, TextureMapping.getBlockTexture(pattern, "_arm")), generators.modelOutput);
-        MultiVariant armVariant = BlockModelGenerators.plainVariant(arm);
-        generators.blockStateOutput.accept(MultiPartGenerator.multiPart(pattern)
-                .with(BlockModelGenerators.plainVariant(mark))
-                .with(new ConditionBuilder().term(BlockStateProperties.NORTH, true), armVariant)
-                .with(new ConditionBuilder().term(BlockStateProperties.EAST, true), armVariant.with(BlockModelGenerators.Y_ROT_90))
-                .with(new ConditionBuilder().term(BlockStateProperties.SOUTH, true), armVariant.with(BlockModelGenerators.Y_ROT_180))
-                .with(new ConditionBuilder().term(BlockStateProperties.WEST, true), armVariant.with(BlockModelGenerators.Y_ROT_270)));
+        // In a fixed order, so the generated file stays the same from run to run.
+        List<Map.Entry<Direction, Quadrant>> arms = List.of(Map.entry(Direction.NORTH, Quadrant.R0), Map.entry(Direction.EAST, Quadrant.R90),
+                Map.entry(Direction.SOUTH, Quadrant.R180), Map.entry(Direction.WEST, Quadrant.R270));
+        MultiPartGenerator parts = MultiPartGenerator.multiPart(pattern);
+        for (Direction front : Direction.values()) {
+            parts.with(new ConditionBuilder().term(ChalkPatternBlock.FACING, front),
+                    BlockModelGenerators.plainVariant(mark).with(onFace(front, Quadrant.R0)));
+            for (Map.Entry<Direction, Quadrant> side : arms) {
+                parts.with(new ConditionBuilder().term(ChalkPatternBlock.FACING, front)
+                                .term(ChalkPatternBlock.CONNECTIONS.get(side.getKey()), true),
+                        BlockModelGenerators.plainVariant(arm).with(onFace(front, side.getValue())));
+            }
+        }
+        generators.blockStateOutput.accept(parts);
+    }
+
+    /**
+     * Turns a floor model by {@code turn} about the vertical, then onto the face {@code front} points
+     * away from ({@link CirclePlane}), as the one x, y and z rotation that does both.
+     */
+    private static VariantMutator onFace(Direction front, Quadrant turn) {
+        OctahedralGroup wanted = CirclePlane.rotation(front).compose(turn.rotationY);
+        for (Quadrant x : Quadrant.values()) {
+            for (Quadrant y : Quadrant.values()) {
+                for (Quadrant z : Quadrant.values()) {
+                    if (Quadrant.fromXYZAngles(x, y, z) == wanted) {
+                        return VariantMutator.X_ROT.withValue(x).then(VariantMutator.Y_ROT.withValue(y)).then(VariantMutator.Z_ROT.withValue(z));
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("No rotation for " + front + " " + turn);
     }
 
     @Override

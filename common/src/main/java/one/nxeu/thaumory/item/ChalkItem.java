@@ -2,6 +2,7 @@ package one.nxeu.thaumory.item;
 
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -14,8 +15,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 
 /**
- * Draws its pattern on top of the clicked block, one durability per block. Right-clicking a
- * pattern of the same kind erases it for free; one of another kind is drawn over.
+ * Draws its pattern on the clicked face of a block (the floor, a wall or the ceiling), one
+ * durability per block. Right-clicking a pattern of the same kind erases it for free; one of
+ * another kind is drawn over, on the same face.
  */
 public final class ChalkItem extends Item {
     private final Supplier<? extends ChalkPatternBlock> pattern;
@@ -40,20 +42,23 @@ public final class ChalkItem extends Item {
                 }
                 return InteractionResult.SUCCESS;
             }
-            return draw(context, clicked);
+            return draw(context, clicked, ChalkPatternBlock.front(clickedState));
         }
 
-        BlockPos target = clickedState.canBeReplaced() ? clicked : clicked.relative(context.getClickedFace());
-        if (!level.getBlockState(target).canBeReplaced() || !drawn.defaultBlockState().canSurvive(level, target)) {
+        // Grass and the like are drawn over on the ground they stand on.
+        boolean replacing = clickedState.canBeReplaced();
+        BlockPos target = replacing ? clicked : clicked.relative(context.getClickedFace());
+        Direction front = replacing ? Direction.UP : context.getClickedFace();
+        if (!level.getBlockState(target).canBeReplaced() || !ChalkPatternBlock.supported(level, target, front)) {
             return InteractionResult.FAIL;
         }
-        return draw(context, target);
+        return draw(context, target, front);
     }
 
-    private InteractionResult draw(UseOnContext context, BlockPos pos) {
+    private InteractionResult draw(UseOnContext context, BlockPos pos, Direction front) {
         Level level = context.getLevel();
         if (!level.isClientSide()) {
-            level.setBlock(pos, pattern.get().connectedState(level, pos), Block.UPDATE_ALL);
+            level.setBlock(pos, pattern.get().connectedState(level, pos, front), Block.UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.CALCITE_STEP, SoundSource.BLOCKS, 1.0f, 1.4f);
             Player player = context.getPlayer();
             if (player != null) {

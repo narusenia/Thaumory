@@ -192,7 +192,7 @@ public final class ThaumoryCommands {
         core.rescan();
         CircleScan scan = core.scan();
         String nodes = scan.nodes().stream()
-                .map(node -> "r" + node.ring() + " " + node.side().name().toLowerCase(Locale.ROOT) + " " + node.pattern())
+                .map(node -> "r" + node.ring() + " " + node.side().inWorld(core.front()).getSerializedName() + " " + node.pattern())
                 .collect(Collectors.joining(", "));
         String ignored = scan.ignoredModifiers().stream()
                 .map(offset -> "(" + offset.dx() + ", " + offset.dz() + ")")

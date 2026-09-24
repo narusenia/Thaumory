@@ -12,7 +12,8 @@
       "one.nxeu.thaumory.fabric.gametest.EssentiaStorageGameTests",
       "one.nxeu.thaumory.fabric.gametest.PipeGameTests",
       "one.nxeu.thaumory.fabric.gametest.InfusionGameTests",
-      "one.nxeu.thaumory.fabric.gametest.EquipmentGameTests"
+      "one.nxeu.thaumory.fabric.gametest.EquipmentGameTests",
+      "one.nxeu.thaumory.fabric.gametest.WallCircleGameTests"
     ]
   },
   "depends": {

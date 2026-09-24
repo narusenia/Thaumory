@@ -169,7 +169,7 @@ final class LoupeHud {
                     .map(block -> (Component) block.getName())
                     .orElseGet(() -> Component.literal(node.pattern().toString()));
             lines.add(Component.literal(" ").append(Component.translatable("hud.thaumory.core.node", node.ring(),
-                    Component.translatable("hud.thaumory.core.side." + node.side().name().toLowerCase(Locale.ROOT)), pattern)
+                    Component.translatable("hud.thaumory.core.side." + node.side().inWorld(core.front()).getSerializedName()), pattern)
                     .withColor(GRAY)));
         }
         if (!scan.ignoredModifiers().isEmpty()) {

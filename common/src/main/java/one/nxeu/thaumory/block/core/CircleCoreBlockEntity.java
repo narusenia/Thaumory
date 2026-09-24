@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -57,6 +58,7 @@ import one.nxeu.thaumory.circle.CircleIndex;
 import one.nxeu.thaumory.circle.CircleMode;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.circle.CircleSettings;
+import one.nxeu.thaumory.circle.CirclePlane;
 import one.nxeu.thaumory.circle.CircleSide;
 import one.nxeu.thaumory.circle.CircleUpkeep;
 import one.nxeu.thaumory.circle.InfusionRules;
@@ -188,9 +190,12 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return;
         }
         Identifier line = BuiltInRegistries.BLOCK.getKey(ThaumoryBlocks.CHALK_LINE.get());
+        Direction front = front();
         CircleScan next = CircleScan.scan((dx, dz) -> {
-            BlockState state = level.getBlockState(worldPosition.offset(dx, 0, dz));
-            return state.is(ChalkPatternBlock.PATTERNS) ? Optional.of(BuiltInRegistries.BLOCK.getKey(state.getBlock())) : Optional.empty();
+            BlockState state = level.getBlockState(worldPosition.offset(CirclePlane.offset(front, dx, dz)));
+            // Only patterns on the Core's own face count.
+            return state.is(ChalkPatternBlock.PATTERNS) && ChalkPatternBlock.front(state) == front
+                    ? Optional.of(BuiltInRegistries.BLOCK.getKey(state.getBlock())) : Optional.empty();
         }, line);
         CircleScan previousScan = scan;
         int previousInstability = instability;
@@ -204,6 +209,11 @@ public final class CircleCoreBlockEntity extends BlockEntity {
                 sync();
             }
         }
+    }
+
+    /** The circle's front: away from the face the Core is drawn on. */
+    public Direction front() {
+        return ChalkPatternBlock.front(getBlockState());
     }
 
     public CircleScan scan() {

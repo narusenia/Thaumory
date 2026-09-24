@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -26,7 +27,8 @@ import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 
 /**
  * Draws a ring around the Core's centre mark for each rune, in that rune's aspect color. The rings
- * glow and turn slowly, each the other way from the one inside it. With a pedestal built in, a
+ * glow and turn slowly, each the other way from the one inside it, on whichever face the Core is
+ * drawn on. With a pedestal built in, a
  * ring of glyphs also turns around its column, and the item on it floats over the top.
  */
 final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEntity, CircleCoreRenderer.State> {
@@ -51,6 +53,7 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         int[] colors = new int[0];
         float time;
         boolean pedestal;
+        Direction front = Direction.UP;
         final ItemStackRenderState item = new ItemStackRenderState();
     }
 
@@ -76,6 +79,7 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         }
         state.time = core.getLevel() == null ? 0 : core.getLevel().getGameTime() + partialTick;
         state.pedestal = core.hasPedestal();
+        state.front = core.front();
         items.updateForTopItem(state.item, core.pedestalItem(), ItemDisplayContext.GROUND, core.getLevel(), null,
                 (int) core.getBlockPos().asLong());
     }
@@ -86,6 +90,7 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
             int argb = 0xFF000000 | state.colors[i];
             float height = BASE_HEIGHT + RING_STEP * i;
             pose.pushPose();
+            pose.rotateAround(state.front.getRotation(), 0.5f, 0.5f, 0.5f);
             pose.translate(0.5f, 0, 0.5f);
             pose.rotateDegrees(Axis.YP, (state.time * SPEEDS[i]) % 360);
             collector.submitCustomGeometry(pose, RINGS.get(i), (p, consumer) -> {

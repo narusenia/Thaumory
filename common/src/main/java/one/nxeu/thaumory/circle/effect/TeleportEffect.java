@@ -3,6 +3,7 @@ package one.nxeu.thaumory.circle.effect;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,9 +16,14 @@ import one.nxeu.thaumory.knowledge.CircleCombination;
 
 /**
  * Arcanum + Aer, triggered. Carries whoever set it off to the nearest circle in the same dimension
- * with the same runes, slot 3 being the channel. Nothing happens, at no cost, if there is none.
+ * with the same runes, slot 3 being the channel. It lands on the first footing down from that Core
+ * (the Core itself on a floor; under a wall or ceiling circle, whatever is below). Nothing happens,
+ * at no cost, if there is none.
  */
 final class TeleportEffect implements CircleEffect {
+    /** How far below a wall or ceiling Core a footing may be. */
+    private static final int MAX_DROP = 32;
+
     @Override
     public boolean canApply(CircleContext context) {
         return context.activator().isPresent() && destination(context).isPresent();
@@ -38,7 +44,10 @@ final class TeleportEffect implements CircleEffect {
         level.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0f, 1.0f);
     }
 
-    /** The nearest partner that really is still there and still working, dropping stale entries on the way. */
+    /**
+     * Where to land at the nearest partner that really is still there and still working, dropping
+     * stale entries on the way. A partner with nowhere to stand is passed over.
+     */
     private static Optional<BlockPos> destination(CircleContext context) {
         ServerLevel level = context.level();
         if (!(level.getBlockEntity(context.core()) instanceof CircleCoreBlockEntity here)) {
@@ -53,10 +62,30 @@ final class TeleportEffect implements CircleEffect {
             if (level.getBlockEntity(pos) instanceof CircleCoreBlockEntity there) {
                 there.rescan();
                 if (there.combination().equals(combination) && there.effectId().isPresent()) {
-                    return Optional.of(pos);
+                    Optional<BlockPos> footing = footing(level, pos);
+                    if (footing.isPresent()) {
+                        return footing;
+                    }
+                    continue;
                 }
             }
             index.remove(pos);
+        }
+        return Optional.empty();
+    }
+
+    /** The first open cell at or below {@code core} that stands on a sturdy top face. */
+    private static Optional<BlockPos> footing(ServerLevel level, BlockPos core) {
+        BlockPos.MutableBlockPos pos = core.mutable();
+        for (int drop = 0; drop <= MAX_DROP && pos.getY() > level.getMinY(); drop++, pos.move(Direction.DOWN)) {
+            BlockPos below = pos.below();
+            boolean open = drop == 0 || level.getBlockState(pos).getCollisionShape(level, pos).isEmpty();
+            if (open && level.getBlockState(below).isFaceSturdy(level, below, Direction.UP)) {
+                return Optional.of(pos.immutable());
+            }
+            if (!open) {
+                return Optional.empty();
+            }
         }
         return Optional.empty();
     }
