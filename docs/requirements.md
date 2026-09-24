@@ -330,7 +330,8 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 - `data/<namespace>/thaumory/research/chapter/*.json` に 1 ファイル 1 章。上位の datapack の同じパスのファイルが丸ごと置き換える
   - 形式: `{"icon": "minecraft:cauldron", "category": "thaumory:alchemy", "x": 1, "y": 0, "requires": ["thaumory:beginning"], "conditions": [{"type": "thaumory:scanned", "item": "thaumory:crucible"}], "unlocks": ["thaumory:blank_rune"]}`
   - `category`: 分野の ID。省略すると `thaumory:basics`。`x`・`y`: 分野の樹形図の格子の座標（右と下が正）。省略すると、同じ分野の最初の `requires` の章の右隣（埋まっていれば下へずらす）、`requires` が無ければ (0, 0)
-- 分野: `data/<namespace>/thaumory/research/category/*.json` に 1 ファイル 1 分野。形式: `{"icon": "thaumory:arcane_codex", "order": 0}`（`order` はしおりの並び。同じなら ID 順）。名前は翻訳キー `category.<namespace>.<path>`
+- 分野: `data/<namespace>/thaumory/research/category/*.json` に 1 ファイル 1 分野。形式: `{"icon": "thaumory:arcane_codex", "order": 0, "background": "minecraft:block/dark_oak_planks"}`（`order` はしおりの並び。同じなら ID 順。`background` は樹形図に敷くテクスチャ（`textures/<path>.png`、16×16 を並べる）。省略すると石）。名前は翻訳キー `category.<namespace>.<path>`
+  - 初期の背景: 基礎 = 濃いオークの板材、錬金術 = 磨かれたブラックストーンのレンガ、陣 = エンドストーン、金属と装備 = 鉄ブロック
   - 初期の分野: 基礎（はじまり・アスペクト・探究・暴きのモノクル）、錬金術（るつぼ・ルーン）、陣（魔法陣・Flux）、金属と装備（魔術の金属・天の銀）
   - タイトルと本文は翻訳キー `chapter.<namespace>.<path>` と `chapter.<namespace>.<path>.text`
 - 状態: `requires` の章がすべて完了すると「開いた」章になり、本に本文と条件（それぞれ満たしたかどうか）と開放するレシピが出る。開いていない章の出し方は §7.3。`conditions` をすべて満たすと完了する（条件が無ければ開いた時点で完了）
@@ -414,6 +415,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 - 知識を読む本。レシピ: 作業台で、本 + 魔術のルーペ（不定形。ルーペは消費する）
 - 右クリックで開く。見開きの本の形（革の表紙の上に羊皮紙の 2 ページ）。タブは本の上の縁から出たしおり
   - 章: 分野ごとの樹形図（進捗の画面のように）。見開き全体に描き、ドラッグで動かす。動かした位置はゲームを起動している間だけ分野ごとに覚える
+    - 背景: 図の場所はページの代わりに分野の背景のタイル（`background`）で埋め、図と一緒に動く。本の折り目は描かない
     - 分野の切り替え: 見開きの左の縁から出たしおり（分野のアイコン）。開いた章か「？」の章が 1 つもない分野は出さない
     - ノード: 章のアイコンを枠に入れて、章の座標（§6.2）に置く。完了は金の枠、開いた章は普通の枠。カーソルを合わせると章の名前
     - 線: 同じ分野の `requires` の章から線を引く。前の章が別の分野にあるときは引かない
