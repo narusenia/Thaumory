@@ -10,7 +10,7 @@ import one.nxeu.thaumory.api.Experimental;
  *
  * <p>A passive effect works while the item is equipped (held in either hand or worn) and costs
  * nothing. An active effect is used with a key and pays from the Essentia stored in the item; what
- * it pays comes from the datapack.
+ * it pays comes from the datapack. On a scroll, either kind works once, for free ({@link #cast}).
  */
 @Experimental
 public interface InfusionEffect {
@@ -49,4 +49,21 @@ public interface InfusionEffect {
 
     /** An active effect: called once per use, after paying. */
     default void use(InfusionContext context) {}
+
+    /** Whether the effect can be burnt into a scroll. By default only active effects can. */
+    default boolean castable() {
+        return active();
+    }
+
+    /**
+     * A scroll with this effect was used up, at no Essentia; the context's item is the scroll. Return
+     * false when nothing came of it, and the scroll is kept. By default an active effect is used.
+     */
+    default boolean cast(InfusionContext context) {
+        if (active() && canUse(context)) {
+            use(context);
+            return true;
+        }
+        return false;
+    }
 }
