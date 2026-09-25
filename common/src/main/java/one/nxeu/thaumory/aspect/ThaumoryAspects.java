@@ -33,10 +33,14 @@ public final class ThaumoryAspects {
     public static final Aspect METALLUM = Aspect.compound(id("metallum"), 0x8C959C, TERRA, IGNIS).withNameEffect(TextEffect.STREAK);
     public static final Aspect CHAOS = Aspect.compound(id("chaos"), 0x4A1F5C, MORS, AER).withNameEffect(TextEffect.SHAKE);
 
+    // The third tier (requirements §2.2).
+    public static final Aspect SORDES = Aspect.compound(id("sordes"), 0x5A3F66, VENENUM, VINCULUM).withNameEffect(TextEffect.TREMBLE);
+
     public static final List<Aspect> ALL = List.of(
             IGNIS, AER, VITA, AQUA, TERRA, MORS,
             LUX, ARCANUM, HERBA, UMBRA, VINCULUM, BELLUM,
-            BESTIA, TEMPESTAS, ORDO, VENENUM, METALLUM, CHAOS);
+            BESTIA, TEMPESTAS, ORDO, VENENUM, METALLUM, CHAOS,
+            SORDES);
 
     private ThaumoryAspects() {}
 

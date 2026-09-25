@@ -20,21 +20,21 @@
     },
     {
       "aspects": {
-        "thaumory:terra": 4,
-        "thaumory:venenum": 2
+        "thaumory:sordes": 2,
+        "thaumory:terra": 4
       },
       "target": "thaumory:polluted_soil"
     },
     {
       "aspects": {
-        "thaumory:chaos": 2,
+        "thaumory:sordes": 2,
         "thaumory:terra": 4
       },
       "target": "thaumory:polluted_stone"
     },
     {
       "aspects": {
-        "thaumory:chaos": 4
+        "thaumory:sordes": 4
       },
       "target": "thaumory:flux_crystal"
     }

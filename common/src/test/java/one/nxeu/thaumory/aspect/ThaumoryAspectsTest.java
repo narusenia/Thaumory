@@ -27,9 +27,23 @@ class ThaumoryAspectsTest {
     }
 
     @Test
-    void registersSixPrimalsAndTwelveCompounds() {
-        assertEquals(18, registry.all().size());
+    void registersSixPrimalsTwelveCompoundsAndTheThirdTier() {
+        assertEquals(19, registry.all().size());
         assertEquals(List.of(IGNIS, AER, VITA, AQUA, TERRA, MORS), registry.primals());
+    }
+
+    /** Requirements §2.2: pollution, bound poison, and what it wears away. */
+    @Test
+    void sordesIsVenenumBoundByVinculum() {
+        assertEquals(List.of(AQUA, MORS, TERRA, MORS), SORDES.primalBreakdown());
+        for (Aspect worn : List.of(IGNIS, AER, VITA, LUX, ARCANUM, HERBA, BELLUM, BESTIA, TEMPESTAS, ORDO, METALLUM, CHAOS)) {
+            assertTrue(registry.cancels(SORDES, worn), worn.toString());
+        }
+        for (Aspect kept : List.of(AQUA, TERRA, MORS, UMBRA, VINCULUM, VENENUM)) {
+            assertFalse(registry.cancels(SORDES, kept), kept.toString());
+        }
+        // Arcanum + Bestia is not registered yet.
+        assertEquals(Optional.empty(), registry.opposite(SORDES));
     }
 
     @Test
