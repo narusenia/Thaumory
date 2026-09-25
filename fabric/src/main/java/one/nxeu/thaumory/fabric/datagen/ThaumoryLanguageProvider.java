@@ -262,6 +262,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.searing", "Bellum kindled with Ignis sears whatever stands against you.");
             builder.add("hint.thaumory.withering", "Mors steeped in Venenum wastes the living and the dead alike.");
             builder.add("hint.thaumory.containment", "Chaos bound in Vinculum draws in what festers and hardens it into stone.");
+            builder.add("hint.thaumory.anima_sordes", "Sordes slowly clouds the Anima that dwells in living things.");
+            builder.add("hint.thaumory.aurora_vesper", "Aurora and Vesper wait for each other at either end of the day.");
+            builder.add("hint.thaumory.abyssus_caelum", "Far beneath Caelum, the lightless Abyssus lies open.");
+            builder.add("hint.thaumory.sigillum_solutio", "What Sigillum shuts, Solutio unbinds.");
+            builder.add("hint.thaumory.tartarus_fons", "The flames of Tartarus die down at the touch of Fons.");
+            builder.add("hint.thaumory.peregrinum_artificium", "The rules of Artificium do not hold in the lands of Peregrinum.");
             builder.add("subtitles.thaumory.block.circle_core.activate", "Circle wakes");
             builder.add("subtitles.thaumory.block.circle_core.deactivate", "Circle falls quiet");
             builder.add("subtitles.thaumory.block.circle_core.infuse", "Item is infused");
@@ -538,6 +544,12 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.searing", "Ignis で熾した Bellum は、刃向かうものを焼く。");
             builder.add("hint.thaumory.withering", "Venenum に浸した Mors は、生者も死者も等しく蝕む。");
             builder.add("hint.thaumory.containment", "Vinculum で縛った Chaos は、淀んだものを吸い寄せ、石に凝らせる。");
+            builder.add("hint.thaumory.anima_sordes", "息づくものに宿る Anima を、Sordes はゆっくりと濁らせる。");
+            builder.add("hint.thaumory.aurora_vesper", "Aurora と Vesper は、一日の両端で互いを待っている。");
+            builder.add("hint.thaumory.abyssus_caelum", "Caelum の遥か下に、光の届かない Abyssus が口を開けている。");
+            builder.add("hint.thaumory.sigillum_solutio", "Sigillum が閉ざしたものを、Solutio は解く。");
+            builder.add("hint.thaumory.tartarus_fons", "Tartarus の炎は、Fons の水に触れて鎮まる。");
+            builder.add("hint.thaumory.peregrinum_artificium", "Peregrinum の地には、Artificium の決まりが通じない。");
             builder.add("subtitles.thaumory.block.circle_core.activate", "陣が目覚める");
             builder.add("subtitles.thaumory.block.circle_core.deactivate", "陣が静まる");
             builder.add("subtitles.thaumory.block.circle_core.infuse", "品に効果が焼き付く");

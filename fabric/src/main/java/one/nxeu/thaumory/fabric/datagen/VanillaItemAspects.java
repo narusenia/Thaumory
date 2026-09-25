@@ -57,7 +57,7 @@ final class VanillaItemAspects {
                 .item(Items.CALCITE, a(TERRA, 6), a(ORDO, 4))
                 .item(Items.POINTED_DRIPSTONE, a(TERRA, 4), a(AQUA, 2))
                 .item(Items.OBSIDIAN, a(TERRA, 16), a(IGNIS, 8), a(ORDO, 8))
-                .item(Items.CRYING_OBSIDIAN, a(TERRA, 16), a(IGNIS, 8), a(ARCANUM, 8), a(AQUA, 4));
+                .item(Items.CRYING_OBSIDIAN, a(TERRA, 16), a(UMBRA, 4), a(VESPER, 8));
     }
 
     private static void oresAndGems(ItemAspectFileBuilder b) {
@@ -71,8 +71,8 @@ final class VanillaItemAspects {
                 .item(Items.LAPIS_LAZULI, a(ARCANUM, 6), a(AQUA, 4))
                 .item(Items.REDSTONE, a(TEMPESTAS, 6), a(ARCANUM, 4))
                 .item(Items.QUARTZ, a(ORDO, 8), a(LUX, 4), a(IGNIS, 2))
-                .item(Items.AMETHYST_SHARD, a(ARCANUM, 8), a(ORDO, 4), a(LUX, 4))
-                .item(Items.ANCIENT_DEBRIS, a(METALLUM, 32), a(IGNIS, 16), a(BELLUM, 12));
+                .item(Items.AMETHYST_SHARD, a(ARCANUM, 6), a(AURORA, 6))
+                .item(Items.ANCIENT_DEBRIS, a(METALLUM, 32), a(IGNIS, 8), a(TARTARUS, 12));
 
         // Silk-touched ores: the drop plus the stone around it.
         ore(b, Items.COAL_ORE, Items.DEEPSLATE_COAL_ORE, a(IGNIS, 12), a(MORS, 4));
@@ -98,7 +98,7 @@ final class VanillaItemAspects {
     }
 
     private static void nether(ItemAspectFileBuilder b) {
-        b.item(Items.NETHERRACK, a(TERRA, 4), a(IGNIS, 4))
+        b.item(Items.NETHERRACK, a(TERRA, 4), a(IGNIS, 2), a(TARTARUS, 2))
                 .item(Items.CRIMSON_NYLIUM, a(TERRA, 4), a(IGNIS, 6), a(HERBA, 2))
                 .item(Items.WARPED_NYLIUM, a(TERRA, 4), a(IGNIS, 4), a(HERBA, 2), a(ARCANUM, 2))
                 .item(Items.SOUL_SAND, a(TERRA, 4), a(MORS, 6), a(UMBRA, 2))
@@ -108,7 +108,7 @@ final class VanillaItemAspects {
                 .item(Items.GILDED_BLACKSTONE, a(TERRA, 8), a(IGNIS, 2), a(UMBRA, 2), a(METALLUM, 6), a(LUX, 3))
                 .item(Items.NETHER_GOLD_ORE, a(METALLUM, 16), a(LUX, 8), a(TERRA, 4), a(IGNIS, 4))
                 .item(Items.NETHER_QUARTZ_ORE, a(TERRA, 4), a(IGNIS, 6), a(ORDO, 8), a(LUX, 4))
-                .item(Items.GLOWSTONE_DUST, a(LUX, 4), a(IGNIS, 2))
+                .item(Items.GLOWSTONE_DUST, a(LUX, 2), a(IGNIS, 2), a(AURORA, 2))
                 .item(Items.SHROOMLIGHT, a(LUX, 8), a(HERBA, 4), a(IGNIS, 4))
                 .item(Items.CRIMSON_FUNGUS, a(HERBA, 4), a(IGNIS, 2))
                 .item(Items.WARPED_FUNGUS, a(HERBA, 4), a(ARCANUM, 2))
@@ -123,11 +123,11 @@ final class VanillaItemAspects {
 
     private static void end(ItemAspectFileBuilder b) {
         b.item(Items.END_STONE, a(TERRA, 8), a(CHAOS, 4))
-                .item(Items.CHORUS_FRUIT, a(HERBA, 4), a(CHAOS, 4), a(ARCANUM, 2))
+                .item(Items.CHORUS_FRUIT, a(CHAOS, 4), a(PEREGRINUM, 4))
                 .item(Items.CHORUS_FLOWER, a(HERBA, 6), a(CHAOS, 6), a(ARCANUM, 4))
                 .item(Items.CHORUS_PLANT, a(HERBA, 4), a(CHAOS, 4))
                 .item(Items.SHULKER_SHELL, a(VINCULUM, 16), a(CHAOS, 8), a(ARCANUM, 8))
-                .item(Items.DRAGON_BREATH, a(ARCANUM, 16), a(IGNIS, 8), a(CHAOS, 8));
+                .item(Items.DRAGON_BREATH, a(CHAOS, 8), a(PEREGRINUM, 12));
     }
 
     private static void waterAndIce(ItemAspectFileBuilder b) {
@@ -138,8 +138,8 @@ final class VanillaItemAspects {
                 .item(Items.SEAGRASS, a(HERBA, 3), a(AQUA, 3))
                 .item(Items.KELP, a(HERBA, 4), a(AQUA, 4))
                 .item(Items.SEA_PICKLE, a(AQUA, 4), a(LUX, 4), a(BESTIA, 2))
-                .item(Items.LILY_PAD, a(HERBA, 4), a(AQUA, 4))
-                .item(Items.WET_SPONGE, a(AQUA, 12), a(BESTIA, 8), a(ORDO, 4));
+                .item(Items.LILY_PAD, a(HERBA, 2), a(AQUA, 2), a(FONS, 2))
+                .item(Items.WET_SPONGE, a(AQUA, 8), a(ORDO, 4), a(FONS, 8));
         for (String coral : new String[] {"tube", "brain", "bubble", "fire", "horn"}) {
             b.item(item(coral + "_coral"), a(AQUA, 4), a(VITA, 4), a(BESTIA, 2))
                     .item(item(coral + "_coral_fan"), a(AQUA, 4), a(VITA, 4), a(BESTIA, 2))
@@ -148,12 +148,12 @@ final class VanillaItemAspects {
     }
 
     private static void deepDark(ItemAspectFileBuilder b) {
-        b.item(Items.SCULK, a(UMBRA, 4), a(MORS, 2), a(ARCANUM, 2))
+        b.item(Items.SCULK, a(UMBRA, 2), a(MORS, 2), a(VESPER, 2))
                 .item(Items.SCULK_VEIN, a(UMBRA, 1), a(MORS, 1))
-                .item(Items.SCULK_CATALYST, a(UMBRA, 16), a(MORS, 16), a(ARCANUM, 8))
+                .item(Items.SCULK_CATALYST, a(UMBRA, 8), a(MORS, 16), a(VESPER, 8))
                 .item(Items.SCULK_SENSOR, a(UMBRA, 8), a(TEMPESTAS, 8), a(ARCANUM, 4))
-                .item(Items.SCULK_SHRIEKER, a(UMBRA, 12), a(TEMPESTAS, 8), a(MORS, 8))
-                .item(Items.ECHO_SHARD, a(UMBRA, 24), a(ARCANUM, 16), a(TEMPESTAS, 8));
+                .item(Items.SCULK_SHRIEKER, a(UMBRA, 8), a(MORS, 8), a(ABYSSUS, 8))
+                .item(Items.ECHO_SHARD, a(UMBRA, 16), a(ABYSSUS, 16));
     }
 
     private static void plants(ItemAspectFileBuilder b) {
@@ -243,20 +243,20 @@ final class VanillaItemAspects {
                 .item(Items.BONE, a(MORS, 8), a(ORDO, 2))
                 .item(Items.STRING, a(BESTIA, 2), a(VINCULUM, 4))
                 .item(Items.SPIDER_EYE, a(BESTIA, 2), a(VENENUM, 6))
-                .item(Items.FEATHER, a(AER, 6), a(BESTIA, 2))
+                .item(Items.FEATHER, a(AER, 4), a(BESTIA, 2), a(CAELUM, 2))
                 .item(Items.RABBIT_HIDE, a(BESTIA, 4), a(VINCULUM, 2))
                 .item(Items.RABBIT_FOOT, a(BESTIA, 4), a(VITA, 4), a(ARCANUM, 4))
                 .item(Items.GUNPOWDER, a(IGNIS, 8), a(BELLUM, 6), a(CHAOS, 2))
-                .item(Items.ENDER_PEARL, a(ARCANUM, 16), a(CHAOS, 12), a(AER, 8))
-                .item(Items.BLAZE_ROD, a(IGNIS, 24), a(ARCANUM, 8))
-                .item(Items.BREEZE_ROD, a(AER, 24), a(TEMPESTAS, 12), a(ARCANUM, 4))
-                .item(Items.GHAST_TEAR, a(AQUA, 12), a(VITA, 12), a(MORS, 8))
+                .item(Items.ENDER_PEARL, a(CHAOS, 8), a(AER, 8), a(PEREGRINUM, 12))
+                .item(Items.BLAZE_ROD, a(IGNIS, 16), a(TARTARUS, 12))
+                .item(Items.BREEZE_ROD, a(AER, 24), a(TEMPESTAS, 8), a(SOLUTIO, 8))
+                .item(Items.GHAST_TEAR, a(AQUA, 12), a(VITA, 8), a(SOLUTIO, 8))
                 .item(Items.PHANTOM_MEMBRANE, a(AER, 12), a(MORS, 8), a(UMBRA, 4))
                 .item(Items.INK_SAC, a(AQUA, 4), a(UMBRA, 6))
                 .item(Items.GLOW_INK_SAC, a(AQUA, 4), a(LUX, 8))
                 .item(Items.TURTLE_SCUTE, a(BESTIA, 8), a(AQUA, 8), a(ORDO, 4))
                 .item(Items.ARMADILLO_SCUTE, a(BESTIA, 8), a(TERRA, 4), a(ORDO, 4))
-                .item(Items.NAUTILUS_SHELL, a(AQUA, 12), a(ORDO, 8), a(BESTIA, 4))
+                .item(Items.NAUTILUS_SHELL, a(AQUA, 8), a(ORDO, 8), a(FONS, 4))
                 .item(Items.HONEYCOMB, a(HERBA, 4), a(BESTIA, 2), a(ORDO, 2))
                 .item(Items.HONEY_BOTTLE, a(HERBA, 4), a(VITA, 4), a(BESTIA, 2))
                 .item(Items.BEE_NEST, a(HERBA, 12), a(BESTIA, 8), a(ORDO, 4))
@@ -265,7 +265,7 @@ final class VanillaItemAspects {
                 .item(Items.OCHRE_FROGLIGHT, a(LUX, 12), a(BESTIA, 4), a(IGNIS, 2))
                 .item(Items.VERDANT_FROGLIGHT, a(LUX, 12), a(BESTIA, 4), a(HERBA, 2))
                 .item(Items.PEARLESCENT_FROGLIGHT, a(LUX, 12), a(BESTIA, 4), a(ARCANUM, 2))
-                .item(Items.EGG, a(BESTIA, 4), a(VITA, 4))
+                .item(Items.EGG, a(BESTIA, 2), a(VITA, 4), a(ANIMA, 2))
                 .item(Items.BROWN_EGG, a(BESTIA, 4), a(VITA, 4))
                 .item(Items.BLUE_EGG, a(BESTIA, 4), a(VITA, 4))
                 .item(Items.TURTLE_EGG, a(BESTIA, 8), a(VITA, 8), a(AQUA, 4))
@@ -282,13 +282,13 @@ final class VanillaItemAspects {
         b.item(Items.NETHER_STAR, a(ARCANUM, 48), a(LUX, 32), a(MORS, 32), a(ORDO, 16))
                 .item(Items.DRAGON_EGG, a(ARCANUM, 64), a(VITA, 32), a(BESTIA, 32))
                 .item(Items.DRAGON_HEAD, a(BESTIA, 32), a(ARCANUM, 32), a(IGNIS, 16))
-                .item(Items.ELYTRA, a(AER, 64), a(ARCANUM, 32), a(BESTIA, 16))
+                .item(Items.ELYTRA, a(AER, 64), a(ARCANUM, 16), a(BESTIA, 16), a(CAELUM, 16))
                 .item(Items.HEAVY_CORE, a(METALLUM, 48), a(TEMPESTAS, 16), a(VINCULUM, 16))
-                .item(Items.HEART_OF_THE_SEA, a(AQUA, 32), a(ARCANUM, 16), a(LUX, 8))
-                .item(Items.TOTEM_OF_UNDYING, a(VITA, 48), a(ARCANUM, 24), a(ORDO, 16))
+                .item(Items.HEART_OF_THE_SEA, a(AQUA, 24), a(ARCANUM, 16), a(FONS, 16))
+                .item(Items.TOTEM_OF_UNDYING, a(VITA, 48), a(ARCANUM, 16), a(ANIMA, 16))
                 .item(Items.ENCHANTED_GOLDEN_APPLE, a(VITA, 64), a(ARCANUM, 32), a(LUX, 16), a(METALLUM, 8))
                 .item(Items.TRIDENT, a(AQUA, 24), a(BELLUM, 16), a(METALLUM, 16))
-                .item(Items.EXPERIENCE_BOTTLE, a(ARCANUM, 12), a(VITA, 4));
+                .item(Items.EXPERIENCE_BOTTLE, a(ARCANUM, 8), a(VITA, 4), a(ANIMA, 4));
     }
 
     private static void loot(ItemAspectFileBuilder b) {
@@ -307,8 +307,17 @@ final class VanillaItemAspects {
                 .item(Items.CHAINMAIL_LEGGINGS, a(METALLUM, 21), a(VINCULUM, 7))
                 .item(Items.CHAINMAIL_BOOTS, a(METALLUM, 12), a(VINCULUM, 4))
                 .item(Items.BELL, a(METALLUM, 16), a(LUX, 4), a(ORDO, 4))
-                .item(Items.TRIAL_KEY, a(ARCANUM, 8), a(METALLUM, 4), a(ORDO, 4))
-                .item(Items.OMINOUS_TRIAL_KEY, a(ARCANUM, 8), a(CHAOS, 8), a(METALLUM, 4), a(ORDO, 4))
+                .item(Items.BEACON, a(LUX, 32), a(CAELUM, 32), a(ARCANUM, 16))
+                .item(Items.IRON_CHAIN, a(METALLUM, 4), a(SIGILLUM, 2))
+                .item(Items.IRON_BARS, a(METALLUM, 2), a(SIGILLUM, 1))
+                .item(Items.LODESTONE, a(TERRA, 16), a(METALLUM, 16), a(SIGILLUM, 8))
+                .item(Items.PISTON, a(TERRA, 8), a(METALLUM, 4), a(ARTIFICIUM, 6))
+                .item(Items.OBSERVER, a(TERRA, 8), a(ARTIFICIUM, 6))
+                .item(Items.REPEATER, a(TERRA, 4), a(ARTIFICIUM, 4))
+                .item(Items.COMPARATOR, a(TERRA, 4), a(ORDO, 4), a(ARTIFICIUM, 6))
+                .item(Items.CRAFTER, a(ORDO, 8), a(METALLUM, 4), a(ARTIFICIUM, 12))
+                .item(Items.TRIAL_KEY, a(METALLUM, 4), a(SIGILLUM, 8))
+                .item(Items.OMINOUS_TRIAL_KEY, a(BELLUM, 8), a(SIGILLUM, 8))
                 .item(Items.OMINOUS_BOTTLE, a(ARCANUM, 8), a(CHAOS, 8), a(BELLUM, 4))
                 .item(item("copper_golem_statue"), a(METALLUM, 16), a(ARCANUM, 8), a(ORDO, 4));
         for (Item item : BuiltInRegistries.ITEM) {

@@ -28,7 +28,7 @@ class ThaumoryAspectsTest {
 
     @Test
     void registersSixPrimalsTwelveCompoundsAndTheThirdTier() {
-        assertEquals(19, registry.all().size());
+        assertEquals(30, registry.all().size());
         assertEquals(List.of(IGNIS, AER, VITA, AQUA, TERRA, MORS), registry.primals());
     }
 
@@ -42,8 +42,17 @@ class ThaumoryAspectsTest {
         for (Aspect kept : List.of(AQUA, TERRA, MORS, UMBRA, VINCULUM, VENENUM)) {
             assertFalse(registry.cancels(SORDES, kept), kept.toString());
         }
-        // Arcanum + Bestia is not registered yet.
-        assertEquals(Optional.empty(), registry.opposite(SORDES));
+    }
+
+    /** Requirements §2.2: the third tier comes in six opposite pairs. */
+    @Test
+    void thirdTierFormsSixOpposingPairs() {
+        assertOpposite(SORDES, ANIMA);
+        assertOpposite(AURORA, VESPER);
+        assertOpposite(ABYSSUS, CAELUM);
+        assertOpposite(SIGILLUM, SOLUTIO);
+        assertOpposite(TARTARUS, FONS);
+        assertOpposite(PEREGRINUM, ARTIFICIUM);
     }
 
     @Test

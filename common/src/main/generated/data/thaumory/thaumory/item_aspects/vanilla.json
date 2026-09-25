@@ -117,10 +117,9 @@
     },
     {
       "aspects": {
-        "thaumory:aqua": 4,
-        "thaumory:arcanum": 8,
-        "thaumory:ignis": 8,
-        "thaumory:terra": 16
+        "thaumory:terra": 16,
+        "thaumory:umbra": 4,
+        "thaumory:vesper": 8
       },
       "target": "minecraft:crying_obsidian"
     },
@@ -192,17 +191,16 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 8,
-        "thaumory:lux": 4,
-        "thaumory:ordo": 4
+        "thaumory:arcanum": 6,
+        "thaumory:aurora": 6
       },
       "target": "minecraft:amethyst_shard"
     },
     {
       "aspects": {
-        "thaumory:bellum": 12,
-        "thaumory:ignis": 16,
-        "thaumory:metallum": 32
+        "thaumory:ignis": 8,
+        "thaumory:metallum": 32,
+        "thaumory:tartarus": 12
       },
       "target": "minecraft:ancient_debris"
     },
@@ -391,7 +389,8 @@
     },
     {
       "aspects": {
-        "thaumory:ignis": 4,
+        "thaumory:ignis": 2,
+        "thaumory:tartarus": 2,
         "thaumory:terra": 4
       },
       "target": "minecraft:netherrack"
@@ -473,8 +472,9 @@
     },
     {
       "aspects": {
+        "thaumory:aurora": 2,
         "thaumory:ignis": 2,
-        "thaumory:lux": 4
+        "thaumory:lux": 2
       },
       "target": "minecraft:glowstone_dust"
     },
@@ -561,9 +561,8 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 2,
         "thaumory:chaos": 4,
-        "thaumory:herba": 4
+        "thaumory:peregrinum": 4
       },
       "target": "minecraft:chorus_fruit"
     },
@@ -592,9 +591,8 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 16,
         "thaumory:chaos": 8,
-        "thaumory:ignis": 8
+        "thaumory:peregrinum": 12
       },
       "target": "minecraft:dragon_breath"
     },
@@ -650,15 +648,16 @@
     },
     {
       "aspects": {
-        "thaumory:aqua": 4,
-        "thaumory:herba": 4
+        "thaumory:aqua": 2,
+        "thaumory:fons": 2,
+        "thaumory:herba": 2
       },
       "target": "minecraft:lily_pad"
     },
     {
       "aspects": {
-        "thaumory:aqua": 12,
-        "thaumory:bestia": 8,
+        "thaumory:aqua": 8,
+        "thaumory:fons": 8,
         "thaumory:ordo": 4
       },
       "target": "minecraft:wet_sponge"
@@ -790,9 +789,9 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 2,
         "thaumory:mors": 2,
-        "thaumory:umbra": 4
+        "thaumory:umbra": 2,
+        "thaumory:vesper": 2
       },
       "target": "minecraft:sculk"
     },
@@ -805,9 +804,9 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 8,
         "thaumory:mors": 16,
-        "thaumory:umbra": 16
+        "thaumory:umbra": 8,
+        "thaumory:vesper": 8
       },
       "target": "minecraft:sculk_catalyst"
     },
@@ -821,17 +820,16 @@
     },
     {
       "aspects": {
+        "thaumory:abyssus": 8,
         "thaumory:mors": 8,
-        "thaumory:tempestas": 8,
-        "thaumory:umbra": 12
+        "thaumory:umbra": 8
       },
       "target": "minecraft:sculk_shrieker"
     },
     {
       "aspects": {
-        "thaumory:arcanum": 16,
-        "thaumory:tempestas": 8,
-        "thaumory:umbra": 24
+        "thaumory:abyssus": 16,
+        "thaumory:umbra": 16
       },
       "target": "minecraft:echo_shard"
     },
@@ -1485,8 +1483,9 @@
     },
     {
       "aspects": {
-        "thaumory:aer": 6,
-        "thaumory:bestia": 2
+        "thaumory:aer": 4,
+        "thaumory:bestia": 2,
+        "thaumory:caelum": 2
       },
       "target": "minecraft:feather"
     },
@@ -1516,31 +1515,31 @@
     {
       "aspects": {
         "thaumory:aer": 8,
-        "thaumory:arcanum": 16,
-        "thaumory:chaos": 12
+        "thaumory:chaos": 8,
+        "thaumory:peregrinum": 12
       },
       "target": "minecraft:ender_pearl"
     },
     {
       "aspects": {
-        "thaumory:arcanum": 8,
-        "thaumory:ignis": 24
+        "thaumory:ignis": 16,
+        "thaumory:tartarus": 12
       },
       "target": "minecraft:blaze_rod"
     },
     {
       "aspects": {
         "thaumory:aer": 24,
-        "thaumory:arcanum": 4,
-        "thaumory:tempestas": 12
+        "thaumory:solutio": 8,
+        "thaumory:tempestas": 8
       },
       "target": "minecraft:breeze_rod"
     },
     {
       "aspects": {
         "thaumory:aqua": 12,
-        "thaumory:mors": 8,
-        "thaumory:vita": 12
+        "thaumory:solutio": 8,
+        "thaumory:vita": 8
       },
       "target": "minecraft:ghast_tear"
     },
@@ -1584,8 +1583,8 @@
     },
     {
       "aspects": {
-        "thaumory:aqua": 12,
-        "thaumory:bestia": 4,
+        "thaumory:aqua": 8,
+        "thaumory:fons": 4,
         "thaumory:ordo": 8
       },
       "target": "minecraft:nautilus_shell"
@@ -1656,7 +1655,8 @@
     },
     {
       "aspects": {
-        "thaumory:bestia": 4,
+        "thaumory:anima": 2,
+        "thaumory:bestia": 2,
         "thaumory:vita": 4
       },
       "target": "minecraft:egg"
@@ -1765,8 +1765,9 @@
     {
       "aspects": {
         "thaumory:aer": 64,
-        "thaumory:arcanum": 32,
-        "thaumory:bestia": 16
+        "thaumory:arcanum": 16,
+        "thaumory:bestia": 16,
+        "thaumory:caelum": 16
       },
       "target": "minecraft:elytra"
     },
@@ -1780,16 +1781,16 @@
     },
     {
       "aspects": {
-        "thaumory:aqua": 32,
+        "thaumory:aqua": 24,
         "thaumory:arcanum": 16,
-        "thaumory:lux": 8
+        "thaumory:fons": 16
       },
       "target": "minecraft:heart_of_the_sea"
     },
     {
       "aspects": {
-        "thaumory:arcanum": 24,
-        "thaumory:ordo": 16,
+        "thaumory:anima": 16,
+        "thaumory:arcanum": 16,
         "thaumory:vita": 48
       },
       "target": "minecraft:totem_of_undying"
@@ -1813,7 +1814,8 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 12,
+        "thaumory:anima": 4,
+        "thaumory:arcanum": 8,
         "thaumory:vita": 4
       },
       "target": "minecraft:experience_bottle"
@@ -1934,18 +1936,83 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 8,
+        "thaumory:arcanum": 16,
+        "thaumory:caelum": 32,
+        "thaumory:lux": 32
+      },
+      "target": "minecraft:beacon"
+    },
+    {
+      "aspects": {
         "thaumory:metallum": 4,
-        "thaumory:ordo": 4
+        "thaumory:sigillum": 2
+      },
+      "target": "minecraft:iron_chain"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 2,
+        "thaumory:sigillum": 1
+      },
+      "target": "minecraft:iron_bars"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 16,
+        "thaumory:sigillum": 8,
+        "thaumory:terra": 16
+      },
+      "target": "minecraft:lodestone"
+    },
+    {
+      "aspects": {
+        "thaumory:artificium": 6,
+        "thaumory:metallum": 4,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:piston"
+    },
+    {
+      "aspects": {
+        "thaumory:artificium": 6,
+        "thaumory:terra": 8
+      },
+      "target": "minecraft:observer"
+    },
+    {
+      "aspects": {
+        "thaumory:artificium": 4,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:repeater"
+    },
+    {
+      "aspects": {
+        "thaumory:artificium": 6,
+        "thaumory:ordo": 4,
+        "thaumory:terra": 4
+      },
+      "target": "minecraft:comparator"
+    },
+    {
+      "aspects": {
+        "thaumory:artificium": 12,
+        "thaumory:metallum": 4,
+        "thaumory:ordo": 8
+      },
+      "target": "minecraft:crafter"
+    },
+    {
+      "aspects": {
+        "thaumory:metallum": 4,
+        "thaumory:sigillum": 8
       },
       "target": "minecraft:trial_key"
     },
     {
       "aspects": {
-        "thaumory:arcanum": 8,
-        "thaumory:chaos": 8,
-        "thaumory:metallum": 4,
-        "thaumory:ordo": 4
+        "thaumory:bellum": 8,
+        "thaumory:sigillum": 8
       },
       "target": "minecraft:ominous_trial_key"
     },

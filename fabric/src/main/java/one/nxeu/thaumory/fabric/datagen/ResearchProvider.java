@@ -1,21 +1,33 @@
 package one.nxeu.thaumory.fabric.datagen;
 
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.ABYSSUS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AER;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.ANIMA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AQUA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARTIFICIUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.AURORA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.BELLUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.BESTIA;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.CAELUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.CHAOS;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.FONS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.HERBA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.IGNIS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.LUX;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.METALLUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.MORS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.PEREGRINUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.SIGILLUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.SOLUTIO;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.SORDES;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.TARTARUS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TEMPESTAS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.TERRA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.UMBRA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VENENUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.VESPER;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VINCULUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VITA;
 
@@ -169,6 +181,13 @@ final class ResearchProvider {
             hint(output, ThaumoryCircleEffects.SEARING, BELLUM, IGNIS);
             hint(output, ThaumoryCircleEffects.WITHERING, MORS, VENENUM);
             hint(output, ThaumoryCircleEffects.CONTAINMENT, VINCULUM, CHAOS);
+            // One for each opposite pair of the third tier.
+            hint(output, Thaumory.id("anima_sordes"), ANIMA, SORDES);
+            hint(output, Thaumory.id("aurora_vesper"), AURORA, VESPER);
+            hint(output, Thaumory.id("abyssus_caelum"), ABYSSUS, CAELUM);
+            hint(output, Thaumory.id("sigillum_solutio"), SIGILLUM, SOLUTIO);
+            hint(output, Thaumory.id("tartarus_fons"), TARTARUS, FONS);
+            hint(output, Thaumory.id("peregrinum_artificium"), PEREGRINUM, ARTIFICIUM);
         }
 
         private static void hint(BiConsumer<Identifier, Hint> output, Identifier effect, Aspect first, Aspect second) {

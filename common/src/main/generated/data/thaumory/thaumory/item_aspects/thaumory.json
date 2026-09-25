@@ -6,15 +6,15 @@
     },
     {
       "aspects": {
-        "thaumory:arcanum": 4,
-        "thaumory:lux": 1
+        "thaumory:arcanum": 3,
+        "thaumory:aurora": 2
       },
       "target": "thaumory:arcane_crystal_shard"
     },
     {
       "aspects": {
-        "thaumory:arcanum": 8,
-        "thaumory:lux": 2
+        "thaumory:arcanum": 6,
+        "thaumory:aurora": 4
       },
       "target": "thaumory:arcane_crystal"
     },
