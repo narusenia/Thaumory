@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -24,6 +25,7 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
+import one.nxeu.thaumory.circle.CircleChildren;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.circle.CircleSide;
 
@@ -68,6 +70,8 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
     /** Above the face it is drawn on, bobbing by {@link #EMBLEM_BOB}. */
     private static final float EMBLEM_HEIGHT = 0.3f;
     private static final float EMBLEM_BOB = 0.06f;
+    /** How far a sub-circle's ring floats above its parent's emblem, so the two never fight over the same depth. */
+    private static final float SUB_EMBLEM_LIFT = 0.02f;
     /** Ticks a triggered circle's emblem takes to fade. */
     private static final float FLASH_TICKS = 20;
 
@@ -83,6 +87,10 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         Direction front = Direction.UP;
         int rank = 1;
         int rings;
+        /** For a sub-circle: the parent's ring it sits on, and where the parent is from here; 0 otherwise. */
+        int seatRing;
+        int parentX;
+        int parentZ;
         /** 0 to 1: how strongly the emblem shows. */
         float emblem;
         final ItemStackRenderState item = new ItemStackRenderState();
@@ -113,6 +121,13 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         state.front = core.front();
         state.rank = core.rank();
         state.rings = core.scan().rings();
+        state.seatRing = 0;
+        Optional<CircleSide> side = core.seatSide();
+        if (core.seat().filter(CircleChildren.Seat.CHILD::equals).isPresent() && side.isPresent()) {
+            state.seatRing = core.frameRings();
+            state.parentX = -side.get().nodeX(state.seatRing);
+            state.parentZ = -side.get().nodeZ(state.seatRing);
+        }
         float sinceFlash = core.lastFlash() == Long.MIN_VALUE ? Float.MAX_VALUE : state.time - core.lastFlash();
         state.emblem = core.isRunning() ? 1 : Math.max(0, 1 - sinceFlash / FLASH_TICKS);
         items.updateForTopItem(state.item, core.pedestalItem(), ItemDisplayContext.GROUND, core.getLevel(), null,
@@ -138,8 +153,13 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
             collector.submitCustomGeometry(pose, GLOWS.get(picture), (p, consumer) -> quad(consumer, p, glow, glowHeight, half * RingGlows.scale()));
             pose.popPose();
         }
-        if (state.emblem > 0 && state.rings > 0 && state.colors.length > 0) {
-            emblem(state, pose, collector);
+        if (state.emblem > 0 && state.colors.length > 0) {
+            if (state.seatRing > 0) {
+                // A sub-circle lights only the parent's ring it sits on, a little above the parent's own emblem.
+                emblem(state, pose, collector, state.seatRing, state.seatRing, state.parentX, state.parentZ, SUB_EMBLEM_LIFT);
+            } else if (state.rings > 0) {
+                emblem(state, pose, collector, 1, state.rings, 0, 0, 0);
+            }
         }
         if (state.pedestal) {
             glyphRing(state, pose, collector);
@@ -154,26 +174,29 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         }
     }
 
-    /** Soft lines along each ring's circle, where its chalk runs, and a spot on each node. */
-    private static void emblem(State state, PoseStack pose, SubmitNodeCollector collector) {
+    /**
+     * Soft lines along the circles of rings {@code from} to {@code to} of the circle centred
+     * ({@code x}, {@code z}) from this Core, where their chalk runs, and a spot on each of their nodes.
+     */
+    private static void emblem(State state, PoseStack pose, SubmitNodeCollector collector, int from, int to, int x, int z, float lift) {
         int color = glow(state.colors[0], EMBLEM_ALPHA * state.emblem);
-        float y = EMBLEM_HEIGHT + EMBLEM_BOB * (float) Math.sin(state.time / 30);
+        float y = EMBLEM_HEIGHT + lift + EMBLEM_BOB * (float) Math.sin(state.time / 30);
         float w = EMBLEM_WIDTH / 2;
         float d = EMBLEM_DOT_SIZE / 2;
         pose.pushPose();
         pose.rotateAround(state.front.getRotation(), 0.5f, 0.5f, 0.5f);
-        pose.translate(0.5f, 0, 0.5f);
+        pose.translate(0.5f + x, 0, 0.5f + z);
         collector.submitCustomGeometry(pose, EMBLEM_LINE, (p, consumer) -> {
-            for (int ring = 1; ring <= state.rings; ring++) {
+            for (int ring = from; ring <= to; ring++) {
                 circle(consumer, p, color, y, CircleScan.radius(ring), w);
             }
         });
         collector.submitCustomGeometry(pose, EMBLEM_DOT, (p, consumer) -> {
-            for (int ring = 1; ring <= state.rings; ring++) {
+            for (int ring = from; ring <= to; ring++) {
                 for (CircleSide side : CircleSide.values()) {
-                    int x = side.nodeX(ring);
-                    int z = side.nodeZ(ring);
-                    spot(consumer, p, color, y + 0.001f, x - d, z - d, x + d, z + d);
+                    int nx = side.nodeX(ring);
+                    int nz = side.nodeZ(ring);
+                    spot(consumer, p, color, y + 0.001f, nx - d, nz - d, nx + d, nz + d);
                 }
             }
         });

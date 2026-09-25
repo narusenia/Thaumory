@@ -20,6 +20,7 @@ class CircleScanTest {
     private static final Identifier AMPLIFY = Identifier.fromNamespaceAndPath("thaumory", "amplifying_pattern");
     private static final Identifier STABILIZE = Identifier.fromNamespaceAndPath("thaumory", "stabilizing_pattern");
     private static final Identifier EXTEND = Identifier.fromNamespaceAndPath("thaumory", "extending_pattern");
+    private static final Identifier CORE = Identifier.fromNamespaceAndPath("thaumory", "circle_core");
 
     /** Chalk around a Core at (0, 0). */
     private static final class Ground {
@@ -51,7 +52,7 @@ class CircleScanTest {
         }
 
         CircleScan scan(int maxRings) {
-            return CircleScan.scan((dx, dz) -> Optional.ofNullable(cells.get(new CircleScan.Offset(dx, dz))), LINE, maxRings);
+            return CircleScan.scan((dx, dz) -> Optional.ofNullable(cells.get(new CircleScan.Offset(dx, dz))), LINE, CORE::equals, maxRings);
         }
     }
 
@@ -218,6 +219,31 @@ class CircleScanTest {
     }
 
     @Test
+    void coreOnANodeIsASeatAndPartOfTheRing() {
+        CircleScan scan = new Ground().ring(1).ring(2).node(2, CircleSide.WEST, CORE).node(2, CircleSide.EAST, CORE)
+                .node(1, CircleSide.NORTH, CORE).scan();
+
+        assertEquals(2, scan.rings());
+        assertTrue(scan.nodes().isEmpty(), "a Core is no modifier");
+        assertEquals(List.of(new CircleScan.Node(1, CircleSide.NORTH, CORE), new CircleScan.Node(2, CircleSide.EAST, CORE),
+                new CircleScan.Node(2, CircleSide.WEST, CORE)), scan.seats());
+        assertEquals(List.of(new CircleScan.Node(1, CircleSide.NORTH, CORE)), scan.seatsOn(1));
+    }
+
+    @Test
+    void coreOffANodeBreaksTheRing() {
+        assertEquals(1, new Ground().ring(1).ring(2).set(2, 2, CORE).scan().rings());
+    }
+
+    @Test
+    void seatsOnRingsThatDoNotHoldAreNotListed() {
+        CircleScan scan = new Ground().ring(1).node(2, CircleSide.NORTH, CORE).scan();
+
+        assertEquals(1, scan.rings());
+        assertTrue(scan.seats().isEmpty());
+    }
+
+    @Test
     void chalkInsideTheRingsDoesNotMatter() {
         // Ring 2 is scanned on its own cells only; the Core's own cell is never read.
         assertEquals(2, new Ground().ring(1).ring(2).set(0, 0, AMPLIFY).scan().rings());
@@ -237,6 +263,16 @@ class CircleScanTest {
     }
 
     @Test
+    void eachSubCircleAddsToInstability() {
+        CircleSettings settings = CircleSettings.DEFAULT;
+        List<CircleScan.Node> stabilize = List.of(new CircleScan.Node(1, CircleSide.NORTH, STABILIZE));
+
+        assertEquals(2, settings.instability(List.of(), 2));
+        assertEquals(0, settings.instability(stabilize, 2), "a stabilizing pattern outweighs two sub-circles");
+        assertEquals(1, settings.instability(stabilize, 4));
+    }
+
+    @Test
     void settingsReadFromJson() {
         CircleSettings settings = CircleSettings.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("""
                 {"scan_interval": 20, "instability_threshold": 5,
@@ -245,6 +281,7 @@ class CircleScanTest {
 
         assertEquals(20, settings.scanInterval());
         assertEquals(5, settings.instabilityThreshold());
+        assertEquals(1, settings.childInstability(), "child_instability defaults to 1");
         assertEquals(1, settings.instability(List.of(new CircleScan.Node(1, CircleSide.NORTH, EXTEND),
                 new CircleScan.Node(1, CircleSide.EAST, AMPLIFY))));
         assertTrue(CircleSettings.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{\"scan_interval\": 0, \"instability_threshold\": 3}")).isError());

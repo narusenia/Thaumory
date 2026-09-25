@@ -3,6 +3,7 @@ package one.nxeu.thaumory.circle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import net.minecraft.resources.Identifier;
 
@@ -16,11 +17,18 @@ import net.minecraft.resources.Identifier;
  * the Core on a ring; a modifier anywhere else on a ring works as a line and is reported as
  * ignored.
  *
+ * <p>Another Core on a node is part of the ring too, with no modifier there: it is a seat for a
+ * sub-circle ({@link CircleChildren}). A Core anywhere else on a ring does not hold it.
+ *
  * @param rings            rings that hold, 0 to the limit the scan was given
  * @param nodes            modifiers on the nodes of those rings, inner ring first
  * @param ignoredModifiers modifiers on those rings but off their nodes
+ * @param seats            Cores on the nodes of those rings, inner ring first
  */
-public record CircleScan(int rings, List<Node> nodes, List<Offset> ignoredModifiers) {
+public record CircleScan(int rings, List<Node> nodes, List<Offset> ignoredModifiers, List<Node> seats) {
+    /** Nothing holds. */
+    public static final CircleScan NONE = new CircleScan(0, List.of(), List.of(), List.of());
+
     /** The most rings any Core reads (rank 3). */
     public static final int MAX_RINGS = 5;
 
@@ -38,25 +46,43 @@ public record CircleScan(int rings, List<Node> nodes, List<Offset> ignoredModifi
         Optional<Identifier> at(int dx, int dz);
     }
 
+    /** A scan where no cell holds a Core. */
+    public static CircleScan scan(Patterns patterns, Identifier line, int maxRings) {
+        return scan(patterns, line, id -> false, maxRings);
+    }
+
     /**
      * @param line     the plain line's id; every other pattern is a modifier
+     * @param cores    which of the ids {@code patterns} gives are Cores
      * @param maxRings how many rings the Core reads, at most {@link #MAX_RINGS}
      */
-    public static CircleScan scan(Patterns patterns, Identifier line, int maxRings) {
+    public static CircleScan scan(Patterns patterns, Identifier line, Predicate<Identifier> cores, int maxRings) {
         int rings = 0;
         List<Node> nodes = new ArrayList<>();
         List<Offset> ignored = new ArrayList<>();
+        List<Node> seats = new ArrayList<>();
         for (int ring = 1; ring <= Math.min(maxRings, MAX_RINGS); ring++) {
-            List<Node> ringNodes = new ArrayList<>();
-            List<Offset> ringIgnored = new ArrayList<>();
-            if (!readRing(patterns, line, ring, ringNodes, ringIgnored)) {
+            Ring read = new Ring();
+            if (!readRing(patterns, line, cores, ring, read)) {
                 break;
             }
             rings = ring;
-            nodes.addAll(ringNodes);
-            ignored.addAll(ringIgnored);
+            nodes.addAll(read.nodes);
+            ignored.addAll(read.ignored);
+            seats.addAll(read.seats);
         }
-        return new CircleScan(rings, List.copyOf(nodes), List.copyOf(ignored));
+        return new CircleScan(rings, List.copyOf(nodes), List.copyOf(ignored), List.copyOf(seats));
+    }
+
+    /** The seats on ring {@code ring}, the outermost that holds when it is {@link #rings}. */
+    public List<Node> seatsOn(int ring) {
+        return seats.stream().filter(seat -> seat.ring() == ring).toList();
+    }
+
+    private static final class Ring {
+        final List<Node> nodes = new ArrayList<>();
+        final List<Offset> ignored = new ArrayList<>();
+        final List<Node> seats = new ArrayList<>();
     }
 
     /** The radius of ring {@code ring}: 1, 3, 5, 7, 9. */
@@ -92,7 +118,7 @@ public record CircleScan(int rings, List<Node> nodes, List<Offset> ignoredModifi
         return List.copyOf(cells);
     }
 
-    private static boolean readRing(Patterns patterns, Identifier line, int ring, List<Node> nodes, List<Offset> ignored) {
+    private static boolean readRing(Patterns patterns, Identifier line, Predicate<Identifier> cores, int ring, Ring read) {
         for (Offset cell : cells(ring)) {
             Optional<Identifier> pattern = patterns.at(cell.dx(), cell.dz());
             if (pattern.isEmpty()) {
@@ -102,13 +128,19 @@ public record CircleScan(int rings, List<Node> nodes, List<Offset> ignoredModifi
                 continue;
             }
             Optional<CircleSide> side = nodeSide(ring, cell.dx(), cell.dz());
-            if (side.isPresent()) {
-                nodes.add(new Node(ring, side.get(), pattern.get()));
+            if (cores.test(pattern.get())) {
+                if (side.isEmpty()) {
+                    return false;
+                }
+                read.seats.add(new Node(ring, side.get(), pattern.get()));
+            } else if (side.isPresent()) {
+                read.nodes.add(new Node(ring, side.get(), pattern.get()));
             } else {
-                ignored.add(cell);
+                read.ignored.add(cell);
             }
         }
-        nodes.sort((a, b) -> a.side().compareTo(b.side()));
+        read.nodes.sort((a, b) -> a.side().compareTo(b.side()));
+        read.seats.sort((a, b) -> a.side().compareTo(b.side()));
         return true;
     }
 

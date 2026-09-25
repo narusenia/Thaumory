@@ -30,6 +30,7 @@ import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.ValveBlock;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
 import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
+import one.nxeu.thaumory.circle.CircleChildren;
 import one.nxeu.thaumory.circle.CircleMode;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.crucible.CrucibleTank;
@@ -164,7 +165,18 @@ final class LoupeHud {
         }
         lines.add(runes);
 
-        lines.add(Component.translatable("hud.thaumory.core.rings", scan.rings(), core.maxRings()).withColor(GRAY));
+        Optional<CircleChildren.Seat> seat = core.seat();
+        if (seat.isPresent()) {
+            // A Core sitting in another's circle reads no chalk of its own.
+            lines.add(seat.get() == CircleChildren.Seat.CHILD
+                    ? Component.translatable("hud.thaumory.core.seat.child", core.frameRings()).withColor(0xFFCC99FF)
+                    : Component.translatable("hud.thaumory.core.seat." + seat.get().name().toLowerCase(Locale.ROOT)).withColor(0xFFFFAA55));
+        } else {
+            lines.add(Component.translatable("hud.thaumory.core.rings", scan.rings(), core.maxRings()).withColor(GRAY));
+        }
+        if (core.children() > 0) {
+            lines.add(Component.translatable("hud.thaumory.core.children", core.children(), CircleChildren.limit(core.rank())).withColor(GRAY));
+        }
         for (CircleScan.Node node : scan.nodes()) {
             Component pattern = BuiltInRegistries.BLOCK.getOptional(node.pattern())
                     .map(block -> (Component) block.getName())
@@ -184,7 +196,7 @@ final class LoupeHud {
                 ? ThaumoryText.withEffect(Component.translatable("hud.thaumory.core.running").withColor(runningColor), TextEffect.PULSE)
                 : Component.translatable("hud.thaumory.core.stopped").withColor(GRAY));
         // Name the circle and its cost only once this player has seen it work, so the loupe never gives answers away.
-        core.combination().filter(combination -> scan.rings() > 0).ifPresent(combination -> {
+        core.combination().filter(combination -> core.frameRings() > 0).ifPresent(combination -> {
             Optional<PlayerKnowledge.CircleOutcome> outcome = knowledge.circle(combination);
             Optional<Identifier> effect = core.effectId();
             if (outcome.filter(PlayerKnowledge.CircleOutcome.SUCCESS::equals).isPresent() && effect.isPresent()) {

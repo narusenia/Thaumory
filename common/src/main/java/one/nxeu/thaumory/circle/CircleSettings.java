@@ -8,7 +8,8 @@ import net.minecraft.resources.Identifier;
 
 /**
  * {@code data/thaumory/thaumory/circle.json}: how often a Core rescans, the instability threshold
- * and the Flux going over it releases, the Flux an undefined combination releases, the radius each
+ * and the Flux going over it releases, the Flux an undefined combination releases, the instability
+ * each sub-circle adds to its parent, the radius each
  * ring count gives, what each rank above the first adds to the strength multiplier, how much of
  * each aspect a Core holds, and what each pattern (by block id) adds to instability and to the
  * strength, range and cost multipliers. Values not written are 0.
@@ -19,6 +20,7 @@ import net.minecraft.resources.Identifier;
  *   "instability_threshold": 3,
  *   "instability_flux": { "chance_per_point": 0.2, "flux_per_point": 2 },
  *   "undefined_flux": 5,
+ *   "child_instability": 1,
  *   "ring_radius": [4, 8, 16, 24, 32],
  *   "rank_strength": 0.25,
  *   "essentia_capacity": 64,
@@ -33,11 +35,11 @@ import net.minecraft.resources.Identifier;
  * }</pre>
  */
 public record CircleSettings(int scanInterval, int instabilityThreshold, InstabilityFlux instabilityFlux, double undefinedFlux,
-        List<Integer> ringRadius, double rankStrength, int essentiaCapacity, Map<Identifier, PatternSettings> patterns, InfusionSettings infusion) {
+        int childInstability, List<Integer> ringRadius, double rankStrength, int essentiaCapacity, Map<Identifier, PatternSettings> patterns, InfusionSettings infusion) {
     /** No multiplier goes below this, however many modifiers lower it. */
     public static final double MIN_MULTIPLIER = 0.25;
 
-    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, InstabilityFlux.DEFAULT, 5, List.of(4, 8, 16, 24, 32), 0.25, 64, Map.of(
+    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, InstabilityFlux.DEFAULT, 5, 1, List.of(4, 8, 16, 24, 32), 0.25, 64, Map.of(
             thaumory("amplifying_pattern"), new PatternSettings(2, 0.5, 0, 0.5),
             thaumory("extending_pattern"), new PatternSettings(0, 0, 0.5, 0.25),
             thaumory("economizing_pattern"), new PatternSettings(0, -0.25, 0, -0.25),
@@ -77,6 +79,7 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, Instabi
             InstabilityFlux.CODEC.optionalFieldOf("instability_flux", InstabilityFlux.DEFAULT).forGetter(CircleSettings::instabilityFlux),
             Codec.doubleRange(0, Double.MAX_VALUE).optionalFieldOf("undefined_flux", DEFAULT.undefinedFlux)
                     .forGetter(CircleSettings::undefinedFlux),
+            Codec.INT.optionalFieldOf("child_instability", DEFAULT.childInstability).forGetter(CircleSettings::childInstability),
             Codec.intRange(1, Integer.MAX_VALUE).listOf(1, CircleScan.MAX_RINGS)
                     .optionalFieldOf("ring_radius", DEFAULT.ringRadius).forGetter(CircleSettings::ringRadius),
             Codec.DOUBLE.optionalFieldOf("rank_strength", DEFAULT.rankStrength).forGetter(CircleSettings::rankStrength),
@@ -93,7 +96,12 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, Instabi
 
     /** The sum of what the node patterns add, never below 0. */
     public int instability(List<CircleScan.Node> nodes) {
-        int sum = 0;
+        return instability(nodes, 0);
+    }
+
+    /** What the node patterns add, and {@code child_instability} for each sub-circle held; never below 0. */
+    public int instability(List<CircleScan.Node> nodes, int children) {
+        int sum = children * childInstability;
         for (CircleScan.Node node : nodes) {
             sum += pattern(node.pattern()).instability();
         }

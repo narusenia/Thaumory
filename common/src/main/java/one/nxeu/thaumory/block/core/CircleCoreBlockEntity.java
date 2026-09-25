@@ -3,6 +3,7 @@ package one.nxeu.thaumory.block.core;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,6 +53,7 @@ import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
+import one.nxeu.thaumory.circle.CircleChildren;
 import one.nxeu.thaumory.circle.CircleDefinitionReloadListener;
 import one.nxeu.thaumory.circle.CircleDefinitions;
 import one.nxeu.thaumory.circle.CircleIndex;
@@ -92,27 +94,34 @@ import one.nxeu.thaumory.text.ThaumoryText;
  *
  * <p>A combination that needs a higher rank than the Core's is found but does not run: it is
  * neither a misfire nor recorded.
+ *
+ * <p>A Core on a node of a circle of higher rank sits in it and reads no chalk of its own
+ * (requirements §4.6). If the parent holds it as a child, its runes make a sub-circle that works
+ * on the parent's rings: the parent's range, centred on the parent, and the parent's multipliers
+ * and instability. Each child adds to the parent's instability.
  */
 public final class CircleCoreBlockEntity extends BlockEntity {
     /** The most rune slots any Core has; {@link #slots()} is this Core's. */
     public static final int SLOTS = 4;
     private static final Codec<List<Identifier>> RUNES_CODEC = Identifier.CODEC.listOf(0, SLOTS);
     private static final Codec<AspectList> ESSENTIA_CODEC = AspectCodecs.aspectList(ThaumoryApi.aspects());
-    private static final CircleScan UNSCANNED = new CircleScan(0, List.of(), List.of());
+    private static final CircleScan UNSCANNED = new CircleScan(0, List.of(), List.of(), List.of());
     /** The combination setting for the Flux given off per piece of work (requirements §4.5). */
     private static final String WORK_FLUX = "work_flux";
     /** The scan as the loupe needs it on the client; sent with block updates, never saved. */
+    private static final Codec<CircleScan.Node> NODE_CODEC = RecordCodecBuilder.create(n -> n.group(
+            Codec.INT.fieldOf("ring").forGetter(CircleScan.Node::ring),
+            Codec.STRING.xmap(CircleSide::valueOf, CircleSide::name).fieldOf("side").forGetter(CircleScan.Node::side),
+            Identifier.CODEC.fieldOf("pattern").forGetter(CircleScan.Node::pattern)
+    ).apply(n, CircleScan.Node::new));
     private static final Codec<CircleScan> SCAN_CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.INT.fieldOf("rings").forGetter(CircleScan::rings),
-            RecordCodecBuilder.<CircleScan.Node>create(n -> n.group(
-                    Codec.INT.fieldOf("ring").forGetter(CircleScan.Node::ring),
-                    Codec.STRING.xmap(CircleSide::valueOf, CircleSide::name).fieldOf("side").forGetter(CircleScan.Node::side),
-                    Identifier.CODEC.fieldOf("pattern").forGetter(CircleScan.Node::pattern)
-            ).apply(n, CircleScan.Node::new)).listOf().fieldOf("nodes").forGetter(CircleScan::nodes),
+            NODE_CODEC.listOf().fieldOf("nodes").forGetter(CircleScan::nodes),
             RecordCodecBuilder.<CircleScan.Offset>create(o -> o.group(
                     Codec.INT.fieldOf("dx").forGetter(CircleScan.Offset::dx),
                     Codec.INT.fieldOf("dz").forGetter(CircleScan.Offset::dz)
-            ).apply(o, CircleScan.Offset::new)).listOf().fieldOf("ignored").forGetter(CircleScan::ignoredModifiers)
+            ).apply(o, CircleScan.Offset::new)).listOf().fieldOf("ignored").forGetter(CircleScan::ignoredModifiers),
+            NODE_CODEC.listOf().optionalFieldOf("seats", List.of()).forGetter(CircleScan::seats)
     ).apply(i, CircleScan::new));
     private static volatile CircleSettings settings = CircleSettings.DEFAULT;
 
@@ -157,12 +166,20 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     private ItemStack pedestalItem = ItemStack.EMPTY;
     private CircleScan scan = UNSCANNED;
     private int instability;
+    /** The Cores sitting on this circle's nodes, by position, as last scanned. Server only. */
+    private Map<BlockPos, CircleChildren.Placed> seats = Map.of();
+    /** The Core of higher rank this one sits in, as last scanned. Server only. */
+    private Optional<BlockPos> parent = Optional.empty();
     /** The server's view, as last received. Only meaningful on the client. */
     private int clientThreshold = CircleSettings.DEFAULT.instabilityThreshold();
     private int clientCapacity = CircleSettings.DEFAULT.essentiaCapacity();
     private Optional<Upkeep> clientUpkeep = Optional.empty();
     private Optional<Identifier> clientEffect = Optional.empty();
     private boolean clientLowRank;
+    private int clientChildren;
+    private Optional<CircleChildren.Seat> clientSeat = Optional.empty();
+    private Optional<CircleSide> clientSeatSide = Optional.empty();
+    private int clientFrameRings;
 
     /** The running sustained circle's definition id, or empty when it is not running. */
     private Optional<Identifier> running = Optional.empty();
@@ -218,24 +235,133 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
         Identifier line = BuiltInRegistries.BLOCK.getKey(ThaumoryBlocks.CHALK_LINE.get());
         Direction front = front();
-        CircleScan next = CircleScan.scan((dx, dz) -> {
-            BlockState state = level.getBlockState(worldPosition.offset(CirclePlane.offset(front, dx, dz)));
-            // Only patterns on the Core's own face count.
-            return state.is(ChalkPatternBlock.PATTERNS) && ChalkPatternBlock.front(state) == front
-                    ? Optional.of(BuiltInRegistries.BLOCK.getKey(state.getBlock())) : Optional.empty();
-        }, line, maxRings());
         CircleScan previousScan = scan;
         int previousInstability = instability;
-        scan = next;
-        instability = settings.instability(scan.nodes()) + (level instanceof ServerLevel server
-                ? Thaumory.flux().settings().effects().extraInstability(fluxStage(server)) : 0);
+        Map<BlockPos, CircleChildren.Placed> previousSeats = seats;
+        Optional<CircleChildren.Seat> previousSeat = seat();
+        int previousFrameRings = frameRings();
+        parent = findParent();
+        // A Core sitting in another's circle is part of that circle and reads no chalk of its own.
+        scan = parent.isPresent() ? CircleScan.NONE : CircleScan.scan((dx, dz) -> {
+            BlockState state = level.getBlockState(worldPosition.offset(CirclePlane.offset(front, dx, dz)));
+            // Only patterns and Cores on the Core's own face count.
+            return (state.is(ChalkPatternBlock.PATTERNS) || state.getBlock() instanceof CircleCoreBlock) && ChalkPatternBlock.front(state) == front
+                    ? Optional.of(BuiltInRegistries.BLOCK.getKey(state.getBlock())) : Optional.empty();
+        }, line, id -> BuiltInRegistries.BLOCK.getValue(id) instanceof CircleCoreBlock, maxRings());
+        seats = placeSeats();
+        instability = parent.isPresent() ? parentCore().map(core -> core.instability).orElse(0)
+                : settings.instability(scan.nodes(), children()) + (level instanceof ServerLevel server
+                        ? Thaumory.flux().settings().effects().extraInstability(fluxStage(server)) : 0);
         if (!level.isClientSide()) {
             stopIfBroken();
             updateIndex();
-            if (!scan.equals(previousScan) || instability != previousInstability) {
+            if (!scan.equals(previousScan) || instability != previousInstability || !seats.equals(previousSeats)
+                    || !seat().equals(previousSeat) || frameRings() != previousFrameRings) {
                 sync();
             }
         }
+    }
+
+    /**
+     * The Core of higher rank, on the same face, that holds this one on a node of its circle, if
+     * any. One that does not list this Core yet scans again now, as it may have scanned before this
+     * Core was placed or loaded.
+     */
+    private Optional<BlockPos> findParent() {
+        Direction front = front();
+        for (CircleSide side : CircleSide.values()) {
+            for (int ring = 1; ring <= CircleScan.MAX_RINGS; ring++) {
+                BlockPos pos = worldPosition.offset(CirclePlane.offset(front, -side.nodeX(ring), -side.nodeZ(ring)));
+                if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof CircleCoreBlockEntity other
+                        && other.rank() > rank() && other.front() == front) {
+                    if (!other.seats.containsKey(worldPosition)) {
+                        other.rescan();
+                    }
+                    if (other.seats.containsKey(worldPosition)) {
+                        return Optional.of(pos);
+                    }
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /** Which of the Cores on the nodes sit in this circle, and how (requirements §4.6). */
+    private Map<BlockPos, CircleChildren.Placed> placeSeats() {
+        if (scan.seats().isEmpty()) {
+            return Map.of();
+        }
+        List<CircleChildren.Candidate> candidates = scan.seats().stream()
+                .map(node -> new CircleChildren.Candidate(node, level.getBlockState(nodePos(node)).getBlock() instanceof CircleCoreBlock core
+                        ? core.rank() : Integer.MAX_VALUE))
+                .toList();
+        Map<BlockPos, CircleChildren.Placed> placed = new LinkedHashMap<>();
+        for (CircleChildren.Placed seat : CircleChildren.place(candidates, scan.rings(), rank())) {
+            placed.put(nodePos(seat.node()), seat);
+        }
+        return Map.copyOf(placed);
+    }
+
+    private BlockPos nodePos(CircleScan.Node node) {
+        return worldPosition.offset(CirclePlane.offset(front(), node.side().nodeX(node.ring()), node.side().nodeZ(node.ring())));
+    }
+
+    /** How many sub-circles this circle holds; what was last received on the client. */
+    public int children() {
+        if (level != null && level.isClientSide()) {
+            return clientChildren;
+        }
+        return (int) seats.values().stream().filter(seat -> seat.seat() == CircleChildren.Seat.CHILD).count();
+    }
+
+    /** How this Core sits in a circle of higher rank, if it does; what was last received on the client. */
+    public Optional<CircleChildren.Seat> seat() {
+        if (level != null && level.isClientSide()) {
+            return clientSeat;
+        }
+        return placed().map(CircleChildren.Placed::seat);
+    }
+
+    /** Which side of its parent's circle this Core sits on, if it does; what was last received on the client. */
+    public Optional<CircleSide> seatSide() {
+        if (level != null && level.isClientSide()) {
+            return clientSeatSide;
+        }
+        return placed().map(placed -> placed.node().side());
+    }
+
+    private Optional<CircleChildren.Placed> placed() {
+        return parentCore().map(core -> core.seats.get(worldPosition));
+    }
+
+    /** The Core this one sits in, while that one still holds it. Server only. */
+    private Optional<CircleCoreBlockEntity> parentCore() {
+        return parent.filter(pos -> level != null && level.isLoaded(pos))
+                .map(pos -> level.getBlockEntity(pos) instanceof CircleCoreBlockEntity core && core.seats.containsKey(worldPosition) ? core : null);
+    }
+
+    /**
+     * The rings a circle runs on: its own, or for a sub-circle its parent's, with the parent's
+     * position as the centre of the range, its rank for the strength and its instability.
+     */
+    private record Frame(BlockPos centre, CircleScan scan, int rank, int instability) {}
+
+    /** Server only. A Core that sits in a circle without running as its child has no rings at all. */
+    private Frame frame() {
+        if (parent.isEmpty()) {
+            return new Frame(worldPosition, scan, rank(), instability);
+        }
+        return parentCore().filter(core -> core.seats.get(worldPosition).seat() == CircleChildren.Seat.CHILD)
+                .map(core -> new Frame(core.worldPosition, core.scan, core.rank(), core.instability))
+                .orElseGet(() -> new Frame(worldPosition, CircleScan.NONE, rank(), instability));
+    }
+
+    /** The rings the circle runs on: its own, or its parent's for a sub-circle; what was last received on the client. */
+    public int frameRings() {
+        if (level != null && level.isClientSide()) {
+            return clientSeat.isPresent() ? clientFrameRings : scan.rings();
+        }
+        return frame().scan().rings();
     }
 
     /** The Core's rank (requirements §4.6); 1 for a block that is not a Core. */
@@ -383,7 +509,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
     // The circle
 
-    private record Circle(CircleDefinitions.Definition definition, Optional<Aspect> parameter, CircleSettings.Multipliers multipliers) {
+    private record Circle(CircleDefinitions.Definition definition, Optional<Aspect> parameter, CircleSettings.Multipliers multipliers, Frame frame) {
         /** The aspects whose colours mark what the effect reaches: slots 1 and 2. */
         List<Aspect> colours() {
             return List.of(definition.first(), definition.second());
@@ -392,7 +518,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
     /** The combination the runes and chalk make now, if the datapacks define it. */
     private Optional<Circle> circle() {
-        if (scan.rings() == 0 || runes.size() < 2) {
+        Frame frame = frame();
+        if (frame.scan().rings() == 0 || runes.size() < 2) {
             return Optional.empty();
         }
         Optional<Aspect> first = ThaumoryApi.aspects().get(runes.get(0));
@@ -403,7 +530,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return Optional.empty();
         }
         return CircleDefinitionReloadListener.definitions().find(first.get(), second.get(), parameter, fourth)
-                .map(definition -> new Circle(definition, parameter, settings.multipliers(scan.nodes(), rank())));
+                .map(definition -> new Circle(definition, parameter, settings.multipliers(frame.scan().nodes(), frame.rank()), frame));
     }
 
     /** Whether this Core is of high enough rank to run {@code circle}. */
@@ -498,9 +625,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         return true;
     }
 
-    /** Each payment of a circle over its instability threshold may leak Flux. */
-    private void rollInstability(ServerLevel server) {
-        releaseFlux(server, settings.instabilityFlux(instability, server.getRandom().nextDouble()));
+    /** Each payment of a circle over its instability threshold may leak Flux; a sub-circle goes by its parent's instability. */
+    private void rollInstability(ServerLevel server, Circle circle) {
+        releaseFlux(server, settings.instabilityFlux(circle.frame().instability(), server.getRandom().nextDouble()));
     }
 
     private FluxStage fluxStage(ServerLevel server) {
@@ -574,7 +701,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (running.isPresent()) {
             return StartResult.ALREADY_RUNNING;
         }
-        if (scan.rings() == 0) {
+        if (frame().scan().rings() == 0) {
             return StartResult.NO_RINGS;
         }
         Optional<Circle> circle = circle();
@@ -596,7 +723,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (misfire(server)) {
             return StartResult.OVERLOADED;
         }
-        rollInstability(server);
+        rollInstability(server, circle.get());
         running = Optional.of(definition.id());
         runningEffect = definition.effect();
         runningRunes = runes;
@@ -637,7 +764,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel server)) {
             return TriggerResult.UNDEFINED;
         }
-        if (scan.rings() == 0) {
+        if (frame().scan().rings() == 0) {
             return TriggerResult.NO_RINGS;
         }
         Optional<Circle> circle = circle();
@@ -669,7 +796,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (misfire(server)) {
             return TriggerResult.OVERLOADED;
         }
-        rollInstability(server);
+        rollInstability(server, circle.get());
         effect.get().apply(context);
         server.blockEvent(worldPosition, getBlockState().getBlock(), FLASH_EVENT, 0);
         workingEffect = effect.get().working(context) ? definition.effect() : null;
@@ -723,7 +850,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (!hasPedestal() || pedestalItem.isEmpty()) {
             return InfuseOutcome.of(InfuseResult.NO_ITEM);
         }
-        if (scan.rings() == 0) {
+        if (frame().scan().rings() == 0) {
             return InfuseOutcome.of(InfuseResult.NO_RINGS);
         }
         Optional<Circle> circle = circle();
@@ -763,7 +890,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return InfuseOutcome.of(InfuseResult.NO_ESSENTIA);
         }
         setEssentia(essentia.minus(cost));
-        if (server.getRandom().nextDouble() < InfusionRules.failureChance(instability, settings.instabilityThreshold(), infusion)) {
+        if (server.getRandom().nextDouble() < InfusionRules.failureChance(circle.get().frame().instability(), settings.instabilityThreshold(), infusion)) {
             releaseFlux(server, InfusionRules.failureFlux(cost, infusion));
             return InfuseOutcome.of(InfuseResult.FAILED);
         }
@@ -794,7 +921,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
                 stop();
                 return;
             }
-            rollInstability(server);
+            rollInstability(server, circle.get());
             nextPayment = time + CircleUpkeep.sustainedInterval(definition.interval(), circle.get().multipliers().cost());
             setChanged();
         }
@@ -889,6 +1016,11 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
 
         @Override
+        public BlockPos centre() {
+            return circle.map(c -> c.frame().centre()).orElse(worldPosition);
+        }
+
+        @Override
         public Optional<Aspect> parameter() {
             return circle.flatMap(Circle::parameter);
         }
@@ -900,7 +1032,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
         @Override
         public double radius() {
-            return circle.map(c -> settings.radius(scan.rings(), c.multipliers())).orElse(0.0);
+            return circle.map(c -> settings.radius(c.frame().scan().rings(), c.multipliers())).orElse(0.0);
         }
 
         @Override
@@ -1053,6 +1185,10 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         clientUpkeep = input.read("upkeep", Upkeep.CODEC);
         clientEffect = input.read("effect", Identifier.CODEC);
         clientLowRank = input.getBooleanOr("low_rank", false);
+        clientChildren = input.getIntOr("children", 0);
+        clientSeat = input.getString("seat").map(name -> CircleChildren.Seat.valueOf(name));
+        clientSeatSide = input.getString("seat_side").map(name -> CircleSide.valueOf(name));
+        clientFrameRings = input.getIntOr("frame_rings", 0);
     }
 
     @Override
@@ -1074,6 +1210,14 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (lowRank()) {
             tag.putBoolean("low_rank", true);
         }
+        if (children() > 0) {
+            tag.putInt("children", children());
+        }
+        seat().ifPresent(seat -> {
+            tag.putString("seat", seat.name());
+            seatSide().ifPresent(side -> tag.putString("seat_side", side.name()));
+            tag.putInt("frame_rings", frameRings());
+        });
         return tag;
     }
 }

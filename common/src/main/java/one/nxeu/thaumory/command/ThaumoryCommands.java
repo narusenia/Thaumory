@@ -201,7 +201,8 @@ public final class ThaumoryCommands {
                 .collect(Collectors.joining(", "));
         context.getSource().sendSuccess(() -> Component.literal("Core at " + pos.toShortString() + ": rank " + core.rank()
                 + ", runes " + core.runes() + " (" + core.slots() + " slots), rings " + scan.rings() + "/" + core.maxRings()
-                + ", nodes [" + nodes + "], ignored modifiers [" + ignored + "], instability "
+                + ", nodes [" + nodes + "], ignored modifiers [" + ignored + "], children " + core.children()
+                + core.seat().map(seat -> ", seat " + seat + " on " + core.frameRings() + " parent rings").orElse("") + ", instability "
                 + core.instability() + " (threshold " + CircleCoreBlockEntity.settings().instabilityThreshold() + "), essentia " + core.essentia()
                 + ", upkeep " + core.upkeep().map(Object::toString).orElse("undefined") + (core.lowRank() ? " (needs a higher rank)" : "")
                 + ", running " + core.isRunning()), false);

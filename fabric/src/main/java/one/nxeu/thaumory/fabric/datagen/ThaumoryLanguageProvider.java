@@ -158,6 +158,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.side.up", "top");
             builder.add("hud.thaumory.core.side.down", "bottom");
             builder.add("hud.thaumory.core.ignored", "%s modifiers off the nodes (no effect)");
+            builder.add("hud.thaumory.core.children", "Sub-circles %s/%s");
+            builder.add("hud.thaumory.core.seat.child", "Sub-circle on its parent's %s rings");
+            builder.add("hud.thaumory.core.seat.inner_ring", "Not a sub-circle: off the outermost ring");
+            builder.add("hud.thaumory.core.seat.too_many", "Not a sub-circle: the parent holds no more");
             builder.add("hud.thaumory.core.instability", "Instability %s/%s");
             builder.add("hud.thaumory.core.unstable", "Unstable: activations may release Flux");
             builder.add("hud.thaumory.core.running", "Running");
@@ -444,6 +448,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.side.up", "上");
             builder.add("hud.thaumory.core.side.down", "下");
             builder.add("hud.thaumory.core.ignored", "節点の外の修飾 %s 個（効果なし）");
+            builder.add("hud.thaumory.core.children", "子の陣 %s/%s");
+            builder.add("hud.thaumory.core.seat.child", "子の陣（親のリング %s 重）");
+            builder.add("hud.thaumory.core.seat.inner_ring", "子の陣にならない: 一番外のリングではない");
+            builder.add("hud.thaumory.core.seat.too_many", "子の陣にならない: 親が抱えきれない");
             builder.add("hud.thaumory.core.instability", "不安定度 %s/%s");
             builder.add("hud.thaumory.core.unstable", "不安定: 発動のたびに Flux が出るおそれがある");
             builder.add("hud.thaumory.core.running", "動作中");
