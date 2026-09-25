@@ -71,6 +71,25 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
   - 登録するとき、Primal まで分けて対が入っていれば受け付けない（アドオンの第 3 層も同じ）
   - 汚染（M2-13）: Sordes（穢れ）= Venenum + Vinculum。縛られて淀んだ毒。Primal は Aqua・Terra・Mors で、Ignis・Aer・Vita を含むアスペクトと打ち消し合う。対は Arcanum + Bestia（M2-32 で登録されれば対になる）。色は濁った紫、名前の演出は震え（弱）
     - 含む品: 汚染された土・汚染された石 = Terra 4 + Sordes 2、Flux の結晶 = Sordes 4
+  - 残りの第 3 層（M2-32）: 対になる 6 組（Sordes を含めて 12）。どの組も、両方が登録されているので互いの対になる
+    - 品の値は各 3〜6 品（判明に 3 種類が要るため）。今の値の一部を置き換え、合計の量は大きく変えない
+    - ヒントは対ごとに 1 つ。対の両方を判明させると現れる
+
+| 対 | アスペクト | 構成 | 意味 | 色 | 名前の演出 |
+|---|---|---|---|---|---|
+| 1 | Sordes | Venenum + Vinculum | 穢れ | 濁った紫 | 震え（弱） |
+| 1 | Anima | Arcanum + Bestia | 魂・生気 | 淡い桃 | 脈動 |
+| 2 | Aurora | Lux + Arcanum | 暁・魔力の光 | 薄紅の金 | 光の筋 |
+| 2 | Vesper | Umbra + Vinculum | 宵・縛る闇 | 群青 | 揺らめき |
+| 3 | Abyssus | Umbra + Mors | 深淵・虚空 | 黒に近い紺 | 脈動 |
+| 3 | Caelum | Lux + Vita | 天 | 空色 | 波 |
+| 4 | Sigillum | Vinculum + Metallum | 封印 | 鈍い金 | なし |
+| 4 | Solutio | Arcanum + Tempestas | 解放・解き放つ | 淡い青緑 | 波 |
+| 5 | Tartarus | Bellum + Ignis | 冥府・ネザー | 赤黒 | にじみ |
+| 5 | Fons | Herba + Aqua | 泉 | 青緑 | 波 |
+| 6 | Peregrinum | Chaos + Tempestas | 異界・エンド | 淡い紫 | 震え（強） |
+| 6 | Artificium | Ordo + Metallum | 仕組み・機構 | 真鍮 | なし |
+
   - 物語の鍵になるもの（封印・虚空など）と、光と闇の素材（§17.9）に使うものを含める
   - 一覧（名前・組み合わせ・意味・対）は M2-32 に着手するときに決める。ポーション調合（M3）の前に入れる
 - Nihil（無）: 六角形の中心にあたる 7 つ目の特別なアスペクト。どの Primal の組み合わせでもない。封印の間の儀式（§17.8）で判明する
