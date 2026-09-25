@@ -14,7 +14,7 @@ public final class CircleText {
 
     private CircleText() {}
 
-    /** {@code first + second / parameter}, the separators in {@code separatorColor}. */
+    /** {@code first + second / parameter / slot 4}, the separators in {@code separatorColor}. */
     public static MutableComponent combination(CircleCombination combination, PlayerKnowledge knowledge, int separatorColor) {
         MutableComponent line = aspectName(combination.first(), knowledge)
                 .append(Component.literal(" + ").withColor(separatorColor))
@@ -22,6 +22,9 @@ public final class CircleText {
         combination.parameter().ifPresent(parameter -> line
                 .append(Component.literal(" / ").withColor(separatorColor))
                 .append(aspectName(parameter, knowledge)));
+        combination.slot4().ifPresent(slot4 -> line
+                .append(Component.literal(" / ").withColor(separatorColor))
+                .append(aspectName(slot4, knowledge)));
         return line;
     }
 

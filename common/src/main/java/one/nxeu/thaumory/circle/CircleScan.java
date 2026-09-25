@@ -13,12 +13,13 @@ import net.minecraft.resources.Identifier;
  * count either. A node is the middle cell of a side; a modifier anywhere else on a ring works as
  * a line and is reported as ignored.
  *
- * @param rings            rings that hold, 0 to {@link #MAX_RINGS}
+ * @param rings            rings that hold, 0 to the limit the scan was given
  * @param nodes            modifiers on the nodes of those rings, inner ring first
  * @param ignoredModifiers modifiers on those rings but off their nodes
  */
 public record CircleScan(int rings, List<Node> nodes, List<Offset> ignoredModifiers) {
-    public static final int MAX_RINGS = 3;
+    /** The most rings any Core reads (rank 3). */
+    public static final int MAX_RINGS = 5;
 
     public record Node(int ring, CircleSide side, Identifier pattern) {}
 
@@ -31,12 +32,15 @@ public record CircleScan(int rings, List<Node> nodes, List<Offset> ignoredModifi
         Optional<Identifier> at(int dx, int dz);
     }
 
-    /** @param line the plain line's id; every other pattern is a modifier */
-    public static CircleScan scan(Patterns patterns, Identifier line) {
+    /**
+     * @param line     the plain line's id; every other pattern is a modifier
+     * @param maxRings how many rings the Core reads, at most {@link #MAX_RINGS}
+     */
+    public static CircleScan scan(Patterns patterns, Identifier line, int maxRings) {
         int rings = 0;
         List<Node> nodes = new ArrayList<>();
         List<Offset> ignored = new ArrayList<>();
-        for (int ring = 1; ring <= MAX_RINGS; ring++) {
+        for (int ring = 1; ring <= Math.min(maxRings, MAX_RINGS); ring++) {
             List<Node> ringNodes = new ArrayList<>();
             List<Offset> ringIgnored = new ArrayList<>();
             if (!readRing(patterns, line, ring, ringNodes, ringIgnored)) {

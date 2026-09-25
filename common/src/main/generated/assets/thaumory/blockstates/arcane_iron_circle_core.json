@@ -1,0 +1,69 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core",
+        "y": 180,
+        "z": 180
+      },
+      "when": {
+        "facing": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core"
+      },
+      "when": {
+        "facing": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core",
+        "x": 90
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core",
+        "y": 270,
+        "z": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core",
+        "y": 90,
+        "z": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_core_pedestal"
+      },
+      "when": {
+        "pedestal": "true"
+      }
+    }
+  ]
+}

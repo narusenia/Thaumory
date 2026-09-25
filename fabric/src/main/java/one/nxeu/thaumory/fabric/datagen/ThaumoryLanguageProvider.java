@@ -66,6 +66,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_essentia", "The Core lacks Essentia");
             builder.add("message.thaumory.wand.no_target", "The circle finds nothing to act on");
             builder.add("message.thaumory.wand.misfired", "The circle misfires and Flux leaks out");
+            builder.add("message.thaumory.wand.low_rank", "This Core is not strong enough for this circle");
             builder.add("message.thaumory.wand.overloaded", "Overloaded with Flux, the circle bursts!");
             builder.add("message.thaumory.circle.discovered", "You found a new circle: %s");
             builder.add("hud.thaumory.flux.amount", "Flux here: %s");
@@ -137,13 +138,15 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "Economizing Chalk");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "Stabilizing Chalk");
             builder.add(ThaumoryBlocks.CIRCLE_CORE.get(), "Circle Core");
+            builder.add(ThaumoryBlocks.ARCANE_IRON_CIRCLE_CORE.get(), "Arcane Iron Circle Core");
+            builder.add(ThaumoryBlocks.AETHER_SILVER_CIRCLE_CORE.get(), "Aether Silver Circle Core");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "Polluted Soil");
             builder.add(ThaumoryBlocks.ARCANE_CRYSTAL.get(), "Arcane Crystal");
             builder.add(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), "Arcane Crystal Shard");
             builder.add(ThaumoryItems.FLUX_CRYSTAL.get(), "Flux Crystal");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "Polluted Stone");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "Void Remnant");
-            builder.add("message.thaumory.core.full", "All three rune slots are full");
+            builder.add("message.thaumory.core.full", "Every rune slot is full");
             builder.add("hud.thaumory.core.runes", "Runes:");
             builder.add("hud.thaumory.core.empty_slot", "—");
             builder.add("hud.thaumory.core.rings", "Rings %s/%s");
@@ -164,6 +167,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.effect", "Circle of %s");
             builder.add("hud.thaumory.core.unknown_circle", "Unknown circle");
             builder.add("hud.thaumory.core.failed_circle", "A combination that failed");
+            builder.add("hud.thaumory.core.low_rank", "This Core is too weak for this circle");
             builder.add(ThaumoryCircleEffects.LIGHT.toLanguageKey("circle_effect"), "Light");
             builder.add(ThaumoryCircleEffects.TELEPORT.toLanguageKey("circle_effect"), "Teleportation");
             builder.add(ThaumoryCircleEffects.PURIFICATION.toLanguageKey("circle_effect"), "Purification");
@@ -348,6 +352,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("message.thaumory.wand.no_essentia", "Core の Essentia が足りない");
             builder.add("message.thaumory.wand.no_target", "陣が働きかける先が見つからない");
             builder.add("message.thaumory.wand.misfired", "陣が乱れ、Flux が漏れ出した");
+            builder.add("message.thaumory.wand.low_rank", "この Core では動かない");
             builder.add("message.thaumory.wand.overloaded", "Flux にあふれた陣が暴発した！");
             builder.add("message.thaumory.circle.discovered", "新しい陣を見出した: %s");
             builder.add("hud.thaumory.flux.amount", "この辺りの Flux: %s");
@@ -419,13 +424,15 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.ECONOMIZING_CHALK.get(), "節約のチョーク");
             builder.add(ThaumoryItems.STABILIZING_CHALK.get(), "安定のチョーク");
             builder.add(ThaumoryBlocks.CIRCLE_CORE.get(), "陣の核");
+            builder.add(ThaumoryBlocks.ARCANE_IRON_CIRCLE_CORE.get(), "魔鉄の陣の核");
+            builder.add(ThaumoryBlocks.AETHER_SILVER_CIRCLE_CORE.get(), "天銀の陣の核");
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "汚染された土");
             builder.add(ThaumoryBlocks.ARCANE_CRYSTAL.get(), "魔力の結晶");
             builder.add(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), "結晶のかけら");
             builder.add(ThaumoryItems.FLUX_CRYSTAL.get(), "Flux の結晶");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "汚染された石");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "虚空の残滓");
-            builder.add("message.thaumory.core.full", "ルーンのスロットは 3 つとも埋まっている");
+            builder.add("message.thaumory.core.full", "ルーンのスロットがすべて埋まっている");
             builder.add("hud.thaumory.core.runes", "ルーン:");
             builder.add("hud.thaumory.core.empty_slot", "—");
             builder.add("hud.thaumory.core.rings", "リング %s/%s");
@@ -446,6 +453,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hud.thaumory.core.effect", "%sの陣");
             builder.add("hud.thaumory.core.unknown_circle", "未知の陣");
             builder.add("hud.thaumory.core.failed_circle", "失敗した組み合わせ");
+            builder.add("hud.thaumory.core.low_rank", "この Core では動かない");
             builder.add(ThaumoryCircleEffects.LIGHT.toLanguageKey("circle_effect"), "灯火");
             builder.add(ThaumoryCircleEffects.TELEPORT.toLanguageKey("circle_effect"), "テレポート");
             builder.add(ThaumoryCircleEffects.PURIFICATION.toLanguageKey("circle_effect"), "浄化");

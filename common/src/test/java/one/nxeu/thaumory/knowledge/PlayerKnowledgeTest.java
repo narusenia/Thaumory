@@ -72,6 +72,21 @@ class PlayerKnowledgeTest {
     }
 
     @Test
+    void aFourthRuneMakesADifferentCombination() {
+        CircleCombination withFourth = new CircleCombination(ARCANUM, AER, Optional.of(HERBA), Optional.of(ARCANUM));
+        assertFalse(withFourth.equals(TELEPORT));
+        assertEquals(TELEPORT, new CircleCombination(ARCANUM, AER, Optional.of(HERBA), Optional.empty()));
+        var json = CircleCombination.CODEC.encodeStart(JsonOps.INSTANCE, withFourth).getOrThrow();
+        assertEquals(withFourth, CircleCombination.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow());
+        ByteBuf buf = Unpooled.buffer();
+        CircleCombination.STREAM_CODEC.encode(buf, withFourth);
+        assertEquals(withFourth, CircleCombination.STREAM_CODEC.decode(buf));
+        // Saves from before slot 4 have no such field.
+        assertEquals(TELEPORT, CircleCombination.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+                "{\"first\": \"thaumory:arcanum\", \"second\": \"thaumory:aer\", \"parameter\": \"thaumory:herba\"}")).getOrThrow());
+    }
+
+    @Test
     void roundTripsThroughCodec() {
         PlayerKnowledge knowledge = sample();
         var json = PlayerKnowledge.CODEC.encodeStart(JsonOps.INSTANCE, knowledge).getOrThrow();

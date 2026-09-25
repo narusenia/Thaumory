@@ -123,13 +123,16 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(core, "_pedestal_side"))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(core, "_pedestal_top"))
                 .put(BAND, TextureMapping.getBlockTexture(core, "_pedestal_band")), generators.modelOutput);
-        MultiPartGenerator coreParts = MultiPartGenerator.multiPart(core);
-        for (Direction front : Direction.values()) {
-            coreParts.with(new ConditionBuilder().term(CircleCoreBlock.FACING, front),
-                    BlockModelGenerators.plainVariant(coreModel).with(onFace(front, Quadrant.R0)));
+        // The Cores of higher rank look the same on the ground; only their items and rings differ.
+        for (CircleCoreBlock rankedCore : List.of(core, ThaumoryBlocks.ARCANE_IRON_CIRCLE_CORE.get(), ThaumoryBlocks.AETHER_SILVER_CIRCLE_CORE.get())) {
+            MultiPartGenerator coreParts = MultiPartGenerator.multiPart(rankedCore);
+            for (Direction front : Direction.values()) {
+                coreParts.with(new ConditionBuilder().term(CircleCoreBlock.FACING, front),
+                        BlockModelGenerators.plainVariant(coreModel).with(onFace(front, Quadrant.R0)));
+            }
+            generators.blockStateOutput.accept(coreParts
+                    .with(new ConditionBuilder().term(CircleCoreBlock.PEDESTAL, true), BlockModelGenerators.plainVariant(pedestalModel)));
         }
-        generators.blockStateOutput.accept(coreParts
-                .with(new ConditionBuilder().term(CircleCoreBlock.PEDESTAL, true), BlockModelGenerators.plainVariant(pedestalModel)));
         generators.itemModelOutput.accept(ThaumoryItems.PEDESTAL.get(), ItemModelUtils.plainModel(pedestalModel));
 
         EssentiaPipeBlock pipe = ThaumoryBlocks.PIPE.get();
@@ -236,6 +239,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.ARCANE_CODEX.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_RUNE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.CIRCLE_CORE.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.ARCANE_IRON_CIRCLE_CORE.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.AETHER_SILVER_CIRCLE_CORE.get(), ModelTemplates.FLAT_ITEM);
         // The blank rune with a glyph over it in the rune's aspect color.
         RuneItem rune = ThaumoryItems.RUNE.get();
         Identifier runeModel = ModelTemplates.TWO_LAYERED_ITEM.create(rune, TextureMapping.layered(

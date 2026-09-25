@@ -136,6 +136,10 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .define('R', ThaumoryItems.BLANK_RUNE.get())
                         .unlockedBy(getHasName(ThaumoryItems.BLANK_RUNE.get()), has(ThaumoryItems.BLANK_RUNE.get()))
                         .save(output);
+                // Each rank: the Core one below it, ringed by its metal (requirements §4.6).
+                coreUpgrade(ThaumoryItems.CIRCLE_CORE.get(), ThaumoryItems.ARCANE_IRON.ingot().get(), ThaumoryItems.ARCANE_IRON_CIRCLE_CORE.get());
+                coreUpgrade(ThaumoryItems.ARCANE_IRON_CIRCLE_CORE.get(), ThaumoryItems.AETHER_SILVER.ingot().get(),
+                        ThaumoryItems.AETHER_SILVER_CIRCLE_CORE.get());
                 shapeless(RecipeCategory.MISC, ThaumoryItems.LABEL.get(), 4)
                         .requires(Items.PAPER)
                         .requires(Items.INK_SAC)
@@ -145,6 +149,19 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .requires(Items.CAULDRON)
                         .requires(Items.GOLD_INGOT)
                         .unlockedBy(getHasName(Items.CAULDRON), has(Items.CAULDRON))
+                        .save(output);
+            }
+
+            /** A Core of the next rank: {@code core} in the middle, {@code ingot} on each side and stone bricks in the corners. */
+            private void coreUpgrade(Item core, Item ingot, Item result) {
+                shaped(RecipeCategory.MISC, result)
+                        .pattern("SIS")
+                        .pattern("ICI")
+                        .pattern("SIS")
+                        .define('S', Items.STONE_BRICKS)
+                        .define('I', ingot)
+                        .define('C', core)
+                        .unlockedBy(getHasName(ingot), has(ingot))
                         .save(output);
             }
 

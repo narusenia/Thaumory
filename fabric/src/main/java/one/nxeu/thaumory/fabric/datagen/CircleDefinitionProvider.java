@@ -119,13 +119,13 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
             List<String> slot3, int cost, Map<String, Double> settings, int capacity, Optional<Integer> itemCost,
             Map<String, Double> itemSettings) {
-        output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.TRIGGERED,
+        output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, List.of(CircleDefinitionFile.NONE), 1, CircleMode.TRIGGERED,
                 cost, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity, itemCost, itemSettings));
     }
 
     private static void sustained(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,
             List<String> slot3, Map<String, Double> settings, int capacity, Optional<Integer> itemCost, Map<String, Double> itemSettings) {
-        output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, CircleMode.SUSTAINED,
+        output.accept(effect, new CircleDefinitionFile(effect, List.of(first.id(), second.id()), slot3, List.of(CircleDefinitionFile.NONE), 1, CircleMode.SUSTAINED,
                 1, SUSTAINED_INTERVAL, settings, InfusionCost.DEFAULT, capacity, itemCost, itemSettings));
     }
 

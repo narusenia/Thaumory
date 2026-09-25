@@ -45,12 +45,29 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
     /** How far the glow's colour leans towards white. */
     private static final float GLOW_WHITEN = 0.1f;
     /** Degrees per tick, inner ring first. */
-    private static final float[] SPEEDS = {1.2f, -0.8f, 0.5f};
+    private static final float[] SPEEDS = {1.2f, -0.8f, 0.5f, -0.35f};
     /** For a rune whose aspect is no longer registered. */
     private static final int UNKNOWN_COLOR = 0xAAAAAA;
     // Just above chalk (0.25/16), each ring a little higher so they never z-fight.
     private static final float BASE_HEIGHT = 0.3f / 16;
     private static final float RING_STEP = 0.05f / 16;
+
+    /** How much larger the turning circles are at each rank, rank 1 first (requirements §4.6). */
+    private static final float[] RANK_SCALES = {1.0f, 1.2f, 1.4f};
+    /** A fourth rune's ring is the third's picture, drawn this much wider around it. */
+    private static final float OUTER_RING_SCALE = 1.3f;
+
+    /** The emblem over a working circle: soft lines tracing its rings, and spots on its nodes. */
+    private static final RenderType EMBLEM_LINE = RenderTypes.entityTranslucentEmissive(RingGlows.LINE);
+    private static final RenderType EMBLEM_DOT = RenderTypes.entityTranslucentEmissive(RingGlows.DOT);
+    private static final float EMBLEM_ALPHA = 0.4f;
+    private static final float EMBLEM_WIDTH = 0.35f;
+    private static final float EMBLEM_DOT_SIZE = 0.7f;
+    /** Above the face it is drawn on, bobbing by {@link #EMBLEM_BOB}. */
+    private static final float EMBLEM_HEIGHT = 0.3f;
+    private static final float EMBLEM_BOB = 0.06f;
+    /** Ticks a triggered circle's emblem takes to fade. */
+    private static final float FLASH_TICKS = 20;
 
     private static final RenderType GLYPH_RING = RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/pedestal_ring.png"));
     private static final int GLYPH_RING_COLOR = 0xE0B070FF;
@@ -62,6 +79,10 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         float time;
         boolean pedestal;
         Direction front = Direction.UP;
+        int rank = 1;
+        int rings;
+        /** 0 to 1: how strongly the emblem shows. */
+        float emblem;
         final ItemStackRenderState item = new ItemStackRenderState();
     }
 
@@ -88,25 +109,35 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         state.time = core.getLevel() == null ? 0 : core.getLevel().getGameTime() + partialTick;
         state.pedestal = core.hasPedestal();
         state.front = core.front();
+        state.rank = core.rank();
+        state.rings = core.scan().rings();
+        float sinceFlash = core.lastFlash() == Long.MIN_VALUE ? Float.MAX_VALUE : state.time - core.lastFlash();
+        state.emblem = core.isRunning() ? 1 : Math.max(0, 1 - sinceFlash / FLASH_TICKS);
         items.updateForTopItem(state.item, core.pedestalItem(), ItemDisplayContext.GROUND, core.getLevel(), null,
                 (int) core.getBlockPos().asLong());
     }
 
     @Override
     public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
-        for (int i = 0; i < state.colors.length && i < RINGS.size(); i++) {
+        float rankScale = RANK_SCALES[Math.clamp(state.rank - 1, 0, RANK_SCALES.length - 1)];
+        for (int i = 0; i < state.colors.length && i < SPEEDS.length; i++) {
             int argb = 0xFF000000 | state.colors[i];
             float height = BASE_HEIGHT + RING_STEP * i;
+            int picture = Math.min(i, RINGS.size() - 1);
+            float half = 0.5f * rankScale * (i >= RINGS.size() ? OUTER_RING_SCALE : 1);
             pose.pushPose();
             pose.rotateAround(state.front.getRotation(), 0.5f, 0.5f, 0.5f);
             pose.translate(0.5f, 0, 0.5f);
             pose.rotateDegrees(Axis.YP, (state.time * SPEEDS[i]) % 360);
-            collector.submitCustomGeometry(pose, RINGS.get(i), (p, consumer) -> quad(consumer, p, argb, height, 0.5f));
+            collector.submitCustomGeometry(pose, RINGS.get(picture), (p, consumer) -> quad(consumer, p, argb, height, half));
             // Just under its ring, so the two never fight over the same depth.
             int glow = glow(state.colors[i], GLOW_ALPHA);
             float glowHeight = height - RING_STEP / 2;
-            collector.submitCustomGeometry(pose, GLOWS.get(i), (p, consumer) -> quad(consumer, p, glow, glowHeight, 0.5f * RingGlows.scale()));
+            collector.submitCustomGeometry(pose, GLOWS.get(picture), (p, consumer) -> quad(consumer, p, glow, glowHeight, half * RingGlows.scale()));
             pose.popPose();
+        }
+        if (state.emblem > 0 && state.rings > 0 && state.colors.length > 0) {
+            emblem(state, pose, collector);
         }
         if (state.pedestal) {
             glyphRing(state, pose, collector);
@@ -119,6 +150,60 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
             state.item.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             pose.popPose();
         }
+    }
+
+    /** Soft lines along each ring's square, where its chalk runs, and a spot on each node. */
+    private static void emblem(State state, PoseStack pose, SubmitNodeCollector collector) {
+        int color = glow(state.colors[0], EMBLEM_ALPHA * state.emblem);
+        float y = EMBLEM_HEIGHT + EMBLEM_BOB * (float) Math.sin(state.time / 30);
+        float w = EMBLEM_WIDTH / 2;
+        float d = EMBLEM_DOT_SIZE / 2;
+        pose.pushPose();
+        pose.rotateAround(state.front.getRotation(), 0.5f, 0.5f, 0.5f);
+        pose.translate(0.5f, 0, 0.5f);
+        collector.submitCustomGeometry(pose, EMBLEM_LINE, (p, consumer) -> {
+            for (int r = 1; r <= state.rings; r++) {
+                // North and south sides run along x; west and east along z.
+                line(consumer, p, color, y, -r, -r - w, r, -r + w, false);
+                line(consumer, p, color, y, -r, r - w, r, r + w, false);
+                line(consumer, p, color, y, -r - w, -r, -r + w, r, true);
+                line(consumer, p, color, y, r - w, -r, r + w, r, true);
+            }
+        });
+        collector.submitCustomGeometry(pose, EMBLEM_DOT, (p, consumer) -> {
+            for (int r = 1; r <= state.rings; r++) {
+                int[][] nodes = {{0, -r}, {0, r}, {-r, 0}, {r, 0}};
+                for (int[] node : nodes) {
+                    line(consumer, p, color, y + 0.001f, node[0] - d, node[1] - d, node[0] + d, node[1] + d, false);
+                }
+            }
+        });
+        pose.popPose();
+    }
+
+    /**
+     * A flat quad from (x0, z0) to (x1, z1), its texture's V running across the line: along z when
+     * {@code alongZ} is false, along x when it is true.
+     */
+    private static void line(VertexConsumer consumer, PoseStack.Pose pose, int argb, float y, float x0, float z0, float x1, float z1,
+            boolean alongZ) {
+        if (alongZ) {
+            vertex(consumer, pose, argb, x0, y, z0, 0, 0);
+            vertex(consumer, pose, argb, x0, y, z1, 1, 0);
+            vertex(consumer, pose, argb, x1, y, z1, 1, 1);
+            vertex(consumer, pose, argb, x1, y, z0, 0, 1);
+        } else {
+            vertex(consumer, pose, argb, x0, y, z0, 0, 0);
+            vertex(consumer, pose, argb, x0, y, z1, 0, 1);
+            vertex(consumer, pose, argb, x1, y, z1, 1, 1);
+            vertex(consumer, pose, argb, x1, y, z0, 1, 0);
+        }
+    }
+
+    /** The emblem reaches well past the Core's own block. */
+    @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
     }
 
     /** Seen from above and below alike, bobbing a little as it turns. */

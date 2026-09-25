@@ -49,10 +49,12 @@ public record KnowledgeFacts(PlayerKnowledge knowledge) implements ResearchFacts
         Optional<Aspect> first = ThaumoryApi.aspects().get(combination.first());
         Optional<Aspect> second = ThaumoryApi.aspects().get(combination.second());
         Optional<Aspect> parameter = combination.parameter().flatMap(ThaumoryApi.aspects()::get);
-        if (first.isEmpty() || second.isEmpty() || (combination.parameter().isPresent() && parameter.isEmpty())) {
+        Optional<Aspect> slot4 = combination.slot4().flatMap(ThaumoryApi.aspects()::get);
+        if (first.isEmpty() || second.isEmpty() || (combination.parameter().isPresent() && parameter.isEmpty())
+                || (combination.slot4().isPresent() && slot4.isEmpty())) {
             return Optional.empty();
         }
-        return CircleDefinitionReloadListener.definitions().find(first.get(), second.get(), parameter)
+        return CircleDefinitionReloadListener.definitions().find(first.get(), second.get(), parameter, slot4)
                 .map(definition -> definition.effect());
     }
 }

@@ -48,6 +48,9 @@ import one.nxeu.thaumory.item.ThaumoryItems;
  * first empty slot with a right click; a sneaking right click on an empty hand takes out the last
  * one.
  *
+ * <p>Its rank (requirements §4.6) comes from what it is made of and sets how many rings it reads
+ * and how many rune slots it has.
+ *
  * <p>A pedestal can be built into a Core on the floor (requirements §10.1): the core then stands as a slim altar,
  * holding one item to infuse. Any item that does not stack goes on with a right click, except
  * Thaumory's own tools; an empty hand takes it back.
@@ -64,9 +67,26 @@ public final class CircleCoreBlock extends BaseEntityBlock {
             Direction.WEST, box(15, 0, 0, 16, 16, 16));
     private static final VoxelShape ALTAR = Shapes.or(box(3, 0, 3, 13, 2, 13), box(6, 2, 6, 10, 10, 10), box(4, 10, 4, 12, 12, 12));
 
-    public CircleCoreBlock(Properties properties) {
+    private final int rank;
+
+    public CircleCoreBlock(int rank, Properties properties) {
         super(properties);
+        this.rank = rank;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.UP).setValue(PEDESTAL, false));
+    }
+
+    public int rank() {
+        return rank;
+    }
+
+    /** Rings read: 3 at rank 1, one more each rank. */
+    public int maxRings() {
+        return 2 + rank;
+    }
+
+    /** Rune slots: 3, and a fourth from rank 3. */
+    public int slots() {
+        return rank >= 3 ? 4 : 3;
     }
 
     @Override
@@ -134,7 +154,7 @@ public final class CircleCoreBlock extends BaseEntityBlock {
             // An empty hand goes on to take the item off the pedestal; anything else (the wand, a jar) does its own work.
             return stack.isEmpty() ? InteractionResult.TRY_WITH_EMPTY_HAND : InteractionResult.PASS;
         }
-        if (core.runes().size() >= CircleCoreBlockEntity.SLOTS) {
+        if (core.runes().size() >= core.slots()) {
             player.sendOverlayMessage(Component.translatable("message.thaumory.core.full"));
             return InteractionResult.FAIL;
         }

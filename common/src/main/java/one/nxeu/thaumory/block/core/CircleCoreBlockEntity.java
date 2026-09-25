@@ -79,8 +79,8 @@ import one.nxeu.thaumory.sound.ThaumorySounds;
 import one.nxeu.thaumory.text.ThaumoryText;
 
 /**
- * A magic circle's Core: up to three runes, kept by aspect id in slot order, the Essentia poured
- * in for them, and the chalk around it as last scanned. The scan is not saved; it runs again every
+ * A magic circle's Core: up to three runes (four from rank 3), kept by aspect id in slot order, the
+ * Essentia poured in for them, and the chalk around it as last scanned. The scan is not saved; it runs again every
  * {@code scan_interval} ticks and goes to clients when it changes, for the loupe.
  *
  * <p>A sustained circle, once started, pays its upkeep on its interval and works once a second
@@ -89,9 +89,13 @@ import one.nxeu.thaumory.text.ThaumoryText;
  * <p>Trying an undefined combination releases Flux and records the failure; every payment of an
  * unstable circle may release Flux too. Flux around the Core makes it less stable from
  * manifestation on, and at overload any payment may make it misfire and explode.
+ *
+ * <p>A combination that needs a higher rank than the Core's is found but does not run: it is
+ * neither a misfire nor recorded.
  */
 public final class CircleCoreBlockEntity extends BlockEntity {
-    public static final int SLOTS = 3;
+    /** The most rune slots any Core has; {@link #slots()} is this Core's. */
+    public static final int SLOTS = 4;
     private static final Codec<List<Identifier>> RUNES_CODEC = Identifier.CODEC.listOf(0, SLOTS);
     private static final Codec<AspectList> ESSENTIA_CODEC = AspectCodecs.aspectList(ThaumoryApi.aspects());
     private static final CircleScan UNSCANNED = new CircleScan(0, List.of(), List.of());
@@ -124,11 +128,16 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         ).apply(i, Upkeep::new));
     }
 
-    /** {@code UNDEFINED}: fewer than two runes, so not a circle yet. {@code MISFIRED}: the combination is undefined. */
-    /** {@code OVERLOADED}: it paid, but Flux at overload made it misfire and explode. */
-    public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, TRIGGERED_ONLY, NO_ESSENTIA, OVERLOADED }
+    /**
+     * {@code UNDEFINED}: fewer than two runes, so not a circle yet. {@code MISFIRED}: the combination is undefined.
+     * {@code LOW_RANK}: the combination is defined, but needs a Core of higher rank. {@code OVERLOADED}: it paid,
+     * but Flux at overload made it misfire and explode.
+     */
+    public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, LOW_RANK, TRIGGERED_ONLY, NO_ESSENTIA, OVERLOADED }
 
-    public enum InfuseResult { INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, NOT_INFUSABLE, NO_CAPACITY, NO_ROOM, ACTIVE_TAKEN, NO_ESSENTIA }
+    public enum InfuseResult {
+        INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, LOW_RANK, NOT_INFUSABLE, NO_CAPACITY, NO_ROOM, ACTIVE_TAKEN, NO_ESSENTIA
+    }
 
     /**
      * @param infusion what went into the item when it did, or what would have when there was no room
@@ -141,7 +150,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
     }
 
-    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA, OVERLOADED, STOPPED }
+    public enum TriggerResult { TRIGGERED, NO_RINGS, UNDEFINED, MISFIRED, LOW_RANK, SUSTAINED_ONLY, NO_TARGET, NO_ESSENTIA, OVERLOADED, STOPPED }
 
     private List<Identifier> runes = List.of();
     private AspectList essentia = AspectList.empty();
@@ -153,9 +162,14 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     private int clientCapacity = CircleSettings.DEFAULT.essentiaCapacity();
     private Optional<Upkeep> clientUpkeep = Optional.empty();
     private Optional<Identifier> clientEffect = Optional.empty();
+    private boolean clientLowRank;
 
     /** The running sustained circle's definition id, or empty when it is not running. */
     private Optional<Identifier> running = Optional.empty();
+    /** The block event a triggered circle sends its watchers when it goes off, for the glowing emblem. */
+    public static final int FLASH_EVENT = 1;
+    /** Client only: the game time a triggered circle last went off. */
+    private long lastFlash = Long.MIN_VALUE;
     private Identifier runningEffect;
     /** The runes the running circle started with; any change stops it. */
     private List<Identifier> runningRunes = List.of();
@@ -209,7 +223,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             // Only patterns on the Core's own face count.
             return state.is(ChalkPatternBlock.PATTERNS) && ChalkPatternBlock.front(state) == front
                     ? Optional.of(BuiltInRegistries.BLOCK.getKey(state.getBlock())) : Optional.empty();
-        }, line);
+        }, line, maxRings());
         CircleScan previousScan = scan;
         int previousInstability = instability;
         scan = next;
@@ -222,6 +236,21 @@ public final class CircleCoreBlockEntity extends BlockEntity {
                 sync();
             }
         }
+    }
+
+    /** The Core's rank (requirements §4.6); 1 for a block that is not a Core. */
+    public int rank() {
+        return getBlockState().getBlock() instanceof CircleCoreBlock core ? core.rank() : 1;
+    }
+
+    /** How many rune slots this Core has. */
+    public int slots() {
+        return getBlockState().getBlock() instanceof CircleCoreBlock core ? core.slots() : 3;
+    }
+
+    /** How many rings this Core reads. */
+    public int maxRings() {
+        return getBlockState().getBlock() instanceof CircleCoreBlock core ? core.maxRings() : 3;
     }
 
     /** The circle's front: away from the face the Core is drawn on. */
@@ -251,7 +280,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
 
     /** Puts a rune in the first empty slot. False when all are full. */
     public boolean insert(Identifier aspect) {
-        if (runes.size() >= SLOTS) {
+        if (runes.size() >= slots()) {
             return false;
         }
         List<Identifier> updated = new ArrayList<>(runes);
@@ -284,7 +313,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     private void updateIndex() {
         if (level instanceof ServerLevel server) {
             CircleIndex index = CircleIndex.of(server);
-            Optional<CircleCombination> combination = combination().filter(c -> circle().isPresent());
+            Optional<CircleCombination> combination = combination().filter(c -> circle().filter(this::runsHere).isPresent());
             if (combination.isPresent()) {
                 index.put(worldPosition, combination.get());
             } else {
@@ -369,11 +398,33 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         Optional<Aspect> first = ThaumoryApi.aspects().get(runes.get(0));
         Optional<Aspect> second = ThaumoryApi.aspects().get(runes.get(1));
         Optional<Aspect> parameter = runes.size() > 2 ? ThaumoryApi.aspects().get(runes.get(2)) : Optional.empty();
-        if (first.isEmpty() || second.isEmpty() || (runes.size() > 2 && parameter.isEmpty())) {
+        Optional<Aspect> fourth = runes.size() > 3 ? ThaumoryApi.aspects().get(runes.get(3)) : Optional.empty();
+        if (first.isEmpty() || second.isEmpty() || (runes.size() > 2 && parameter.isEmpty()) || (runes.size() > 3 && fourth.isEmpty())) {
             return Optional.empty();
         }
-        return CircleDefinitionReloadListener.definitions().find(first.get(), second.get(), parameter)
-                .map(definition -> new Circle(definition, parameter, settings.multipliers(scan.nodes())));
+        return CircleDefinitionReloadListener.definitions().find(first.get(), second.get(), parameter, fourth)
+                .map(definition -> new Circle(definition, parameter, settings.multipliers(scan.nodes(), rank())));
+    }
+
+    /** Whether this Core is of high enough rank to run {@code circle}. */
+    private boolean runsHere(Circle circle) {
+        return circle.definition().rank() <= rank();
+    }
+
+    /**
+     * Whether the runes and chalk make a defined combination that needs a higher rank than this
+     * Core's; what was last received on the client.
+     */
+    public boolean lowRank() {
+        if (level != null && level.isClientSide()) {
+            return clientLowRank;
+        }
+        return circle().filter(circle -> !runsHere(circle)).isPresent();
+    }
+
+    /** How the circle the runes and chalk make now is scaled, if it is defined. Server only. */
+    public Optional<CircleSettings.Multipliers> multipliers() {
+        return circle().map(Circle::multipliers);
     }
 
     /** What the circle would take now, if it is defined; what was last received on the client. */
@@ -411,7 +462,8 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (runes.size() < 2) {
             return Optional.empty();
         }
-        return Optional.of(new CircleCombination(runes.get(0), runes.get(1), runes.size() > 2 ? Optional.of(runes.get(2)) : Optional.empty()));
+        return Optional.of(new CircleCombination(runes.get(0), runes.get(1), runes.size() > 2 ? Optional.of(runes.get(2)) : Optional.empty(),
+                runes.size() > 3 ? Optional.of(runes.get(3)) : Optional.empty()));
     }
 
     /** The one who started or triggered the circle has now seen it work; the first time, they are told what it is. */
@@ -499,6 +551,22 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         return running.isPresent();
     }
 
+    /** Client only: when a triggered circle last went off, in game time. */
+    public long lastFlash() {
+        return lastFlash;
+    }
+
+    @Override
+    public boolean triggerEvent(int id, int param) {
+        if (id == FLASH_EVENT) {
+            if (level != null) {
+                lastFlash = level.getGameTime();
+            }
+            return true;
+        }
+        return super.triggerEvent(id, param);
+    }
+
     public StartResult start(Optional<Entity> activator) {
         if (!(level instanceof ServerLevel server)) {
             return StartResult.UNDEFINED;
@@ -512,6 +580,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         Optional<Circle> circle = circle();
         if (circle.isEmpty()) {
             return misfire(server, activator) ? StartResult.MISFIRED : StartResult.UNDEFINED;
+        }
+        if (!runsHere(circle.get())) {
+            return StartResult.LOW_RANK;
         }
         CircleDefinitions.Definition definition = circle.get().definition();
         if (definition.mode() != CircleMode.SUSTAINED) {
@@ -573,6 +644,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         if (circle.isEmpty()) {
             return misfire(server, activator) ? TriggerResult.MISFIRED : TriggerResult.UNDEFINED;
         }
+        if (!runsHere(circle.get())) {
+            return TriggerResult.LOW_RANK;
+        }
         CircleDefinitions.Definition definition = circle.get().definition();
         if (definition.mode() != CircleMode.TRIGGERED) {
             return TriggerResult.SUSTAINED_ONLY;
@@ -597,6 +671,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         }
         rollInstability(server);
         effect.get().apply(context);
+        server.blockEvent(worldPosition, getBlockState().getBlock(), FLASH_EVENT, 0);
         workingEffect = effect.get().working(context) ? definition.effect() : null;
         setChanged();
         recordSuccess(activator, definition.effect());
@@ -654,6 +729,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         Optional<Circle> circle = circle();
         if (circle.isEmpty()) {
             return InfuseOutcome.of(misfire(server, activator) ? InfuseResult.MISFIRED : InfuseResult.UNDEFINED);
+        }
+        if (!runsHere(circle.get())) {
+            return InfuseOutcome.of(InfuseResult.LOW_RANK);
         }
         ItemStack stack = pedestalItem;
         Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(circle.get().definition().effect())
@@ -974,6 +1052,7 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         clientCapacity = input.getIntOr("capacity", clientCapacity);
         clientUpkeep = input.read("upkeep", Upkeep.CODEC);
         clientEffect = input.read("effect", Identifier.CODEC);
+        clientLowRank = input.getBooleanOr("low_rank", false);
     }
 
     @Override
@@ -992,6 +1071,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
         tag.putInt("capacity", capacity());
         upkeep().flatMap(u -> Upkeep.CODEC.encodeStart(NbtOps.INSTANCE, u).result()).ifPresent(encoded -> tag.put("upkeep", encoded));
         effectId().ifPresent(effect -> tag.putString("effect", effect.toString()));
+        if (lowRank()) {
+            tag.putBoolean("low_rank", true);
+        }
         return tag;
     }
 }

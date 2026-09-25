@@ -89,6 +89,12 @@ public final class ThaumoryItems {
     public static final RegistrySupplier<BlockItem> CIRCLE_CORE =
             register("circle_core", properties -> new BlockItem(ThaumoryBlocks.CIRCLE_CORE.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
+    public static final RegistrySupplier<BlockItem> ARCANE_IRON_CIRCLE_CORE =
+            register("arcane_iron_circle_core", properties -> new BlockItem(ThaumoryBlocks.ARCANE_IRON_CIRCLE_CORE.get(), properties),
+                    new Item.Properties().useBlockDescriptionPrefix());
+    public static final RegistrySupplier<BlockItem> AETHER_SILVER_CIRCLE_CORE =
+            register("aether_silver_circle_core", properties -> new BlockItem(ThaumoryBlocks.AETHER_SILVER_CIRCLE_CORE.get(), properties),
+                    new Item.Properties().useBlockDescriptionPrefix());
 
     /** The monocle's look when worn: {@code assets/thaumory/equipment/monocle.json}. */
     public static final ResourceKey<EquipmentAsset> MONOCLE_ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, Thaumory.id("monocle"));
@@ -123,7 +129,8 @@ public final class ThaumoryItems {
      * the empty jar is followed by a full one for each aspect.
      */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
+            ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE,
+            ARCANE_IRON_CIRCLE_CORE, AETHER_SILVER_CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE, FLUX_CRYSTAL);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
             Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();

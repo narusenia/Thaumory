@@ -9,9 +9,9 @@ import net.minecraft.resources.Identifier;
 /**
  * {@code data/thaumory/thaumory/circle.json}: how often a Core rescans, the instability threshold
  * and the Flux going over it releases, the Flux an undefined combination releases, the radius each
- * ring count gives, how much of each aspect a Core holds, and what each pattern
- * (by block id) adds to instability and to the strength, range and cost multipliers. Values not
- * written are 0.
+ * ring count gives, what each rank above the first adds to the strength multiplier, how much of
+ * each aspect a Core holds, and what each pattern (by block id) adds to instability and to the
+ * strength, range and cost multipliers. Values not written are 0.
  *
  * <pre>{@code
  * {
@@ -19,7 +19,8 @@ import net.minecraft.resources.Identifier;
  *   "instability_threshold": 3,
  *   "instability_flux": { "chance_per_point": 0.2, "flux_per_point": 2 },
  *   "undefined_flux": 5,
- *   "ring_radius": [4, 8, 16],
+ *   "ring_radius": [4, 8, 16, 24, 32],
+ *   "rank_strength": 0.25,
  *   "essentia_capacity": 64,
  *   "patterns": {
  *     "thaumory:amplifying_pattern": { "instability": 2, "strength": 0.5, "cost": 0.5 },
@@ -32,11 +33,11 @@ import net.minecraft.resources.Identifier;
  * }</pre>
  */
 public record CircleSettings(int scanInterval, int instabilityThreshold, InstabilityFlux instabilityFlux, double undefinedFlux,
-        List<Integer> ringRadius, int essentiaCapacity, Map<Identifier, PatternSettings> patterns, InfusionSettings infusion) {
+        List<Integer> ringRadius, double rankStrength, int essentiaCapacity, Map<Identifier, PatternSettings> patterns, InfusionSettings infusion) {
     /** No multiplier goes below this, however many modifiers lower it. */
     public static final double MIN_MULTIPLIER = 0.25;
 
-    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, InstabilityFlux.DEFAULT, 5, List.of(4, 8, 16), 64, Map.of(
+    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, InstabilityFlux.DEFAULT, 5, List.of(4, 8, 16, 24, 32), 0.25, 64, Map.of(
             thaumory("amplifying_pattern"), new PatternSettings(2, 0.5, 0, 0.5),
             thaumory("extending_pattern"), new PatternSettings(0, 0, 0.5, 0.25),
             thaumory("economizing_pattern"), new PatternSettings(0, -0.25, 0, -0.25),
@@ -76,8 +77,9 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, Instabi
             InstabilityFlux.CODEC.optionalFieldOf("instability_flux", InstabilityFlux.DEFAULT).forGetter(CircleSettings::instabilityFlux),
             Codec.doubleRange(0, Double.MAX_VALUE).optionalFieldOf("undefined_flux", DEFAULT.undefinedFlux)
                     .forGetter(CircleSettings::undefinedFlux),
-            Codec.intRange(1, Integer.MAX_VALUE).listOf(CircleScan.MAX_RINGS, CircleScan.MAX_RINGS)
+            Codec.intRange(1, Integer.MAX_VALUE).listOf(1, CircleScan.MAX_RINGS)
                     .optionalFieldOf("ring_radius", DEFAULT.ringRadius).forGetter(CircleSettings::ringRadius),
+            Codec.DOUBLE.optionalFieldOf("rank_strength", DEFAULT.rankStrength).forGetter(CircleSettings::rankStrength),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("essentia_capacity", DEFAULT.essentiaCapacity)
                     .forGetter(CircleSettings::essentiaCapacity),
             Codec.unboundedMap(Identifier.CODEC, PatternSettings.CODEC).optionalFieldOf("patterns", Map.of())
@@ -98,9 +100,17 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, Instabi
         return Math.max(0, sum);
     }
 
-    /** Each multiplier is 1 plus what the node patterns add to it, never below {@link #MIN_MULTIPLIER}. */
+    /** The multipliers of a rank 1 Core. */
     public Multipliers multipliers(List<CircleScan.Node> nodes) {
-        double strength = 1;
+        return multipliers(nodes, 1);
+    }
+
+    /**
+     * Each multiplier is 1 plus what the node patterns add to it, never below {@link #MIN_MULTIPLIER}.
+     * Each rank above the first adds {@code rank_strength} to the strength, the same way a pattern does.
+     */
+    public Multipliers multipliers(List<CircleScan.Node> nodes, int rank) {
+        double strength = 1 + (rank - 1) * rankStrength;
         double range = 1;
         double cost = 1;
         for (CircleScan.Node node : nodes) {

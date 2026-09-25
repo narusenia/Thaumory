@@ -55,9 +55,10 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<PumpBlock> PUMP = register("pump", PumpBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).strength(0.5f).sound(SoundType.METAL).noOcclusion());
 
-    public static final RegistrySupplier<CircleCoreBlock> CIRCLE_CORE = register("circle_core", CircleCoreBlock::new,
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops()
-                    .strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
+    /** The Core by rank (requirements §4.6): gold, arcane iron, aether silver. */
+    public static final RegistrySupplier<CircleCoreBlock> CIRCLE_CORE = circleCore("circle_core", 1);
+    public static final RegistrySupplier<CircleCoreBlock> ARCANE_IRON_CIRCLE_CORE = circleCore("arcane_iron_circle_core", 2);
+    public static final RegistrySupplier<CircleCoreBlock> AETHER_SILVER_CIRCLE_CORE = circleCore("aether_silver_circle_core", 3);
 
     /** Grows on the stone of caves (requirements §17.3); drops shards like an amethyst cluster. */
     public static final RegistrySupplier<AmethystClusterBlock> ARCANE_CRYSTAL = register("arcane_crystal",
@@ -84,7 +85,7 @@ public final class ThaumoryBlocks {
             "crucible", () -> new BlockEntityType<>(CrucibleBlockEntity::new, Set.of(CRUCIBLE.get())));
 
     public static final RegistrySupplier<BlockEntityType<CircleCoreBlockEntity>> CIRCLE_CORE_ENTITY = BLOCK_ENTITIES.register(
-            "circle_core", () -> new BlockEntityType<>(CircleCoreBlockEntity::new, Set.of(CIRCLE_CORE.get())));
+            "circle_core", () -> new BlockEntityType<>(CircleCoreBlockEntity::new, Set.of(CIRCLE_CORE.get(), ARCANE_IRON_CIRCLE_CORE.get(), AETHER_SILVER_CIRCLE_CORE.get())));
 
     public static final RegistrySupplier<BlockEntityType<PipeBlockEntity>> PIPE_ENTITY = BLOCK_ENTITIES.register(
             "pipe", () -> new BlockEntityType<>(PipeBlockEntity::new, Set.of(PIPE.get(), FILTER_PIPE.get(), VALVE.get(), PUMP.get())));
@@ -101,6 +102,11 @@ public final class ThaumoryBlocks {
         return register(name, properties -> new ChalkPatternBlock(chalk, properties), BlockBehaviour.Properties.of()
                 .mapColor(MapColor.NONE).noCollision().instabreak().noLootTable().sound(SoundType.CALCITE)
                 .pushReaction(PushReaction.POPPED));
+    }
+
+    private static RegistrySupplier<CircleCoreBlock> circleCore(String name, int rank) {
+        return register(name, properties -> new CircleCoreBlock(rank, properties), BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                .requiresCorrectToolForDrops().strength(1.5f, 6.0f).sound(SoundType.STONE).noOcclusion());
     }
 
     private static <B extends Block> RegistrySupplier<B> register(String name, Function<BlockBehaviour.Properties, B> factory,

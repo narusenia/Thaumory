@@ -57,6 +57,21 @@ class CircleRulesTest {
     }
 
     @Test
+    void eachRankAboveTheFirstAddsToStrengthOnly() {
+        CircleSettings settings = CircleSettings.DEFAULT;
+        assertEquals(CircleSettings.Multipliers.NONE, settings.multipliers(List.of(), 1));
+        CircleSettings.Multipliers rank3 = settings.multipliers(List.of(), 3);
+        assertEquals(1.5, rank3.strength(), 1e-9);
+        assertEquals(1.0, rank3.range(), 1e-9);
+        assertEquals(1.0, rank3.cost(), 1e-9);
+        // Added the same way as a pattern: two amplifiers and rank 2 make 1 + 0.5 + 0.5 + 0.25.
+        assertEquals(2.25, settings.multipliers(nodes(AMPLIFY, AMPLIFY), 2).strength(), 1e-9);
+        // The floor applies to the whole sum: four economizers alone would be at it, but rank 3 lifts them off.
+        assertEquals(0.25, settings.multipliers(nodes(ECONOMIZE, ECONOMIZE, ECONOMIZE, ECONOMIZE), 1).strength(), 1e-9);
+        assertEquals(0.5, settings.multipliers(nodes(ECONOMIZE, ECONOMIZE, ECONOMIZE, ECONOMIZE), 3).strength(), 1e-9);
+    }
+
+    @Test
     void multipliersNeverGoBelowAQuarter() {
         CircleSettings.Multipliers m = CircleSettings.DEFAULT.multipliers(nodes(ECONOMIZE, ECONOMIZE, ECONOMIZE, ECONOMIZE, ECONOMIZE));
         assertEquals(0.25, m.cost(), 1e-9);
@@ -69,6 +84,8 @@ class CircleRulesTest {
         assertEquals(0, settings.radius(0, CircleSettings.Multipliers.NONE), 1e-9);
         assertEquals(4, settings.radius(1, CircleSettings.Multipliers.NONE), 1e-9);
         assertEquals(16, settings.radius(3, CircleSettings.Multipliers.NONE), 1e-9);
+        assertEquals(24, settings.radius(4, CircleSettings.Multipliers.NONE), 1e-9);
+        assertEquals(32, settings.radius(5, CircleSettings.Multipliers.NONE), 1e-9);
         assertEquals(12, settings.radius(2, settings.multipliers(nodes(EXTEND))), 1e-9);
     }
 
@@ -79,8 +96,15 @@ class CircleRulesTest {
                 """)).getOrThrow();
         assertEquals(List.of(2, 3, 5), settings.ringRadius());
         assertEquals(10, settings.essentiaCapacity());
+        assertEquals(0.25, settings.rankStrength(), 1e-9);
+        // Rings past the last radius written take the last one.
+        assertEquals(5, settings.radius(4, CircleSettings.Multipliers.NONE), 1e-9);
         assertTrue(CircleSettings.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
-                "{\"scan_interval\": 40, \"instability_threshold\": 3, \"ring_radius\": [2, 3]}")).isError());
+                "{\"scan_interval\": 40, \"instability_threshold\": 3, \"ring_radius\": []}")).isError());
+        assertTrue(CircleSettings.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+                "{\"scan_interval\": 40, \"instability_threshold\": 3, \"ring_radius\": [1, 2, 3, 4, 5, 6]}")).isError());
+        assertEquals(0.5, CircleSettings.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+                "{\"scan_interval\": 40, \"instability_threshold\": 3, \"rank_strength\": 0.5}")).getOrThrow().rankStrength(), 1e-9);
     }
 
     @Test
@@ -166,6 +190,33 @@ class CircleRulesTest {
         assertTrue(table.find(LUX, IGNIS, Optional.empty()).isPresent());
         CircleDefinitions.Definition definition = table.find(LUX, IGNIS, Optional.of(AER)).orElseThrow();
         assertEquals(Map.of("speed", 0.3), definition.settings());
+    }
+
+    @Test
+    void rankAndSlot4DefaultToOneAndEmpty() {
+        CircleDefinitions table = definitions("thaumory:light", """
+                {"effect": "thaumory:light", "runes": ["thaumory:lux", "thaumory:ignis"], "mode": "sustained"}""");
+
+        CircleDefinitions.Definition light = table.find(LUX, IGNIS, Optional.empty(), Optional.empty()).orElseThrow();
+        assertEquals(1, light.rank());
+        assertTrue(table.find(LUX, IGNIS, Optional.empty(), Optional.of(AER)).isEmpty(), "slot 4 takes only an empty slot by default");
+    }
+
+    @Test
+    void slot4MatchesLikeSlot3AndRankIsNotPartOfTheMatch() {
+        CircleDefinitions table = definitions("thaumory:teleport", """
+                {"effect": "thaumory:teleport", "runes": ["thaumory:arcanum", "thaumory:aer"], "slot3": "any",
+                 "slot4": ["none", "thaumory:umbra"], "rank": 3, "mode": "triggered"}""", "thaumory:light", """
+                {"effect": "thaumory:light", "runes": ["thaumory:lux", "thaumory:ignis"], "slot4": "any", "mode": "sustained"}""");
+
+        assertEquals(3, table.find(AER, ARCANUM, Optional.of(LUX), Optional.empty()).orElseThrow().rank());
+        assertTrue(table.find(AER, ARCANUM, Optional.of(LUX), Optional.of(UMBRA)).isPresent());
+        assertTrue(table.find(AER, ARCANUM, Optional.of(LUX), Optional.of(IGNIS)).isEmpty(), "Ignis is not an accepted slot 4");
+        assertTrue(table.find(LUX, IGNIS, Optional.empty(), Optional.of(AER)).isPresent());
+        assertTrue(table.find(LUX, IGNIS, Optional.empty(), Optional.empty()).isEmpty(), "a plain any needs a rune");
+        assertTrue(CircleDefinitionFile.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+                "{\"effect\": \"thaumory:light\", \"runes\": [\"thaumory:lux\", \"thaumory:ignis\"], \"rank\": 0, \"mode\": \"sustained\"}"))
+                .isError(), "rank starts at 1");
     }
 
     @Test

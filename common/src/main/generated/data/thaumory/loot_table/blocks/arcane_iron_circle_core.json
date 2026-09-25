@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "thaumory:arcane_iron_circle_core"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

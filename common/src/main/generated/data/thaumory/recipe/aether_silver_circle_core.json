@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "thaumory:arcane_iron_circle_core",
+    "I": "thaumory:aether_silver_ingot",
+    "S": "minecraft:stone_bricks"
+  },
+  "pattern": [
+    "SIS",
+    "ICI",
+    "SIS"
+  ],
+  "result": {
+    "id": "thaumory:aether_silver_circle_core"
+  }
+}

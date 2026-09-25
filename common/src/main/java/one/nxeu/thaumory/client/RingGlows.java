@@ -31,6 +31,11 @@ final class RingGlows implements ResourceManagerReloadListener {
         return Thaumory.id("textures/block/circle_core_ring_" + (index + 1) + ".png");
     }
 
+    /** A soft line of light, full along its length and fading out across it. */
+    static final Identifier LINE = Thaumory.id("dynamic/emblem_line");
+    /** A soft round spot of light. */
+    static final Identifier DOT = Thaumory.id("dynamic/emblem_dot");
+
     static Identifier glow(int index) {
         return Thaumory.id("dynamic/circle_core_ring_" + (index + 1) + "_glow");
     }
@@ -42,6 +47,8 @@ final class RingGlows implements ResourceManagerReloadListener {
 
     @Override
     public void onResourceManagerReload(ResourceManager resources) {
+        register(LINE, soft(16, false));
+        register(DOT, soft(16, true));
         for (int i = 0; i < RINGS; i++) {
             Optional<Resource> resource = resources.getResource(ring(i));
             if (resource.isEmpty()) {
@@ -54,6 +61,26 @@ final class RingGlows implements ResourceManagerReloadListener {
                 LOGGER.warn("Could not make the glow for {}", ring(i), e);
             }
         }
+    }
+
+    private static void register(Identifier id, NativeImage image) {
+        Minecraft.getInstance().getTextureManager().register(id, new DynamicTexture(id::toString, image));
+    }
+
+    /** White with a soft falloff: across the V axis for a line, from the centre for a spot. */
+    private static NativeImage soft(int size, boolean round) {
+        NativeImage image = new NativeImage(size, size, false);
+        double centre = (size - 1) / 2.0;
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                double dy = (y - centre) / centre;
+                double dx = round ? (x - centre) / centre : 0;
+                double d2 = dx * dx + dy * dy;
+                int a = (int) Math.round(255 * Math.exp(-d2 * 4));
+                image.setPixel(x, y, a << 24 | 0xFFFFFF);
+            }
+        }
+        return image;
     }
 
     private static NativeImage glowOf(NativeImage ring) {

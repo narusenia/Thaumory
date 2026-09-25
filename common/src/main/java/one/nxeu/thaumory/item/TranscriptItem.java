@@ -142,7 +142,8 @@ public final class TranscriptItem extends Item {
             return Optional.empty();
         }
         Optional<Aspect> parameter = combination.parameter().flatMap(ThaumoryApi.aspects()::get);
-        return CircleDefinitionReloadListener.definitions().find(first.get(), second.get(), parameter)
+        Optional<Aspect> slot4 = combination.slot4().flatMap(ThaumoryApi.aspects()::get);
+        return CircleDefinitionReloadListener.definitions().find(first.get(), second.get(), parameter, slot4)
                 .map(definition -> Component.translatable(definition.effect().toLanguageKey("circle_effect")).withColor(0xCC99FF));
     }
 }

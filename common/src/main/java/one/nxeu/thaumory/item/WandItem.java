@@ -73,6 +73,7 @@ public final class WandItem extends Item {
         NO_RINGS("no_rings", () -> SoundEvents.FIRE_EXTINGUISH),
         NO_RESPONSE("no_response", () -> SoundEvents.FIRE_EXTINGUISH),
         MISFIRED("misfired", () -> SoundEvents.FIRE_EXTINGUISH),
+        LOW_RANK("low_rank", () -> SoundEvents.FIRE_EXTINGUISH),
         OVERLOADED("overloaded", () -> SoundEvents.FIRE_EXTINGUISH),
         NO_TARGET("no_target", () -> SoundEvents.FIRE_EXTINGUISH),
         NO_ESSENTIA("no_essentia", () -> SoundEvents.FIRE_EXTINGUISH);
@@ -101,6 +102,7 @@ public final class WandItem extends Item {
             case NO_RINGS -> Component.translatable("message.thaumory.wand.no_rings");
             case UNDEFINED -> Component.translatable("message.thaumory.wand.no_response");
             case MISFIRED -> ThaumoryText.withEffect(Component.translatable("message.thaumory.wand.misfired"), TextEffect.SHAKE);
+            case LOW_RANK -> Component.translatable("message.thaumory.wand.low_rank");
             case NO_ESSENTIA -> Component.translatable("message.thaumory.wand.no_essentia");
         };
         player.sendOverlayMessage(message);
@@ -122,6 +124,7 @@ public final class WandItem extends Item {
             case NO_RINGS -> Outcome.NO_RINGS;
             case UNDEFINED -> Outcome.NO_RESPONSE;
             case MISFIRED -> Outcome.MISFIRED;
+            case LOW_RANK -> Outcome.LOW_RANK;
             case OVERLOADED -> Outcome.OVERLOADED;
             case NO_ESSENTIA -> Outcome.NO_ESSENTIA;
             case TRIGGERED_ONLY -> switch (core.trigger(Optional.of(player))) {
@@ -129,6 +132,7 @@ public final class WandItem extends Item {
                 case NO_RINGS -> Outcome.NO_RINGS;
                 case UNDEFINED, SUSTAINED_ONLY -> Outcome.NO_RESPONSE;
                 case MISFIRED -> Outcome.MISFIRED;
+                case LOW_RANK -> Outcome.LOW_RANK;
                 case OVERLOADED -> Outcome.OVERLOADED;
                 case NO_TARGET -> Outcome.NO_TARGET;
                 case NO_ESSENTIA -> Outcome.NO_ESSENTIA;

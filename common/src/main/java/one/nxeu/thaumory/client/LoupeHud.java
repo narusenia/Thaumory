@@ -151,7 +151,7 @@ final class LoupeHud {
         lines.add(core.getBlockState().getBlock().getName().withColor(WHITE));
 
         MutableComponent runes = Component.translatable("hud.thaumory.core.runes").withColor(GRAY);
-        for (int slot = 0; slot < CircleCoreBlockEntity.SLOTS; slot++) {
+        for (int slot = 0; slot < core.slots(); slot++) {
             runes.append(" ");
             if (slot < core.runes().size()) {
                 Identifier id = core.runes().get(slot);
@@ -164,7 +164,7 @@ final class LoupeHud {
         }
         lines.add(runes);
 
-        lines.add(Component.translatable("hud.thaumory.core.rings", scan.rings(), CircleScan.MAX_RINGS).withColor(GRAY));
+        lines.add(Component.translatable("hud.thaumory.core.rings", scan.rings(), core.maxRings()).withColor(GRAY));
         for (CircleScan.Node node : scan.nodes()) {
             Component pattern = BuiltInRegistries.BLOCK.getOptional(node.pattern())
                     .map(block -> (Component) block.getName())
@@ -190,6 +190,9 @@ final class LoupeHud {
             if (outcome.filter(PlayerKnowledge.CircleOutcome.SUCCESS::equals).isPresent() && effect.isPresent()) {
                 MutableComponent name = Component.translatable("hud.thaumory.core.effect", Component.translatable(effect.get().toLanguageKey("circle_effect")));
                 lines.add(core.isRunning() ? ThaumoryText.withEffect(name.withColor(runningColor), TextEffect.PULSE) : name.withColor(0xFFCC99FF));
+                if (core.lowRank()) {
+                    lines.add(Component.translatable("hud.thaumory.core.low_rank").withColor(0xFFFFAA55));
+                }
                 core.upkeep().ifPresent(upkeep -> lines.add((upkeep.mode() == CircleMode.TRIGGERED
                         ? Component.translatable("hud.thaumory.core.upkeep.triggered", upkeep.cost())
                         : Component.translatable("hud.thaumory.core.upkeep.sustained", String.format(Locale.ROOT, "%.1f", upkeep.interval() / 20.0)))

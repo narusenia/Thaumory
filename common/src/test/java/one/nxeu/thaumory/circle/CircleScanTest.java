@@ -48,7 +48,11 @@ class CircleScanTest {
         }
 
         CircleScan scan() {
-            return CircleScan.scan((dx, dz) -> Optional.ofNullable(cells.get(new CircleScan.Offset(dx, dz))), LINE);
+            return scan(3);
+        }
+
+        CircleScan scan(int maxRings) {
+            return CircleScan.scan((dx, dz) -> Optional.ofNullable(cells.get(new CircleScan.Offset(dx, dz))), LINE, maxRings);
         }
     }
 
@@ -63,6 +67,25 @@ class CircleScanTest {
     void completeRingsCount() {
         assertEquals(1, new Ground().ring(1).scan().rings());
         assertEquals(3, new Ground().ring(1).ring(2).ring(3).scan().rings());
+    }
+
+    @Test
+    void fiveRingsHoldForACoreThatReadsFive() {
+        Ground ground = new Ground().ring(1).ring(2).ring(3).ring(4).ring(5).node(5, CircleSide.EAST, AMPLIFY);
+        CircleScan scan = ground.scan(CircleScan.MAX_RINGS);
+
+        assertEquals(5, scan.rings());
+        assertEquals(List.of(new CircleScan.Node(5, CircleSide.EAST, AMPLIFY)), scan.nodes());
+    }
+
+    @Test
+    void theScanStopsAtTheCoresLimit() {
+        Ground ground = new Ground().ring(1).ring(2).ring(3).ring(4).ring(5).node(4, CircleSide.NORTH, AMPLIFY);
+
+        assertEquals(3, ground.scan(3).rings());
+        assertTrue(ground.scan(3).nodes().isEmpty(), "the modifier on ring 4 must not count");
+        assertEquals(4, ground.scan(4).rings());
+        assertEquals(5, ground.scan(9).rings(), "no Core reads more than the maximum");
     }
 
     @Test

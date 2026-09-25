@@ -107,12 +107,14 @@ public final class ThaumoryCommands {
                                 .executes(c -> changeKnowledge(c, k -> PlayerKnowledge.EMPTY))))));
     }
 
-    /** {@code circle <player> success|failure <first> <second> [parameter]}. */
+    /** {@code circle <player> success|failure <first> <second> [parameter [slot4]]}. */
     private static ArgumentBuilder<CommandSourceStack, ?> circleOutcome(String name, CircleOutcome outcome) {
         return Commands.literal(name).then(aspectArgument("first").then(aspectArgument("second")
-                .executes(c -> recordCircle(c, outcome, Optional.empty()))
+                .executes(c -> recordCircle(c, outcome, Optional.empty(), Optional.empty()))
                 .then(aspectArgument("parameter")
-                        .executes(c -> recordCircle(c, outcome, Optional.of(aspect(c, "parameter")))))));
+                        .executes(c -> recordCircle(c, outcome, Optional.of(aspect(c, "parameter")), Optional.empty()))
+                        .then(aspectArgument("slot4")
+                                .executes(c -> recordCircle(c, outcome, Optional.of(aspect(c, "parameter")), Optional.of(aspect(c, "slot4"))))))));
     }
 
     private static ArgumentBuilder<CommandSourceStack, ?> aspectArgument(String name) {
@@ -120,9 +122,9 @@ public final class ThaumoryCommands {
                 SharedSuggestionProvider.suggestResource(ThaumoryApi.aspects().all().stream().map(Aspect::id), builder));
     }
 
-    private static int recordCircle(CommandContext<CommandSourceStack> context, CircleOutcome outcome, Optional<Identifier> parameter)
-            throws CommandSyntaxException {
-        CircleCombination combination = new CircleCombination(aspect(context, "first"), aspect(context, "second"), parameter);
+    private static int recordCircle(CommandContext<CommandSourceStack> context, CircleOutcome outcome, Optional<Identifier> parameter,
+            Optional<Identifier> slot4) throws CommandSyntaxException {
+        CircleCombination combination = new CircleCombination(aspect(context, "first"), aspect(context, "second"), parameter, slot4);
         return changeKnowledge(context, k -> k.withCircle(combination, outcome));
     }
 
@@ -197,10 +199,12 @@ public final class ThaumoryCommands {
         String ignored = scan.ignoredModifiers().stream()
                 .map(offset -> "(" + offset.dx() + ", " + offset.dz() + ")")
                 .collect(Collectors.joining(", "));
-        context.getSource().sendSuccess(() -> Component.literal("Core at " + pos.toShortString() + ": runes " + core.runes()
-                + ", rings " + scan.rings() + ", nodes [" + nodes + "], ignored modifiers [" + ignored + "], instability "
+        context.getSource().sendSuccess(() -> Component.literal("Core at " + pos.toShortString() + ": rank " + core.rank()
+                + ", runes " + core.runes() + " (" + core.slots() + " slots), rings " + scan.rings() + "/" + core.maxRings()
+                + ", nodes [" + nodes + "], ignored modifiers [" + ignored + "], instability "
                 + core.instability() + " (threshold " + CircleCoreBlockEntity.settings().instabilityThreshold() + "), essentia " + core.essentia()
-                + ", upkeep " + core.upkeep().map(Object::toString).orElse("undefined") + ", running " + core.isRunning()), false);
+                + ", upkeep " + core.upkeep().map(Object::toString).orElse("undefined") + (core.lowRank() ? " (needs a higher rank)" : "")
+                + ", running " + core.isRunning()), false);
         return scan.rings();
     }
 
