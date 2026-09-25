@@ -64,6 +64,22 @@ class AspectRegistryTest {
     }
 
     @Test
+    void rejectsCompoundWhoseBreakdownHoldsOpposites() {
+        Aspect smoke = registry.register(Aspect.compound(id("smoke"), 0, fire, wind));
+        Aspect mud = registry.register(Aspect.compound(id("mud"), 0, water, earth));
+        // Neither is the other's opposite, but fire and water meet once both are broken down.
+        assertThrows(IllegalArgumentException.class,
+                () -> registry.register(Aspect.compound(id("ash"), 0, smoke, mud)));
+    }
+
+    @Test
+    void acceptsCompoundOfCompoundsWithoutOpposites() {
+        Aspect smoke = registry.register(Aspect.compound(id("smoke"), 0, fire, wind));
+        Aspect gust = registry.register(Aspect.compound(id("gust"), 0, smoke, wind));
+        assertEquals(List.of(fire, wind, wind), gust.primalBreakdown());
+    }
+
+    @Test
     void rejectsCompoundOfSameAspectTwice() {
         assertThrows(IllegalArgumentException.class, () -> Aspect.compound(id("inferno"), 0, fire, fire));
     }
@@ -104,10 +120,10 @@ class AspectRegistryTest {
     @Test
     void compoundBreaksDownIntoPrimalsInOrder() {
         Aspect smoke = registry.register(Aspect.compound(id("smoke"), 0, fire, wind));
-        Aspect soot = registry.register(Aspect.compound(id("soot"), 0, smoke, earth));
+        Aspect soot = registry.register(Aspect.compound(id("soot"), 0, smoke, fire));
 
-        assertEquals(List.of(fire, wind, earth), soot.primalBreakdown());
-        assertTrue(soot.vector().isCloseTo(new AspectVector(1, 0), 1e-9));
+        assertEquals(List.of(fire, wind, fire), soot.primalBreakdown());
+        assertTrue(soot.vector().isCloseTo(new AspectVector(2, 1), 1e-9));
     }
 
     @Test

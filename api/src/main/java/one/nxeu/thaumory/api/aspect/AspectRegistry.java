@@ -26,7 +26,8 @@ public final class AspectRegistry {
      *
      * @throws IllegalStateException if the registry is frozen
      * @throws IllegalArgumentException if the id is taken, a primal already points the same way, a
-     *     component is unregistered, the components are opposites, or another compound already has
+     *     component is unregistered, the components cancel each other out (their primal breakdowns hold
+     *     opposites), or another compound already has
      *     the same components
      */
     public Aspect register(Aspect aspect) {
@@ -61,7 +62,8 @@ public final class AspectRegistry {
                 throw new IllegalArgumentException(compound + " uses unregistered aspect " + component);
             }
         }
-        if (areOpposite(components.get(0), components.get(1))) {
+        // Checked on the primal breakdowns, so a compound of compounds cannot hide an opposite pair.
+        if (cancels(components.get(0), components.get(1))) {
             throw new IllegalArgumentException(
                     compound + " combines opposites " + components.get(0) + " and " + components.get(1));
         }
