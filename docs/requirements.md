@@ -241,7 +241,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
   - `circle.json` の `"instability_flux": {"chance_per_point": 0.2, "flux_per_point": 2}`
 - 陣の判定は一定の間隔（初期 2 秒）で Core が周囲を調べ直す
 - 判定の間隔・不安定度の閾値・不安定度による Flux・未定義の組み合わせの Flux・リングごとの半径・Core の容量・紋様ごとの値は `data/thaumory/thaumory/circle.json` に書き、上位の datapack が丸ごと置き換える。紋様はブロック ID で指定するので、アドオンの紋様にも値を付けられる。書かれていない値は 0
-  - 形式: `{"scan_interval": 40, "instability_threshold": 3, "instability_flux": {"chance_per_point": 0.2, "flux_per_point": 2}, "undefined_flux": 5, "child_instability": 1, "ring_radius": [4, 8, 16], "essentia_capacity": 64, "patterns": {"thaumory:amplifying_pattern": {"instability": 2, "strength": 0.5, "cost": 0.5}, "thaumory:extending_pattern": {"range": 0.5, "cost": 0.25}, "thaumory:economizing_pattern": {"cost": -0.25, "strength": -0.25}, "thaumory:stabilizing_pattern": {"instability": -3}}}`
+  - 形式: `{"scan_interval": 40, "instability_threshold": 3, "instability_flux": {"chance_per_point": 0.2, "flux_per_point": 2}, "undefined_flux": 5, "child_instability": 1, "ring_radius": [4, 8, 16], "essentia_capacity": 64, "stone_radius": 4, "patterns": {"thaumory:amplifying_pattern": {"instability": 2, "strength": 0.5, "cost": 0.5}, "thaumory:extending_pattern": {"range": 0.5, "cost": 0.25}, "thaumory:economizing_pattern": {"cost": -0.25, "strength": -0.25}, "thaumory:stabilizing_pattern": {"instability": -3}}}`
 - 紋様として数えるブロックはブロックタグ `thaumory:circle_patterns` で決める（アドオンの紋様はこのタグに入れる）。基本の線は `thaumory:chalk_line`
 
 ### 4.4 Essentia の消費
@@ -717,10 +717,18 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 
 #### 陣石（M2-11）
 
-- 空の陣石: 作業台で、石レンガ + 魔鉄のインゴット + 結晶のかけら（形は着手するときに決める）
-- 注入の陣の台座に載せて焼き付けると「治癒の陣石」「灯火の陣石」のようになる。焼き付けられるのは持続型の効果だけで、テレポートと天候は除く（農業・工業・防衛・生活の持続型も入る）
-- 置くと半径 4・強度 1 で働く。修飾はできない。Essentia は中に持ち、配管から受け取る（Core と同じく、焼き付けた効果のアスペクトだけ）
-- 数値（容量・消費の間隔）は着手するときに決める
+- 空の陣石: 作業台で、上の中央に結晶のかけら、真ん中に魔鉄のインゴット、残りの 7 マスに石レンガ。1 つできる。16 まで重なる
+- 注入の陣の台座に 1 つ載せて杖で焼き付けると「治癒の陣石」「灯火の陣石」のようになる。消費と失敗の確率はほかの注入と同じ
+  - 焼き付けられるのは持続型の組み合わせすべて（農業・工業・防衛・生活・封じ込めも入る。装備に焼き付けられない効果も入る）。充填は台座の品に注ぐ効果なので除く。ランク 2 以上が要る組み合わせも除く（陣石はランク 1 として扱う）。焼き付けられなければ「この陣の効果は陣石に焼き付けられない」
+  - 焼き付けるのは組み合わせ（Rune の並び）。動くときの消費の間隔・設定・働いた分の Flux は、組み合わせのファイルの値を使う
+  - 焼き付けた陣石は重ならない。ツールチップに効果の名前（とスロット 3 のアスペクト）を出す
+- 置く: Core と同じく床・壁・天井のどの面にも置ける
+- 働き: 半径 4（`circle.json` の `stone_radius`）・強度 1 で働く。範囲の中心は陣石。修飾・ランク・注入のレベルは関係せず、不安定度は 0
+  - Essentia がある間は常に動く。レッドストーン信号を受けている間は止まる（止まるときは陣と同じく効果の後始末をする）
+  - Essentia は中に持つ。焼き付けた組み合わせのスロット 1・2 のアスペクトを、それぞれ Core と同じ容量（`essentia_capacity`、初期 64）まで。配管から受け取り、瓶からも注げる。取り出しはできない
+  - 消費は持続型の陣と同じ: 組み合わせの間隔ごとにスロット 1・2 を 1 ずつ。足りなければ止まり、また入れば動き出す
+- 壊す: 焼き付けたままの陣石として落ちる（置き直せる）。中の Essentia は Core と同じく Flux になる
+- ルーペ: 効果の名前・動いているか（止まっているなら理由: Essentia 不足・信号）・中の Essentia
 
 #### 巻物（M2-9）
 
