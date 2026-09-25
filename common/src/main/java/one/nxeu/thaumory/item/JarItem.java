@@ -20,6 +20,7 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectRegistry;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
+import one.nxeu.thaumory.block.stone.CircleStoneBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.infusion.InfusionRuntime;
@@ -43,7 +44,8 @@ public final class JarItem extends BlockItem {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockEntity target = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (!(target instanceof CrucibleBlockEntity) && !(target instanceof JarBlockEntity) && !(target instanceof CircleCoreBlockEntity)) {
+        if (!(target instanceof CrucibleBlockEntity) && !(target instanceof JarBlockEntity) && !(target instanceof CircleCoreBlockEntity)
+                && !(target instanceof CircleStoneBlockEntity)) {
             Player player = context.getPlayer();
             if (player != null && pouringIntoRune(player, context.getHand())) {
                 return infuseRune(context.getLevel(), player, context.getItemInHand());
@@ -154,6 +156,12 @@ public final class JarItem extends BlockItem {
                     ? EssentiaTransfer.pourSeparated(held.aspects(), core.essentia(), core.acceptedAspects(), CircleCoreBlockEntity.capacity())
                     : EssentiaTransfer.draw(core.essentia(), held.aspects(), held.label(), capacity, registry);
             core.setEssentia(pour ? result.to() : result.from());
+        } else if (target instanceof CircleStoneBlockEntity stone) {
+            // Kept apart like a Core's, for the aspects of the circle burnt into it.
+            result = pour
+                    ? EssentiaTransfer.pourSeparated(held.aspects(), stone.essentia(), stone.acceptedAspects(), CircleStoneBlockEntity.capacity())
+                    : EssentiaTransfer.draw(stone.essentia(), held.aspects(), held.label(), capacity, registry);
+            stone.setEssentia(pour ? result.to() : result.from());
         } else {
             return;
         }

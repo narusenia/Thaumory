@@ -51,6 +51,11 @@ public final class ThaumoryItems {
     public static final RegistrySupplier<Item> BLANK_SCROLL = register("blank_scroll", Item::new, new Item.Properties().stacksTo(16));
     /** Works from anywhere in its owner's inventory (requirements §10.3); "empty" until something is burnt into it. */
     public static final RegistrySupplier<Item> AMULET = register("amulet", Item::new, new Item.Properties().stacksTo(1));
+    /** Takes one sustained circle and turns into a {@link #CIRCLE_STONE} (requirements §10.3). */
+    public static final RegistrySupplier<Item> BLANK_CIRCLE_STONE = register("blank_circle_stone", Item::new, new Item.Properties().stacksTo(16));
+    /** Made from a blank circle stone by infusion only, so it is not in the creative tab. */
+    public static final RegistrySupplier<CircleStoneItem> CIRCLE_STONE = register("circle_stone",
+            properties -> new CircleStoneItem(ThaumoryBlocks.CIRCLE_STONE.get(), properties), new Item.Properties().stacksTo(1).useBlockDescriptionPrefix());
     /** Made from a blank scroll by infusion only, so it is not in the creative tab. */
     public static final RegistrySupplier<ScrollItem> SCROLL = register("scroll", ScrollItem::new, new Item.Properties().stacksTo(16));
     public static final RegistrySupplier<RuneItem> RUNE = register("rune", RuneItem::new, new Item.Properties());
@@ -130,7 +135,7 @@ public final class ThaumoryItems {
      */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
             ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE,
-            ARCANE_IRON_CIRCLE_CORE, AETHER_SILVER_CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
+            ARCANE_IRON_CIRCLE_CORE, AETHER_SILVER_CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET, BLANK_CIRCLE_STONE,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE, FLUX_CRYSTAL);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
             Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();

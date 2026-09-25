@@ -167,15 +167,15 @@ public final class CircleCoreBlock extends BaseEntityBlock {
     }
 
     /**
-     * Items that do not stack, and items with an infusion capacity (a stack of blank scrolls, say), one
-     * at a time. The client goes by the capacities the server sent it.
+     * Items that do not stack, and items with an infusion capacity (a stack of blank scrolls, say) or
+     * blank circle stones, one at a time. The client goes by the capacities the server sent it.
      */
     private static boolean goesOnPedestal(Level level, ItemStack stack) {
         if (stack.isEmpty() || stack.is(ThaumoryItems.PEDESTAL_IGNORED)) {
             return false;
         }
         int capacity = level.isClientSide() ? ClientCapacities.of(stack.getItem()) : InfusionCapacities.of(stack.getItem());
-        return !stack.isStackable() || capacity > 0;
+        return !stack.isStackable() || capacity > 0 || stack.is(ThaumoryItems.BLANK_CIRCLE_STONE.get());
     }
 
     @Override

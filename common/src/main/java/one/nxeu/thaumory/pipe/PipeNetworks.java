@@ -21,6 +21,7 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
+import one.nxeu.thaumory.block.stone.CircleStoneBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
@@ -232,6 +233,7 @@ public final class PipeNetworks {
         public int priority() {
             return switch (level.getBlockEntity(pos)) {
                 case CircleCoreBlockEntity core -> 3;
+                case CircleStoneBlockEntity stone -> 3;
                 case CrucibleBlockEntity crucible -> 0;
                 case JarBlockEntity jar when jar.contents().label().isPresent() -> 2;
                 case null, default -> 1;

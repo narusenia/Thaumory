@@ -15,6 +15,7 @@ import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.stream.Stream;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -31,6 +32,7 @@ import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
+import one.nxeu.thaumory.block.stone.BurntCircle;
 import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
 import one.nxeu.thaumory.client.entity.VoidRemnantRenderer;
 import one.nxeu.thaumory.client.particle.AspectMoteParticle;
@@ -43,6 +45,7 @@ import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.TranscriptItem;
 import one.nxeu.thaumory.jar.JarContents;
+import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.Transcript.AspectTranscript;
 import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
@@ -105,6 +108,7 @@ public final class ThaumoryClient {
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), CircleCoreRenderer::new);
+        BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_STONE_ENTITY.get(), CircleStoneRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.PIPE_ENTITY.get(), PipeRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
         particles.register(ThaumoryParticles.ASPECT_MOTE.get(), AspectMoteParticle.Provider::new);
@@ -120,6 +124,7 @@ public final class ThaumoryClient {
             appendRuneAspect(stack, lines);
             appendTranscript(stack, lines);
             appendInfusions(stack, lines);
+            appendBurntCircle(stack, lines);
             appendAspects(stack.getItem(), lines);
         });
     }
@@ -129,6 +134,24 @@ public final class ThaumoryClient {
         if (contents != null) {
             lines.addAll(JarText.describe(contents, OptionalInt.empty(), ClientKnowledge.get()));
         }
+    }
+
+    /** The runes of the circle burnt into a circle stone, slot 1 first; its name already gives the effect. */
+    private static void appendBurntCircle(ItemStack stack, List<Component> lines) {
+        BurntCircle burnt = stack.get(ThaumoryComponents.BURNT_CIRCLE.get());
+        if (burnt == null) {
+            return;
+        }
+        PlayerKnowledge knowledge = ClientKnowledge.get();
+        CircleCombination combination = burnt.combination();
+        MutableComponent line = Component.translatable("tooltip.thaumory.circle_stone.runes").withColor(0xAAAAAA);
+        for (Identifier id : Stream.concat(Stream.of(combination.first(), combination.second()),
+                Stream.concat(combination.parameter().stream(), combination.slot4().stream())).toList()) {
+            line.append(" ").append(ThaumoryApi.aspects().get(id)
+                    .map(aspect -> (Component) AspectText.name(aspect, knowledge.knowsAspect(id)))
+                    .orElseGet(() -> Component.literal(id.toString())));
+        }
+        lines.add(line);
     }
 
     private static void appendRuneAspect(ItemStack stack, List<Component> lines) {

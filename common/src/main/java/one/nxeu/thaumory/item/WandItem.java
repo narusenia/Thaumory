@@ -92,6 +92,8 @@ public final class WandItem extends Item {
         CircleCoreBlockEntity.InfuseOutcome outcome = core.infuse(Optional.of(player));
         MutableComponent message = switch (outcome.result()) {
             case INFUSED -> Component.translatable("message.thaumory.infusion.infused", InfusionText.describe(outcome.infusion().orElseThrow()));
+            case INFUSED_STONE -> Component.translatable("message.thaumory.infusion.stone", core.pedestalItem().getHoverName());
+            case NOT_FOR_STONE -> Component.translatable("message.thaumory.infusion.not_for_stone");
             case FAILED -> ThaumoryText.withEffect(Component.translatable("message.thaumory.infusion.failed"), TextEffect.SHAKE);
             case NOT_INFUSABLE -> Component.translatable("message.thaumory.infusion.not_infusable");
             case NO_CAPACITY -> Component.translatable("message.thaumory.infusion.no_capacity");
@@ -107,7 +109,7 @@ public final class WandItem extends Item {
         };
         player.sendOverlayMessage(message);
         level.playSound(null, core.getBlockPos(), switch (outcome.result()) {
-            case INFUSED -> ThaumorySounds.CIRCLE_INFUSE.get();
+            case INFUSED, INFUSED_STONE -> ThaumorySounds.CIRCLE_INFUSE.get();
             case FAILED -> SoundEvents.GENERIC_EXTINGUISH_FIRE;
             default -> SoundEvents.FIRE_EXTINGUISH;
         }, SoundSource.BLOCKS, 0.8f, 1.0f);

@@ -136,6 +136,15 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .define('R', ThaumoryItems.BLANK_RUNE.get())
                         .unlockedBy(getHasName(ThaumoryItems.BLANK_RUNE.get()), has(ThaumoryItems.BLANK_RUNE.get()))
                         .save(output);
+                shaped(RecipeCategory.MISC, ThaumoryItems.BLANK_CIRCLE_STONE.get())
+                        .pattern("SCS")
+                        .pattern("SIS")
+                        .pattern("SSS")
+                        .define('S', Items.STONE_BRICKS)
+                        .define('C', ThaumoryItems.ARCANE_CRYSTAL_SHARD.get())
+                        .define('I', ThaumoryItems.ARCANE_IRON.ingot().get())
+                        .unlockedBy(getHasName(ThaumoryItems.ARCANE_IRON.ingot().get()), has(ThaumoryItems.ARCANE_IRON.ingot().get()))
+                        .save(output);
                 // Each rank: the Core one below it, ringed by its metal (requirements §4.6).
                 coreUpgrade(ThaumoryItems.CIRCLE_CORE.get(), ThaumoryItems.ARCANE_IRON.ingot().get(), ThaumoryItems.ARCANE_IRON_CIRCLE_CORE.get());
                 coreUpgrade(ThaumoryItems.ARCANE_IRON_CIRCLE_CORE.get(), ThaumoryItems.AETHER_SILVER.ingot().get(),

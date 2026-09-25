@@ -1,0 +1,7 @@
+{
+  "parent": "thaumory:block/template_circle_stone",
+  "textures": {
+    "side": "thaumory:block/circle_stone_side",
+    "top": "thaumory:block/circle_stone_top"
+  }
+}

@@ -46,6 +46,11 @@ final class ThaumoryBlockLootProvider extends FabricBlockLootSubProvider {
                         .apply(ApplyBonusCount.addOreBonusCount(enchantments.getOrThrow(Enchantments.FORTUNE)))
                         .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(items, ItemTags.CLUSTER_MAX_HARVESTABLES)))
                         .otherwise((LootPoolEntryContainer.Builder<?>) applyExplosionDecay(block, LootItem.lootTableItem(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get())))));
+        // A broken circle stone keeps the circle burnt into it; its Essentia turns to Flux.
+        add(ThaumoryBlocks.CIRCLE_STONE.get(), LootTable.lootTable().withPool(applyExplosionCondition(ThaumoryBlocks.CIRCLE_STONE.get(), LootPool.lootPool()
+                .add(LootItem.lootTableItem(ThaumoryItems.CIRCLE_STONE.get())
+                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                                .include(ThaumoryComponents.BURNT_CIRCLE.get()))))));
         // A broken jar keeps its Essentia and label.
         add(ThaumoryBlocks.JAR.get(), LootTable.lootTable().withPool(applyExplosionCondition(ThaumoryBlocks.JAR.get(), LootPool.lootPool()
                 .add(LootItem.lootTableItem(ThaumoryBlocks.JAR.get())

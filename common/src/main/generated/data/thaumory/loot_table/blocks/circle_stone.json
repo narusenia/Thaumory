@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "include": [
+              "thaumory:burnt_circle"
+            ],
+            "source": "block_entity"
+          },
+          "name": "thaumory:circle_stone"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

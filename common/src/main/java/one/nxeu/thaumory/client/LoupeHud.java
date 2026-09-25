@@ -30,11 +30,14 @@ import one.nxeu.thaumory.block.jar.JarBlockEntity;
 import one.nxeu.thaumory.block.pipe.ValveBlock;
 import one.nxeu.thaumory.block.pipe.PipeBlockEntity;
 import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
+import one.nxeu.thaumory.block.stone.BurntCircle;
+import one.nxeu.thaumory.block.stone.CircleStoneBlockEntity;
 import one.nxeu.thaumory.circle.CircleChildren;
 import one.nxeu.thaumory.circle.CircleMode;
 import one.nxeu.thaumory.circle.CircleScan;
 import one.nxeu.thaumory.crucible.CrucibleTank;
 import one.nxeu.thaumory.item.ArcaneLoupeItem;
+import one.nxeu.thaumory.knowledge.CircleCombination;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.text.ThaumoryText;
@@ -64,6 +67,7 @@ final class LoupeHud {
             case CrucibleBlockEntity crucible -> crucibleLines(crucible);
             case JarBlockEntity jar -> jarLines(jar);
             case CircleCoreBlockEntity core -> coreLines(core);
+            case CircleStoneBlockEntity stone -> stoneLines(stone);
             case PipeBlockEntity pipe -> pipeLines(pipe);
             // Worn as the monocle, only containers, pipes and circles show, so the view is not always cluttered.
             case null, default -> ArcaneLoupeItem.isHeldBy(player) ? blockLines(minecraft.level.getBlockState(hit.getBlockPos())) : List.of();
@@ -226,6 +230,42 @@ final class LoupeHud {
                 .withColor(unstable ? 0xFFFF5555 : GRAY));
         if (unstable) {
             lines.add(ThaumoryText.withEffect(Component.translatable("hud.thaumory.core.unstable").withColor(0xFFFF5555), TextEffect.SHAKE));
+        }
+        return lines;
+    }
+
+    /** A circle stone: its effect and runes, whether it works (and if not, why), and its Essentia. */
+    private static List<Component> stoneLines(CircleStoneBlockEntity stone) {
+        PlayerKnowledge knowledge = ClientKnowledge.get();
+        List<Component> lines = new ArrayList<>();
+        Optional<BurntCircle> burnt = stone.burnt();
+        lines.add(burnt.map(circle -> (Component) Component.translatable("block.thaumory.circle_stone.named",
+                        Component.translatable(circle.effect().toLanguageKey("circle_effect"))))
+                .orElseGet(() -> stone.getBlockState().getBlock().getName()).copy().withColor(WHITE));
+        burnt.ifPresent(circle -> {
+            MutableComponent runes = Component.translatable("hud.thaumory.core.runes").withColor(GRAY);
+            CircleCombination combination = circle.combination();
+            List<Identifier> ids = new ArrayList<>(List.of(combination.first(), combination.second()));
+            combination.parameter().ifPresent(ids::add);
+            combination.slot4().ifPresent(ids::add);
+            for (Identifier id : ids) {
+                runes.append(" ").append(ThaumoryApi.aspects().get(id)
+                        .map(aspect -> (Component) AspectText.name(aspect, knowledge.knowsAspect(id)))
+                        .orElseGet(() -> Component.literal(id.toString()).withColor(GRAY)));
+            }
+            lines.add(runes);
+        });
+        int runningColor = burnt.flatMap(circle -> ThaumoryApi.aspects().get(circle.combination().first()))
+                .map(aspect -> 0xFF000000 | aspect.color()).orElse(0xFF55FF88);
+        lines.add(switch (stone.status()) {
+            case RUNNING -> ThaumoryText.withEffect(Component.translatable("hud.thaumory.core.running").withColor(runningColor), TextEffect.PULSE);
+            case POWERED -> Component.translatable("hud.thaumory.stone.powered").withColor(GRAY);
+            case NO_ESSENTIA -> Component.translatable("hud.thaumory.stone.no_essentia").withColor(0xFFFFAA55);
+            case UNDEFINED -> Component.translatable("hud.thaumory.stone.undefined").withColor(0xFFFFAA55);
+        });
+        lines.add(Component.translatable("hud.thaumory.core.essentia", CircleStoneBlockEntity.capacity()).withColor(GRAY));
+        for (AspectStack stack : stone.essentia().sortedByAmount()) {
+            lines.add(Component.literal(" ").append(AspectText.stack(stack, knowledge.knowsAspect(stack.aspect().id()))));
         }
         return lines;
     }

@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
  * and the Flux going over it releases, the Flux an undefined combination releases, the instability
  * each sub-circle adds to its parent, the radius each
  * ring count gives, what each rank above the first adds to the strength multiplier, how much of
- * each aspect a Core holds, and what each pattern (by block id) adds to instability and to the
+ * each aspect a Core (and a circle stone) holds, how far a circle stone reaches, and what each pattern (by block id) adds to instability and to the
  * strength, range and cost multipliers. Values not written are 0.
  *
  * <pre>{@code
@@ -24,6 +24,7 @@ import net.minecraft.resources.Identifier;
  *   "ring_radius": [4, 8, 16, 24, 32],
  *   "rank_strength": 0.25,
  *   "essentia_capacity": 64,
+ *   "stone_radius": 4,
  *   "patterns": {
  *     "thaumory:amplifying_pattern": { "instability": 2, "strength": 0.5, "cost": 0.5 },
  *     "thaumory:extending_pattern": { "range": 0.5, "cost": 0.25 },
@@ -35,11 +36,12 @@ import net.minecraft.resources.Identifier;
  * }</pre>
  */
 public record CircleSettings(int scanInterval, int instabilityThreshold, InstabilityFlux instabilityFlux, double undefinedFlux,
-        int childInstability, List<Integer> ringRadius, double rankStrength, int essentiaCapacity, Map<Identifier, PatternSettings> patterns, InfusionSettings infusion) {
+        int childInstability, List<Integer> ringRadius, double rankStrength, int essentiaCapacity, int stoneRadius, Map<Identifier, PatternSettings> patterns,
+        InfusionSettings infusion) {
     /** No multiplier goes below this, however many modifiers lower it. */
     public static final double MIN_MULTIPLIER = 0.25;
 
-    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, InstabilityFlux.DEFAULT, 5, 1, List.of(4, 8, 16, 24, 32), 0.25, 64, Map.of(
+    public static final CircleSettings DEFAULT = new CircleSettings(40, 3, InstabilityFlux.DEFAULT, 5, 1, List.of(4, 8, 16, 24, 32), 0.25, 64, 4, Map.of(
             thaumory("amplifying_pattern"), new PatternSettings(2, 0.5, 0, 0.5),
             thaumory("extending_pattern"), new PatternSettings(0, 0, 0.5, 0.25),
             thaumory("economizing_pattern"), new PatternSettings(0, -0.25, 0, -0.25),
@@ -85,6 +87,7 @@ public record CircleSettings(int scanInterval, int instabilityThreshold, Instabi
             Codec.DOUBLE.optionalFieldOf("rank_strength", DEFAULT.rankStrength).forGetter(CircleSettings::rankStrength),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("essentia_capacity", DEFAULT.essentiaCapacity)
                     .forGetter(CircleSettings::essentiaCapacity),
+            Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("stone_radius", DEFAULT.stoneRadius).forGetter(CircleSettings::stoneRadius),
             Codec.unboundedMap(Identifier.CODEC, PatternSettings.CODEC).optionalFieldOf("patterns", Map.of())
                     .forGetter(CircleSettings::patterns),
             InfusionSettings.CODEC.optionalFieldOf("infusion", InfusionSettings.DEFAULT).forGetter(CircleSettings::infusion)

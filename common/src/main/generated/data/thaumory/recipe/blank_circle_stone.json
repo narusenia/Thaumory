@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "thaumory:arcane_crystal_shard",
+    "I": "thaumory:arcane_iron_ingot",
+    "S": "minecraft:stone_bricks"
+  },
+  "pattern": [
+    "SCS",
+    "SIS",
+    "SSS"
+  ],
+  "result": {
+    "id": "thaumory:blank_circle_stone"
+  }
+}

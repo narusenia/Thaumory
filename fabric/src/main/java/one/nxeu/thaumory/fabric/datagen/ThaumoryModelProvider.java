@@ -28,6 +28,7 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CircleCoreBlock;
+import one.nxeu.thaumory.block.stone.CircleStoneBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
@@ -58,6 +59,9 @@ final class ThaumoryModelProvider extends FabricModelProvider {
     private static final TextureSlot PATTERN = TextureSlot.create("pattern");
     private static final ModelTemplate CHALK_PATTERN = new ModelTemplate(Optional.of(Thaumory.id("block/template_chalk_pattern")),
             Optional.empty(), PATTERN);
+
+    private static final ModelTemplate CIRCLE_STONE = new ModelTemplate(Optional.of(Thaumory.id("block/template_circle_stone")),
+            Optional.empty(), TextureSlot.TOP, TextureSlot.SIDE);
 
     private static final TextureSlot PIPE = TextureSlot.create("pipe");
     private static final TextureSlot ARM = TextureSlot.create("arm");
@@ -134,6 +138,18 @@ final class ThaumoryModelProvider extends FabricModelProvider {
                     .with(new ConditionBuilder().term(CircleCoreBlock.PEDESTAL, true), BlockModelGenerators.plainVariant(pedestalModel)));
         }
         generators.itemModelOutput.accept(ThaumoryItems.PEDESTAL.get(), ItemModelUtils.plainModel(pedestalModel));
+
+        // A stone tablet on whichever face it was laid; a signal changes nothing to see.
+        CircleStoneBlock stone = ThaumoryBlocks.CIRCLE_STONE.get();
+        Identifier stoneModel = CIRCLE_STONE.create(stone, new TextureMapping()
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(stone, "_top"))
+                .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(stone, "_side")), generators.modelOutput);
+        MultiPartGenerator stoneParts = MultiPartGenerator.multiPart(stone);
+        for (Direction front : Direction.values()) {
+            stoneParts.with(new ConditionBuilder().term(CircleStoneBlock.FACING, front),
+                    BlockModelGenerators.plainVariant(stoneModel).with(onFace(front, Quadrant.R0)));
+        }
+        generators.blockStateOutput.accept(stoneParts);
 
         EssentiaPipeBlock pipe = ThaumoryBlocks.PIPE.get();
         TextureMapping pipeTextures = pipeTextures(TextureMapping.getBlockTexture(pipe));
@@ -251,6 +267,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.LABEL.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.TRANSCRIPT.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_SCROLL.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.BLANK_CIRCLE_STONE.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.CIRCLE_STONE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.SCROLL.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.AMULET.get(), ModelTemplates.FLAT_ITEM);
         for (var chalk : List.of(ThaumoryItems.CHALK, ThaumoryItems.AMPLIFYING_CHALK, ThaumoryItems.EXTENDING_CHALK,

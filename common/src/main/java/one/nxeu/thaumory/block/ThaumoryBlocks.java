@@ -20,6 +20,8 @@ import one.nxeu.thaumory.flux.pollution.PollutedBlock;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CircleCoreBlock;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
+import one.nxeu.thaumory.block.stone.CircleStoneBlock;
+import one.nxeu.thaumory.block.stone.CircleStoneBlockEntity;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.block.jar.JarBlock;
@@ -60,6 +62,11 @@ public final class ThaumoryBlocks {
     public static final RegistrySupplier<CircleCoreBlock> ARCANE_IRON_CIRCLE_CORE = circleCore("arcane_iron_circle_core", 2);
     public static final RegistrySupplier<CircleCoreBlock> AETHER_SILVER_CIRCLE_CORE = circleCore("aether_silver_circle_core", 3);
 
+    /** A circle burnt into stone (requirements §10.3); placed from an infused circle stone only. */
+    public static final RegistrySupplier<CircleStoneBlock> CIRCLE_STONE = register("circle_stone", CircleStoneBlock::new,
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE).noOcclusion());
+
     /** Grows on the stone of caves (requirements §17.3); drops shards like an amethyst cluster. */
     public static final RegistrySupplier<AmethystClusterBlock> ARCANE_CRYSTAL = register("arcane_crystal",
             properties -> new AmethystClusterBlock(7.0f, 10.0f, properties),
@@ -86,6 +93,9 @@ public final class ThaumoryBlocks {
 
     public static final RegistrySupplier<BlockEntityType<CircleCoreBlockEntity>> CIRCLE_CORE_ENTITY = BLOCK_ENTITIES.register(
             "circle_core", () -> new BlockEntityType<>(CircleCoreBlockEntity::new, Set.of(CIRCLE_CORE.get(), ARCANE_IRON_CIRCLE_CORE.get(), AETHER_SILVER_CIRCLE_CORE.get())));
+
+    public static final RegistrySupplier<BlockEntityType<CircleStoneBlockEntity>> CIRCLE_STONE_ENTITY = BLOCK_ENTITIES.register(
+            "circle_stone", () -> new BlockEntityType<>(CircleStoneBlockEntity::new, Set.of(CIRCLE_STONE.get())));
 
     public static final RegistrySupplier<BlockEntityType<PipeBlockEntity>> PIPE_ENTITY = BLOCK_ENTITIES.register(
             "pipe", () -> new BlockEntityType<>(PipeBlockEntity::new, Set.of(PIPE.get(), FILTER_PIPE.get(), VALVE.get(), PUMP.get())));

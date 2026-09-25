@@ -24,7 +24,8 @@
       "one.nxeu.thaumory.fabric.gametest.InfusedEffectGameTests",
       "one.nxeu.thaumory.fabric.gametest.FluxCrystalGameTests",
       "one.nxeu.thaumory.fabric.gametest.CircleRankGameTests",
-      "one.nxeu.thaumory.fabric.gametest.CircleChildGameTests"
+      "one.nxeu.thaumory.fabric.gametest.CircleChildGameTests",
+      "one.nxeu.thaumory.fabric.gametest.CircleStoneGameTests"
     ]
   },
   "depends": {

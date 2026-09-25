@@ -1,0 +1,61 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "thaumory:block/circle_stone",
+        "y": 180,
+        "z": 180
+      },
+      "when": {
+        "facing": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_stone"
+      },
+      "when": {
+        "facing": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_stone",
+        "x": 90
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_stone",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_stone",
+        "y": 270,
+        "z": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "thaumory:block/circle_stone",
+        "y": 90,
+        "z": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    }
+  ]
+}

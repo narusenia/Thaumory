@@ -53,6 +53,8 @@ import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
+import one.nxeu.thaumory.block.stone.BurntCircle;
+import one.nxeu.thaumory.block.stone.CircleStoneBlockEntity;
 import one.nxeu.thaumory.circle.CircleChildren;
 import one.nxeu.thaumory.circle.CircleDefinitionReloadListener;
 import one.nxeu.thaumory.circle.CircleDefinitions;
@@ -144,8 +146,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
      */
     public enum StartResult { STARTED, ALREADY_RUNNING, NO_RINGS, UNDEFINED, MISFIRED, LOW_RANK, TRIGGERED_ONLY, NO_ESSENTIA, OVERLOADED }
 
+    /** {@code INFUSED_STONE}: a blank circle stone took the circle. {@code NOT_FOR_STONE}: a circle stone cannot take it. */
     public enum InfuseResult {
-        INFUSED, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, LOW_RANK, NOT_INFUSABLE, NO_CAPACITY, NO_ROOM, ACTIVE_TAKEN, NO_ESSENTIA
+        INFUSED, INFUSED_STONE, NOT_FOR_STONE, FAILED, NO_ITEM, NO_RINGS, UNDEFINED, MISFIRED, LOW_RANK, NOT_INFUSABLE, NO_CAPACITY, NO_ROOM, ACTIVE_TAKEN, NO_ESSENTIA
     }
 
     /**
@@ -572,8 +575,12 @@ public final class CircleCoreBlockEntity extends BlockEntity {
     /**
      * Whether a wand's click with an item on the pedestal infuses it: true unless the circle works and
      * its effect cannot be burnt into anything (a charging circle, say), which then starts and stops as usual.
+     * A blank circle stone always takes the click: it takes effects no item does (harvesting, say).
      */
     public boolean infusesPedestalItem() {
+        if (pedestalItem.is(ThaumoryItems.BLANK_CIRCLE_STONE.get())) {
+            return true;
+        }
         return effectId().map(ThaumoryApi.infusionEffects()::contains).orElse(true);
     }
 
@@ -639,39 +646,11 @@ public final class CircleCoreBlockEntity extends BlockEntity {
      * Flux leaks out and a blast that breaks nothing hurts what is near and pollutes the ground.
      */
     private boolean misfire(ServerLevel server) {
-        FluxSettings.Effects effects = Thaumory.flux().settings().effects();
-        double chance = effects.misfireChance(fluxStage(server));
-        if (chance <= 0 || server.getRandom().nextDouble() >= chance) {
-            return false;
-        }
-        releaseFlux(server, settings.undefinedFlux());
-        double radius = effects.explosionRadius();
-        Vec3 center = Vec3.atCenterOf(worldPosition);
-        server.sendParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y, center.z, 1, 0, 0, 0, 0);
-        server.sendParticles(ParticleTypes.WITCH, center.x, center.y + 0.5, center.z, 60, radius / 2, 0.5, radius / 2, 0.1);
-        server.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 0.8f);
-        for (LivingEntity entity : server.getEntitiesOfClass(LivingEntity.class, new AABB(worldPosition).inflate(radius))) {
-            Vec3 away = entity.position().subtract(center);
-            if (away.length() > radius) {
-                continue;
-            }
-            entity.hurtServer(server, server.damageSources().magic(), effects.explosionDamage());
-            Vec3 push = away.lengthSqr() < 1.0E-4 ? new Vec3(0, 1, 0) : away.normalize();
-            entity.push(push.x, 0.4, push.z);
-            entity.needsSync = true;
-        }
-        FluxWorldEffects.polluteAround(server, worldPosition, radius);
-        return true;
+        return CircleMishaps.overload(server, worldPosition);
     }
 
     private void releaseFlux(ServerLevel server, double amount) {
-        if (amount <= 0) {
-            return;
-        }
-        ThaumoryApi.flux().add(server, ChunkPos.containing(worldPosition), amount);
-        server.sendParticles(ParticleTypes.WITCH, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5,
-                12, 0.6, 0.2, 0.6, 0);
-        server.playSound(null, worldPosition, ThaumorySounds.CIRCLE_FLUX.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+        CircleMishaps.releaseFlux(server, worldPosition, amount);
     }
 
     public boolean isRunning() {
@@ -861,6 +840,9 @@ public final class CircleCoreBlockEntity extends BlockEntity {
             return InfuseOutcome.of(InfuseResult.LOW_RANK);
         }
         ItemStack stack = pedestalItem;
+        if (stack.is(ThaumoryItems.BLANK_CIRCLE_STONE.get())) {
+            return infuseStone(server, activator, circle.get());
+        }
         Optional<InfusionEffect> effect = ThaumoryApi.infusionEffects().get(circle.get().definition().effect())
                 .filter(e -> e.castable() || !stack.is(ThaumoryItems.BLANK_SCROLL.get()));
         if (effect.isEmpty()) {
@@ -901,6 +883,37 @@ public final class CircleCoreBlockEntity extends BlockEntity {
                 40, 0.3, 0.3, 0.3, 0.6);
         recordSuccess(activator, definition.effect());
         return new InfuseOutcome(InfuseResult.INFUSED, Optional.of(burnt), infusions.usedBesides(burnt.effect()) + burnt.capacity(), capacity);
+    }
+
+    /**
+     * Burns the circle itself into the blank circle stone on the pedestal (requirements §10.3): its
+     * runes, whatever its modifiers, for the stone to run at strength 1. It costs and may fail as
+     * other infusions do.
+     */
+    private InfuseOutcome infuseStone(ServerLevel server, Optional<Entity> activator, Circle circle) {
+        CircleDefinitions.Definition definition = circle.definition();
+        Optional<CircleCombination> combination = combination();
+        if (!CircleStoneBlockEntity.takes(definition) || combination.isEmpty()) {
+            return InfuseOutcome.of(InfuseResult.NOT_FOR_STONE);
+        }
+        InfusionSettings infusion = settings.infusion();
+        AspectList cost = InfusionRules.cost(definition.infusionCost(), circle.multipliers().cost(), definition.first(), definition.second(),
+                circle.parameter());
+        if (!essentia.containsAll(cost)) {
+            return InfuseOutcome.of(InfuseResult.NO_ESSENTIA);
+        }
+        setEssentia(essentia.minus(cost));
+        if (server.getRandom().nextDouble() < InfusionRules.failureChance(circle.frame().instability(), settings.instabilityThreshold(), infusion)) {
+            releaseFlux(server, InfusionRules.failureFlux(cost, infusion));
+            return InfuseOutcome.of(InfuseResult.FAILED);
+        }
+        ItemStack stone = new ItemStack(ThaumoryItems.CIRCLE_STONE.get());
+        stone.set(ThaumoryComponents.BURNT_CIRCLE.get(), new BurntCircle(combination.get(), definition.effect()));
+        setPedestalItem(stone);
+        server.sendParticles(ParticleTypes.ENCHANT, worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,
+                40, 0.3, 0.3, 0.3, 0.6);
+        recordSuccess(activator, definition.effect());
+        return InfuseOutcome.of(InfuseResult.INFUSED_STONE);
     }
 
     private void runSustained(ServerLevel server, long time) {

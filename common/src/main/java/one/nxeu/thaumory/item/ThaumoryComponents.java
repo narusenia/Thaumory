@@ -11,6 +11,7 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.AspectCodecs;
+import one.nxeu.thaumory.block.stone.BurntCircle;
 import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.Transcript;
@@ -62,6 +63,13 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<Integer>builder()
                     .persistent(ExtraCodecs.POSITIVE_INT)
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
+                    .build());
+
+    /** The circle burnt into a circle stone, on the item and copied to and from the placed block (requirements §10.3). */
+    public static final RegistrySupplier<DataComponentType<BurntCircle>> BURNT_CIRCLE = COMPONENTS.register("burnt_circle",
+            () -> DataComponentType.<BurntCircle>builder()
+                    .persistent(BurntCircle.CODEC)
+                    .networkSynchronized(BurntCircle.STREAM_CODEC)
                     .build());
 
     private ThaumoryComponents() {}

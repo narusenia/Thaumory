@@ -138,20 +138,8 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
     public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
         float rankScale = RANK_SCALES[Math.clamp(state.rank - 1, 0, RANK_SCALES.length - 1)];
         for (int i = 0; i < state.colors.length && i < SPEEDS.length; i++) {
-            int argb = 0xFF000000 | state.colors[i];
-            float height = BASE_HEIGHT + RING_STEP * i;
-            int picture = Math.min(i, RINGS.size() - 1);
             float half = 0.5f * rankScale * (i >= RINGS.size() ? OUTER_RING_SCALE : 1);
-            pose.pushPose();
-            pose.rotateAround(state.front.getRotation(), 0.5f, 0.5f, 0.5f);
-            pose.translate(0.5f, 0, 0.5f);
-            pose.rotateDegrees(Axis.YP, (state.time * SPEEDS[i]) % 360);
-            collector.submitCustomGeometry(pose, RINGS.get(picture), (p, consumer) -> quad(consumer, p, argb, height, half));
-            // Just under its ring, so the two never fight over the same depth.
-            int glow = glow(state.colors[i], GLOW_ALPHA);
-            float glowHeight = height - RING_STEP / 2;
-            collector.submitCustomGeometry(pose, GLOWS.get(picture), (p, consumer) -> quad(consumer, p, glow, glowHeight, half * RingGlows.scale()));
-            pose.popPose();
+            turningRing(pose, collector, state.front, state.time, i, state.colors[i], BASE_HEIGHT + RING_STEP * i, half);
         }
         if (state.emblem > 0 && state.colors.length > 0) {
             if (state.seatRing > 0) {
@@ -172,6 +160,27 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
             state.item.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             pose.popPose();
         }
+    }
+
+    /**
+     * The {@code i}th turning ring (inner first: its picture and speed) in {@code rgb}, with its glow,
+     * {@code height} above the face that {@code front} points away from and {@code half} blocks from
+     * its centre to its edge. Circle stones draw theirs this way too.
+     */
+    static void turningRing(PoseStack pose, SubmitNodeCollector collector, Direction front, float time, int i, int rgb, float height,
+            float half) {
+        int argb = 0xFF000000 | rgb;
+        int picture = Math.min(i, RINGS.size() - 1);
+        pose.pushPose();
+        pose.rotateAround(front.getRotation(), 0.5f, 0.5f, 0.5f);
+        pose.translate(0.5f, 0, 0.5f);
+        pose.rotateDegrees(Axis.YP, (time * SPEEDS[i % SPEEDS.length]) % 360);
+        collector.submitCustomGeometry(pose, RINGS.get(picture), (p, consumer) -> quad(consumer, p, argb, height, half));
+        // Just under its ring, so the two never fight over the same depth.
+        int glow = glow(rgb, GLOW_ALPHA);
+        float glowHeight = height - RING_STEP / 2;
+        collector.submitCustomGeometry(pose, GLOWS.get(picture), (p, consumer) -> quad(consumer, p, glow, glowHeight, half * RingGlows.scale()));
+        pose.popPose();
     }
 
     /**
