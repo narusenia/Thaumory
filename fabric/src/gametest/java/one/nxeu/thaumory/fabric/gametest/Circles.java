@@ -11,6 +11,7 @@ import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CircleCoreBlock;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.circle.CirclePlane;
+import one.nxeu.thaumory.circle.CircleScan;
 
 /**
  * Builds circles for GameTests, of one ring unless asked for more: stone underfoot, a Core, its runes
@@ -38,20 +39,26 @@ final class Circles {
         return build(helper, core, front, ThaumoryBlocks.CIRCLE_CORE.get(), 1, runes);
     }
 
-    /** {@code block} at {@code core} inside {@code rings} rings of plain chalk, of which it reads as many as its rank lets it. */
+    /**
+     * {@code block} at {@code core} inside {@code rings} round rings of plain chalk, of which it reads
+     * as many as its rank lets it. The stone behind reaches as far as the outer ring: 4 × rings − 1 across.
+     */
     static CircleCoreBlockEntity build(GameTestHelper helper, BlockPos core, CircleCoreBlock block, int rings, Aspect... runes) {
         return build(helper, core, Direction.UP, block, rings, runes);
     }
 
     private static CircleCoreBlockEntity build(GameTestHelper helper, BlockPos core, Direction front, CircleCoreBlock block, int rings,
             Aspect... runes) {
-        for (int dx = -rings; dx <= rings; dx++) {
-            for (int dz = -rings; dz <= rings; dz++) {
-                BlockPos cell = core.offset(CirclePlane.offset(front, dx, dz));
-                helper.setBlock(cell.relative(front.getOpposite()), Blocks.STONE);
-                if (dx != 0 || dz != 0) {
-                    helper.setBlock(cell, ThaumoryBlocks.CHALK_LINE.get().defaultBlockState().setValue(ChalkPatternBlock.FACING, front));
-                }
+        int reach = CircleScan.radius(rings);
+        for (int dx = -reach; dx <= reach; dx++) {
+            for (int dz = -reach; dz <= reach; dz++) {
+                helper.setBlock(core.offset(CirclePlane.offset(front, dx, dz)).relative(front.getOpposite()), Blocks.STONE);
+            }
+        }
+        for (int ring = 1; ring <= rings; ring++) {
+            for (CircleScan.Offset cell : CircleScan.cells(ring)) {
+                helper.setBlock(core.offset(CirclePlane.offset(front, cell.dx(), cell.dz())),
+                        ThaumoryBlocks.CHALK_LINE.get().defaultBlockState().setValue(ChalkPatternBlock.FACING, front));
             }
         }
         helper.setBlock(core, block.defaultBlockState().setValue(ChalkPatternBlock.FACING, front));

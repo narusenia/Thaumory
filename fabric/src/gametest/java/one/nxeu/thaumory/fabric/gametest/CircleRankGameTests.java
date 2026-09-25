@@ -19,18 +19,18 @@ public class CircleRankGameTests {
         helper.succeed();
     }
 
-    // Five rings reach past the test area, so each test keeps its neighbours at a distance.
-    @GameTest(padding = 8)
+    // Five rings (19 × 19) reach well past the test area, so each test keeps its neighbours at a distance.
+    @GameTest(padding = 12)
     public void rankOneReadsThreeRings(GameTestHelper helper) {
         readsRings(helper, ThaumoryBlocks.CIRCLE_CORE.get(), 3);
     }
 
-    @GameTest(padding = 8)
+    @GameTest(padding = 12)
     public void rankTwoReadsFourRings(GameTestHelper helper) {
         readsRings(helper, ThaumoryBlocks.ARCANE_IRON_CIRCLE_CORE.get(), 4);
     }
 
-    @GameTest(padding = 8)
+    @GameTest(padding = 12)
     public void rankThreeReadsFiveRings(GameTestHelper helper) {
         readsRings(helper, ThaumoryBlocks.AETHER_SILVER_CIRCLE_CORE.get(), 5);
     }

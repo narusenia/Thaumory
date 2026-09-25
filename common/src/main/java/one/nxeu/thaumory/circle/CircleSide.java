@@ -3,7 +3,7 @@ package one.nxeu.thaumory.circle;
 import net.minecraft.core.Direction;
 
 /**
- * The four sides of a ring, each with a node in its middle. North is towards negative z on the
+ * The four compass points of a ring, each with a node on it. North is towards negative z on the
  * floor; on other faces the sides turn with the face ({@link CirclePlane}).
  */
 public enum CircleSide {
@@ -25,12 +25,12 @@ public enum CircleSide {
         return CirclePlane.toWorld(front, Direction.valueOf(name()));
     }
 
-    /** The node of ring {@code ring} on this side, as an offset from the Core. */
+    /** The node of ring {@code ring} on this side, as an offset from the Core ({@link CircleScan#radius}). */
     public int nodeX(int ring) {
-        return dx * ring;
+        return dx * CircleScan.radius(ring);
     }
 
     public int nodeZ(int ring) {
-        return dz * ring;
+        return dz * CircleScan.radius(ring);
     }
 }

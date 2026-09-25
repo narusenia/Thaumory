@@ -24,6 +24,8 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
+import one.nxeu.thaumory.circle.CircleScan;
+import one.nxeu.thaumory.circle.CircleSide;
 
 /**
  * Draws a ring around the Core's centre mark for each rune, in that rune's aspect color. The rings
@@ -152,7 +154,7 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         }
     }
 
-    /** Soft lines along each ring's square, where its chalk runs, and a spot on each node. */
+    /** Soft lines along each ring's circle, where its chalk runs, and a spot on each node. */
     private static void emblem(State state, PoseStack pose, SubmitNodeCollector collector) {
         int color = glow(state.colors[0], EMBLEM_ALPHA * state.emblem);
         float y = EMBLEM_HEIGHT + EMBLEM_BOB * (float) Math.sin(state.time / 30);
@@ -162,42 +164,48 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
         pose.rotateAround(state.front.getRotation(), 0.5f, 0.5f, 0.5f);
         pose.translate(0.5f, 0, 0.5f);
         collector.submitCustomGeometry(pose, EMBLEM_LINE, (p, consumer) -> {
-            for (int r = 1; r <= state.rings; r++) {
-                // North and south sides run along x; west and east along z.
-                line(consumer, p, color, y, -r, -r - w, r, -r + w, false);
-                line(consumer, p, color, y, -r, r - w, r, r + w, false);
-                line(consumer, p, color, y, -r - w, -r, -r + w, r, true);
-                line(consumer, p, color, y, r - w, -r, r + w, r, true);
+            for (int ring = 1; ring <= state.rings; ring++) {
+                circle(consumer, p, color, y, CircleScan.radius(ring), w);
             }
         });
         collector.submitCustomGeometry(pose, EMBLEM_DOT, (p, consumer) -> {
-            for (int r = 1; r <= state.rings; r++) {
-                int[][] nodes = {{0, -r}, {0, r}, {-r, 0}, {r, 0}};
-                for (int[] node : nodes) {
-                    line(consumer, p, color, y + 0.001f, node[0] - d, node[1] - d, node[0] + d, node[1] + d, false);
+            for (int ring = 1; ring <= state.rings; ring++) {
+                for (CircleSide side : CircleSide.values()) {
+                    int x = side.nodeX(ring);
+                    int z = side.nodeZ(ring);
+                    spot(consumer, p, color, y + 0.001f, x - d, z - d, x + d, z + d);
                 }
             }
         });
         pose.popPose();
     }
 
-    /**
-     * A flat quad from (x0, z0) to (x1, z1), its texture's V running across the line: along z when
-     * {@code alongZ} is false, along x when it is true.
-     */
-    private static void line(VertexConsumer consumer, PoseStack.Pose pose, int argb, float y, float x0, float z0, float x1, float z1,
-            boolean alongZ) {
-        if (alongZ) {
-            vertex(consumer, pose, argb, x0, y, z0, 0, 0);
-            vertex(consumer, pose, argb, x0, y, z1, 1, 0);
-            vertex(consumer, pose, argb, x1, y, z1, 1, 1);
-            vertex(consumer, pose, argb, x1, y, z0, 0, 1);
-        } else {
-            vertex(consumer, pose, argb, x0, y, z0, 0, 0);
-            vertex(consumer, pose, argb, x0, y, z1, 0, 1);
-            vertex(consumer, pose, argb, x1, y, z1, 1, 1);
-            vertex(consumer, pose, argb, x1, y, z0, 1, 0);
+    /** A flat circle of radius {@code radius} and half width {@code w}, in straight pieces; the texture's V runs across it. */
+    private static void circle(VertexConsumer consumer, PoseStack.Pose pose, int argb, float y, int radius, float w) {
+        int segments = 8 * radius;
+        float inner = radius - w;
+        float outer = radius + w;
+        for (int i = 0; i < segments; i++) {
+            double a0 = 2 * Math.PI * i / segments;
+            double a1 = 2 * Math.PI * (i + 1) / segments;
+            float c0 = (float) Math.cos(a0);
+            float s0 = (float) Math.sin(a0);
+            float c1 = (float) Math.cos(a1);
+            float s1 = (float) Math.sin(a1);
+            // Wound to face up, like the other quads.
+            vertex(consumer, pose, argb, inner * c0, y, inner * s0, 0, 0);
+            vertex(consumer, pose, argb, inner * c1, y, inner * s1, 1, 0);
+            vertex(consumer, pose, argb, outer * c1, y, outer * s1, 1, 1);
+            vertex(consumer, pose, argb, outer * c0, y, outer * s0, 0, 1);
         }
+    }
+
+    /** A flat quad from (x0, z0) to (x1, z1), the texture's U along x and V along z. */
+    private static void spot(VertexConsumer consumer, PoseStack.Pose pose, int argb, float y, float x0, float z0, float x1, float z1) {
+        vertex(consumer, pose, argb, x0, y, z0, 0, 0);
+        vertex(consumer, pose, argb, x0, y, z1, 0, 1);
+        vertex(consumer, pose, argb, x1, y, z1, 1, 1);
+        vertex(consumer, pose, argb, x1, y, z0, 1, 0);
     }
 
     /** The emblem reaches well past the Core's own block. */
