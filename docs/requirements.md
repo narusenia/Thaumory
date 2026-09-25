@@ -241,7 +241,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
   - `circle.json` の `"instability_flux": {"chance_per_point": 0.2, "flux_per_point": 2}`
 - 陣の判定は一定の間隔（初期 2 秒）で Core が周囲を調べ直す
 - 判定の間隔・不安定度の閾値・不安定度による Flux・未定義の組み合わせの Flux・リングごとの半径・Core の容量・紋様ごとの値は `data/thaumory/thaumory/circle.json` に書き、上位の datapack が丸ごと置き換える。紋様はブロック ID で指定するので、アドオンの紋様にも値を付けられる。書かれていない値は 0
-  - 形式: `{"scan_interval": 40, "instability_threshold": 3, "instability_flux": {"chance_per_point": 0.2, "flux_per_point": 2}, "undefined_flux": 5, "ring_radius": [4, 8, 16], "essentia_capacity": 64, "patterns": {"thaumory:amplifying_pattern": {"instability": 2, "strength": 0.5, "cost": 0.5}, "thaumory:extending_pattern": {"range": 0.5, "cost": 0.25}, "thaumory:economizing_pattern": {"cost": -0.25, "strength": -0.25}, "thaumory:stabilizing_pattern": {"instability": -3}}}`
+  - 形式: `{"scan_interval": 40, "instability_threshold": 3, "instability_flux": {"chance_per_point": 0.2, "flux_per_point": 2}, "undefined_flux": 5, "child_instability": 1, "ring_radius": [4, 8, 16], "essentia_capacity": 64, "patterns": {"thaumory:amplifying_pattern": {"instability": 2, "strength": 0.5, "cost": 0.5}, "thaumory:extending_pattern": {"range": 0.5, "cost": 0.25}, "thaumory:economizing_pattern": {"cost": -0.25, "strength": -0.25}, "thaumory:stabilizing_pattern": {"instability": -3}}}`
 - 紋様として数えるブロックはブロックタグ `thaumory:circle_patterns` で決める（アドオンの紋様はこのタグに入れる）。基本の線は `thaumory:chalk_line`
 
 ### 4.4 Essentia の消費
@@ -310,7 +310,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
 - 見た目: Core の回る円は、ランクが高いほど大きくなる。動いている陣の上には、描いた線をなぞる光の紋が薄く浮かび、ランクが高いほど大きく鮮やかになる。起動型は発動した瞬間だけ
 - 子の陣: 高いランクの陣の外側のリングの節点に、修飾の代わりに低いランクの Core を置くと、その Core の効果（子の陣）が親の範囲と強度で動く
   - 1 つの陣で 2 つの効果を重ねるのは、スロットではなくこの仕組みで行う
-  - 抱えられる数は親のランクで決まる。子の陣の Essentia・消費・不安定度の扱いは M2-34 に着手するときに決める
+  - 詳しくは下の「子の陣（M2-34）」
 - ランク 2・3（M2-33）
   - 作り方: 作業台で、中央に 1 つ下のランクの Core、上下左右に魔鉄のインゴット（ランク 3 は天銀のインゴット）、四隅に石レンガ。素材が章で開くので、進みもそれに沿う。ブロックは別（`thaumory:arcane_iron_circle_core`・`thaumory:aether_silver_circle_core`）で、振る舞いは同じ
   - 範囲: リングの半径は 4 重 = 24、5 重 = 32（`ring_radius` に足す）。強度: ランクが 1 つ上がるごとに強度の倍率に +0.25（`rank_strength`。修飾と同じ足し算）
@@ -318,7 +318,18 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
   - スロット 4: ランク 3 から挿せる。組み合わせのファイルの `slot4`（`slot3` と同じ書き方。省略すると空だけ許す）で決める。今ある効果はどれも空だけ
   - Core の回る円は、ランク 2 で 1.2 倍、ランク 3 で 1.4 倍の大きさ。アイテムのテクスチャは仮
 - 光る紋（M2-33）: 動いている陣の上に、成立したリングの円と節点の位置をなぞる淡い光の線が、少し浮いてゆっくり浮き沈みする。色はスロット 1 のアスペクト。輪のグローと同じく、ぼかした光で描く。起動型は発動した瞬間だけ（1 秒ほどで消える）
-- 抱えられる子の陣の数などは、M2-34 に着手するときに決める
+- 子の陣（M2-34）
+  - 置き場所: 親の陣の成立した一番外のリングの節点（東西南北）。修飾の紋様の代わりに、親より低いランクの Core を親と同じ面に置く。その Core はリングの一部として数え、そのマスの修飾は無い
+    - 節点以外のマスの Core はリングの一部として数えない（リングは欠ける）
+  - 抱えられる数: 親のランク − 1（ランク 1 は抱えられない。ランク 2 で 1、ランク 3 で 2、ランク 4・5 で 3・4）。数を超えた分と、親より低いランクではない Core は、リングの一部としては数えるが子の陣としては働かない。どれが子になるかは北・東・南・西の順
+  - 子の Core は自分の周りのチョークを読まない。親の陣の一部として動き、子が子を抱えることはない
+  - 起動: 子の Core を杖で右クリックして、それぞれ起動・停止・発動する（今までの Core と同じ操作）。親の陣のリングが成り立っていれば働き、親が動いている必要はない（Rune の無い親を枠として使ってもよい）。親のリングが崩れる・子が節点から外れると、子の陣は止まる
+  - 範囲と強度: 範囲は親の Core を中心に、親の成立したリングの数で決まる半径。強度・範囲・消費の倍率は親のもの（親の修飾と親のランクの強度の加算）を使う
+    - 効果の場所: 範囲の中心は親の Core。Essentia の置き場所・落ちた品の出る場所・Flux の出るチャンク・陣の向き（採掘の奥など）は子の Core のもの。API の `CircleContext.centre()`（範囲の中心。既定は `core()`）で効果に渡す
+  - Essentia: 子の Core に入れた、子の Rune のアスペクトを払う（配管も子の Core へつなぐ）
+  - 不安定度: 子の陣は親の不安定度で判定する。親の不安定度は、抱えた子の陣 1 つにつき +1（`circle.json` の `child_instability`）
+  - ランクの条件: 組み合わせのファイルの `rank` は子の Core のランクで判定する（上位の効果には、子でも上位の Core が要る）
+  - ルーペ: 親の Core では抱えた子の陣の数と上限を出す。子の Core では「子の陣」と親のリングの数・不安定度を出す。働かない Core（数を超えた・ランクが足りない）には、その理由を出す
 - 封印の間の祭壇は、作れない特別な Core（§17.8）。自分の Core は要らない
 
 ## 5. Flux（汚染）
@@ -480,6 +491,7 @@ Thaumcraft（特に TC2）にインスパイアされた、Minecraft の魔術 M
   - ネットワークはサーバーにしか無いので、ルーペを持ってパイプを見ている間だけ、サーバーが 0.25 秒ごとに送る。閉じたバルブは、そのバルブに残っている分を出す
 - Core を見る（陣の診断）: 挿した Rune（未判明のアスペクトは紋字）・成立したリングの数・節点の修飾・無視された修飾の数・不安定度と閾値・動作中かどうか・中の Essentia が画面に出る。閾値を超えていれば警告を出す
   - 効果の名前と消費量は、見ている人が一度起動に成功した組み合わせのときだけ出す。試していなければ「未知の陣」、失敗と記録されていれば「失敗した組み合わせ」と出す（試す前に正解が分からないように）
+  - 子の陣（§4.6）: 親の Core では抱えた子の陣の数と上限、子の Core では「子の陣」と親のリングの数・不安定度、働かない Core にはその理由も出す
   - 判定はサーバーが一定の間隔で行うので、描き替えてから表示が変わるまで少し（最大で判定の間隔）かかる
 
 ### 7.3 魔術の書（Arcane Codex）
