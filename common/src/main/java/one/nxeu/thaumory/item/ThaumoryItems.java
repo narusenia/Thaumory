@@ -101,6 +101,8 @@ public final class ThaumoryItems {
             register("arcane_crystal", properties -> new BlockItem(ThaumoryBlocks.ARCANE_CRYSTAL.get(), properties),
                     new Item.Properties().useBlockDescriptionPrefix());
     public static final RegistrySupplier<Item> ARCANE_CRYSTAL_SHARD = register("arcane_crystal_shard", Item::new, new Item.Properties());
+    public static final RegistrySupplier<FluxCrystalItem> FLUX_CRYSTAL = register("flux_crystal", FluxCrystalItem::new,
+            new Item.Properties().stacksTo(16));
 
     public static final RegistrySupplier<BlockItem> POLLUTED_SOIL =
             register("polluted_soil", properties -> new BlockItem(ThaumoryBlocks.POLLUTED_SOIL.get(), properties),
@@ -122,7 +124,7 @@ public final class ThaumoryItems {
      */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
             ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET,
-            CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE);
+            CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE, FLUX_CRYSTAL);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =
             Stream.concat(ARCANE_IRON.all().stream(), AETHER_SILVER.all().stream()).<RegistrySupplier<? extends Item>>map(item -> item).toList();
 

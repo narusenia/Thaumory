@@ -231,6 +231,7 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.ARCANE_LOUPE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generators.generateFlatItem(ThaumoryItems.MONOCLE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.FLUX_CRYSTAL.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.WAND.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CODEX.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_RUNE.get(), ModelTemplates.FLAT_ITEM);

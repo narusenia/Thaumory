@@ -168,6 +168,7 @@ final class ResearchProvider {
             hint(output, ThaumoryCircleEffects.BINDING, UMBRA, VINCULUM);
             hint(output, ThaumoryCircleEffects.SEARING, BELLUM, IGNIS);
             hint(output, ThaumoryCircleEffects.WITHERING, MORS, VENENUM);
+            hint(output, ThaumoryCircleEffects.CONTAINMENT, VINCULUM, CHAOS);
         }
 
         private static void hint(BiConsumer<Identifier, Hint> output, Identifier effect, Aspect first, Aspect second) {

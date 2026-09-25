@@ -15,6 +15,7 @@ import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.block.crucible.CrucibleBlockEntity;
 import one.nxeu.thaumory.circle.CircleMelt;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
+import one.nxeu.thaumory.item.FluxCrystalItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 
 /**
@@ -40,7 +41,7 @@ final class MeltingEffect implements CircleEffect {
                 left--;
                 CircleMelt.Result result = CircleMelt.melt(aspects, ratio, kept, Integer.MAX_VALUE);
                 int stored = kept.map(aspect -> context.store(aspect, result.stored())).orElse(0);
-                flux += result.flux() + result.stored() - stored;
+                flux += result.flux() + result.stored() - stored + FluxCrystalItem.flux(stack.copyWithCount(1));
                 ItemStackTemplate remainder = stack.getItem().getCraftingRemainder();
                 stack.shrink(1);
                 if (remainder != null) {

@@ -43,6 +43,7 @@ import one.nxeu.thaumory.aspect.data.ItemAspects;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.crucible.CrucibleSettings;
 import one.nxeu.thaumory.crucible.CrucibleTank;
+import one.nxeu.thaumory.item.FluxCrystalItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.research.ResearchProgress;
 import one.nxeu.thaumory.sound.ThaumorySounds;
@@ -186,6 +187,8 @@ public final class CrucibleBlockEntity extends BlockEntity {
             CrucibleTank.MeltResult result = tank.melt(aspects, ratio, current);
 
             ItemStackTemplate remainder = stack.getItem().getCraftingRemainder();
+            // A Flux crystal lets out what it sealed as it melts.
+            int sealed = FluxCrystalItem.flux(stack.copyWithCount(1));
             stack.shrink(1);
             if (stack.isEmpty()) {
                 entity.discard();
@@ -195,8 +198,8 @@ public final class CrucibleBlockEntity extends BlockEntity {
             if (remainder != null) {
                 popOut(level, remainder.create());
             }
-            if (result.overflow() > 0) {
-                ThaumoryApi.flux().add(level, ChunkPos.containing(worldPosition), result.overflow());
+            if (result.overflow() + sealed > 0) {
+                ThaumoryApi.flux().add(level, ChunkPos.containing(worldPosition), result.overflow() + sealed);
             }
             setTank(result.tank());
 

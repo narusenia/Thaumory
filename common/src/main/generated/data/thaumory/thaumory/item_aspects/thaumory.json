@@ -31,6 +31,12 @@
         "thaumory:terra": 4
       },
       "target": "thaumory:polluted_stone"
+    },
+    {
+      "aspects": {
+        "thaumory:chaos": 4
+      },
+      "target": "thaumory:flux_crystal"
     }
   ]
 }

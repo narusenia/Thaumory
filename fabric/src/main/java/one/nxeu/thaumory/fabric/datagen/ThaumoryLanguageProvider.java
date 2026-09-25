@@ -140,6 +140,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "Polluted Soil");
             builder.add(ThaumoryBlocks.ARCANE_CRYSTAL.get(), "Arcane Crystal");
             builder.add(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), "Arcane Crystal Shard");
+            builder.add(ThaumoryItems.FLUX_CRYSTAL.get(), "Flux Crystal");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "Polluted Stone");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "Void Remnant");
             builder.add("message.thaumory.core.full", "All three rune slots are full");
@@ -187,6 +188,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.BINDING.toLanguageKey("circle_effect"), "Binding");
             builder.add(ThaumoryCircleEffects.SEARING.toLanguageKey("circle_effect"), "Searing");
             builder.add(ThaumoryCircleEffects.WITHERING.toLanguageKey("circle_effect"), "Withering");
+            builder.add(ThaumoryCircleEffects.CONTAINMENT.toLanguageKey("circle_effect"), "Containment");
             builder.add("hud.thaumory.core.essentia", "Essentia (up to %s each)");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "Chalk Line");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "Amplifying Pattern");
@@ -259,6 +261,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.binding", "Umbra woven into Vinculum weighs down every step.");
             builder.add("hint.thaumory.searing", "Bellum kindled with Ignis sears whatever stands against you.");
             builder.add("hint.thaumory.withering", "Mors steeped in Venenum wastes the living and the dead alike.");
+            builder.add("hint.thaumory.containment", "Chaos bound in Vinculum draws in what festers and hardens it into stone.");
             builder.add("subtitles.thaumory.block.circle_core.activate", "Circle wakes");
             builder.add("subtitles.thaumory.block.circle_core.deactivate", "Circle falls quiet");
             builder.add("subtitles.thaumory.block.circle_core.infuse", "Item is infused");
@@ -413,6 +416,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryBlocks.POLLUTED_SOIL.get(), "汚染された土");
             builder.add(ThaumoryBlocks.ARCANE_CRYSTAL.get(), "魔力の結晶");
             builder.add(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), "結晶のかけら");
+            builder.add(ThaumoryItems.FLUX_CRYSTAL.get(), "Flux の結晶");
             builder.add(ThaumoryBlocks.POLLUTED_STONE.get(), "汚染された石");
             builder.add(ThaumoryEntities.VOID_REMNANT.get(), "虚空の残滓");
             builder.add("message.thaumory.core.full", "ルーンのスロットは 3 つとも埋まっている");
@@ -460,6 +464,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryCircleEffects.BINDING.toLanguageKey("circle_effect"), "束縛");
             builder.add(ThaumoryCircleEffects.SEARING.toLanguageKey("circle_effect"), "灼光");
             builder.add(ThaumoryCircleEffects.WITHERING.toLanguageKey("circle_effect"), "衰弱");
+            builder.add(ThaumoryCircleEffects.CONTAINMENT.toLanguageKey("circle_effect"), "封じ込め");
             builder.add("hud.thaumory.core.essentia", "Essentia（各 %s まで）");
             builder.add(ThaumoryBlocks.CHALK_LINE.get(), "チョークの線");
             builder.add(ThaumoryBlocks.AMPLIFYING_PATTERN.get(), "増幅の紋様");
@@ -532,6 +537,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("hint.thaumory.binding", "Umbra を編み込んだ Vinculum は、一歩ごとに足を重くする。");
             builder.add("hint.thaumory.searing", "Ignis で熾した Bellum は、刃向かうものを焼く。");
             builder.add("hint.thaumory.withering", "Venenum に浸した Mors は、生者も死者も等しく蝕む。");
+            builder.add("hint.thaumory.containment", "Vinculum で縛った Chaos は、淀んだものを吸い寄せ、石に凝らせる。");
             builder.add("subtitles.thaumory.block.circle_core.activate", "陣が目覚める");
             builder.add("subtitles.thaumory.block.circle_core.deactivate", "陣が静まる");
             builder.add("subtitles.thaumory.block.circle_core.infuse", "品に効果が焼き付く");

@@ -28,6 +28,8 @@ final class ItemAspectProvider extends FabricCodecDataProvider<ItemAspectFile> {
                 .item(ThaumoryItems.ARCANE_CRYSTAL.get(), new AspectStack(ThaumoryAspects.ARCANUM, 8), new AspectStack(ThaumoryAspects.LUX, 2))
                 .item(ThaumoryItems.POLLUTED_SOIL.get(), new AspectStack(ThaumoryAspects.TERRA, 4), new AspectStack(ThaumoryAspects.VENENUM, 2))
                 .item(ThaumoryItems.POLLUTED_STONE.get(), new AspectStack(ThaumoryAspects.TERRA, 4), new AspectStack(ThaumoryAspects.CHAOS, 2))
+                // Until the pollution aspect (M2-13) takes its place.
+                .item(ThaumoryItems.FLUX_CRYSTAL.get(), new AspectStack(ThaumoryAspects.CHAOS, 4))
                 .build());
     }
 

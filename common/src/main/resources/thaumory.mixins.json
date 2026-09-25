@@ -9,7 +9,9 @@
   ],
   "mixins": [
     "CropBlockMixin",
+    "EntityMixin",
     "GameRulesMixin",
+    "ItemEntityMixin",
     "ServerExplosionMixin",
     "ServerLevelMixin",
     "ShapedRecipeAccessor",

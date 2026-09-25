@@ -32,6 +32,7 @@ public final class ThaumoryCircleEffects {
     public static final Identifier BINDING = Thaumory.id("binding");
     public static final Identifier SEARING = Thaumory.id("searing");
     public static final Identifier WITHERING = Thaumory.id("withering");
+    public static final Identifier CONTAINMENT = Thaumory.id("containment");
 
     /** How long the life circles' status effects outlast leaving the range, in ticks (requirements §17.4). */
     static final int SHORT_AURA = 60;
@@ -78,6 +79,7 @@ public final class ThaumoryCircleEffects {
         registry.register(WITHERING, new AuraEffect(parameter -> AuraEffect.enemiesUnlessPicked(Optional.empty()), false,
                 new AuraEffect.Aura(MobEffects.WITHER, WITHER_AURA, 0, false),
                 new AuraEffect.Aura(MobEffects.WEAKNESS, WITHER_AURA, 0, false)));
+        registry.register(CONTAINMENT, new ContainmentEffect());
         WardEffect.registerEvents();
         AuraEffect.registerEvents();
         SafeguardEffect.registerEvents();

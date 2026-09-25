@@ -1,0 +1,13 @@
+{
+  "capacity": 0,
+  "effect": "thaumory:containment",
+  "mode": "sustained",
+  "runes": [
+    "thaumory:vinculum",
+    "thaumory:chaos"
+  ],
+  "settings": {
+    "flux_per_crystal": 10.0,
+    "flux_per_second": 1.0
+  }
+}

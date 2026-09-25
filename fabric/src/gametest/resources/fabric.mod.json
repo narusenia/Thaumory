@@ -21,7 +21,8 @@
       "one.nxeu.thaumory.fabric.gametest.IndustryCircleGameTests",
       "one.nxeu.thaumory.fabric.gametest.LifeCircleGameTests",
       "one.nxeu.thaumory.fabric.gametest.DefenceCircleGameTests",
-      "one.nxeu.thaumory.fabric.gametest.InfusedEffectGameTests"
+      "one.nxeu.thaumory.fabric.gametest.InfusedEffectGameTests",
+      "one.nxeu.thaumory.fabric.gametest.FluxCrystalGameTests"
     ]
   },
   "depends": {

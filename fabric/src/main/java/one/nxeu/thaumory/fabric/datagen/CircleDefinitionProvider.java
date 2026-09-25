@@ -105,6 +105,9 @@ final class CircleDefinitionProvider extends FabricCodecDataProvider<CircleDefin
                 Map.of("radius", 4.0, "damage_per_level", 4.0, "burn_seconds", 3.0));
         sustained(output, ThaumoryCircleEffects.WITHERING, MORS, VENENUM, slot3(true), Map.of("work_flux", 0.02), 2, Optional.empty(),
                 Map.of("seconds", 3.0));
+        // Containment (requirements §17.5): Flux drawn in and sealed into crystals.
+        sustained(output, ThaumoryCircleEffects.CONTAINMENT, VINCULUM, CHAOS, slot3(true),
+                Map.of("flux_per_second", 1.0, "flux_per_crystal", 10.0), 0, Optional.empty(), Map.of());
     }
 
     private static void triggered(BiConsumer<Identifier, CircleDefinitionFile> output, Identifier effect, Aspect first, Aspect second,

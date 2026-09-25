@@ -6,6 +6,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ExtraCodecs;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
@@ -54,6 +55,13 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<AspectList>builder()
                     .persistent(AspectCodecs.aspectList(ThaumoryApi.aspects()))
                     .networkSynchronized(ByteBufCodecs.fromCodec(AspectCodecs.aspectList(ThaumoryApi.aspects())))
+                    .build());
+
+    /** The Flux sealed in one Flux crystal, given back to the chunk when it breaks (requirements §17.5). */
+    public static final RegistrySupplier<DataComponentType<Integer>> SEALED_FLUX = COMPONENTS.register("sealed_flux",
+            () -> DataComponentType.<Integer>builder()
+                    .persistent(ExtraCodecs.POSITIVE_INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT)
                     .build());
 
     private ThaumoryComponents() {}
