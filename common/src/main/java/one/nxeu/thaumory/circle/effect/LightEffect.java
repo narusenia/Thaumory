@@ -55,7 +55,7 @@ final class LightEffect implements CircleEffect {
         List<Long> placed = new ArrayList<>(Arrays.stream(context.data().getLongArray(LIGHTS).orElse(new long[0])).boxed().toList());
         int added = 0;
         for (int attempt = 0; attempt < wanted * TRIES_PER_LIGHT && added < wanted; attempt++) {
-            BlockPos column = context.core().offset(random.nextIntBetweenInclusive(-radius, radius), 0, random.nextIntBetweenInclusive(-radius, radius));
+            BlockPos column = context.centre().offset(random.nextIntBetweenInclusive(-radius, radius), 0, random.nextIntBetweenInclusive(-radius, radius));
             BlockPos spot = groundIn(level, column, radius);
             if (spot != null && level.getBrightness(LightLayer.BLOCK, spot) <= DARK) {
                 level.setBlock(spot, LIGHT, Block.UPDATE_ALL);
@@ -93,6 +93,6 @@ final class LightEffect implements CircleEffect {
     }
 
     private static AABB range(CircleContext context) {
-        return new AABB(context.core()).inflate(context.radius());
+        return new AABB(context.centre()).inflate(context.radius());
     }
 }

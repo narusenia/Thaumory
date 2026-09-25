@@ -11,14 +11,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import one.nxeu.thaumory.api.circle.CircleContext;
 
-/** A circle's range: the cube around the Core reaching {@code radius} blocks out (requirements §4.5). */
+/** A circle's range: the cube around its centre reaching {@code radius} blocks out (requirements §4.5). */
 final class CircleRange {
     private static final String SWEEP = "sweep";
 
     private CircleRange() {}
 
     static AABB box(CircleContext context) {
-        return new AABB(context.core()).inflate(context.radius());
+        return new AABB(context.centre()).inflate(context.radius());
     }
 
     static int blocks(CircleContext context) {
@@ -30,7 +30,7 @@ final class CircleRange {
         return (int) Math.ceil(context.setting("items_per_level", 4) * context.strength());
     }
 
-    /** Dropped items in range that are still there, nearest the Core first. */
+    /** Dropped items in range that are still there, nearest the centre first. */
     static List<ItemEntity> items(CircleContext context, Predicate<ItemEntity> filter) {
         Vec3 centre = centre(context);
         return context.level().getEntitiesOfClass(ItemEntity.class, box(context), item -> item.isAlive() && filter.test(item)).stream()
@@ -39,7 +39,7 @@ final class CircleRange {
     }
 
     static Vec3 centre(CircleContext context) {
-        return Vec3.atBottomCenterOf(context.core());
+        return Vec3.atBottomCenterOf(context.centre());
     }
 
     /**
@@ -51,7 +51,7 @@ final class CircleRange {
     }
 
     /**
-     * Visits every block of the next few columns in a sweep across the range, Core height ± range,
+     * Visits every block of the next few columns in a sweep across the range, centre height ± range,
      * {@code columns_per_level} × strength columns a call (requirements §17.4). Where the sweep got
      * to is kept in the context's data.
      */
@@ -62,17 +62,17 @@ final class CircleRange {
         context.data().putInt(SWEEP, step.cursor());
         for (ColumnSweep.Column column : step.columns()) {
             for (int dy = -radius; dy <= radius; dy++) {
-                visit.accept(context.core().offset(column.dx(), dy, column.dz()));
+                visit.accept(context.centre().offset(column.dx(), dy, column.dz()));
             }
         }
     }
 
-    /** Visits {@code columns} random columns of the range, each at the Core's position offset sideways. */
+    /** Visits {@code columns} random columns of the range, each at the centre offset sideways. */
     static void randomColumns(CircleContext context, int columns, Consumer<BlockPos> visit) {
         int radius = blocks(context);
         var random = context.level().getRandom();
         for (int i = 0; i < columns; i++) {
-            visit.accept(context.core().offset(random.nextIntBetweenInclusive(-radius, radius), 0, random.nextIntBetweenInclusive(-radius, radius)));
+            visit.accept(context.centre().offset(random.nextIntBetweenInclusive(-radius, radius), 0, random.nextIntBetweenInclusive(-radius, radius)));
         }
     }
 }

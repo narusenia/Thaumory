@@ -9,8 +9,8 @@ import one.nxeu.thaumory.api.circle.CircleEffect;
 import one.nxeu.thaumory.aspect.data.ItemAspects;
 
 /**
- * Tempestas + Vinculum, sustained. Draws dropped items in range towards the Core; with an aspect in
- * slot 3, only items that contain it.
+ * Tempestas + Vinculum, sustained. Draws dropped items in range towards the Core (a sub-circle's own
+ * Core, not the centre of its range); with an aspect in slot 3, only items that contain it.
  */
 final class AttractionEffect implements CircleEffect {
     private static final int PERIOD = 5;
@@ -27,7 +27,7 @@ final class AttractionEffect implements CircleEffect {
     @Override
     public void apply(CircleContext context) {
         Optional<Aspect> filter = context.parameter();
-        Vec3 target = CircleRange.centre(context).add(0, 0.5, 0);
+        Vec3 target = Vec3.atBottomCenterOf(context.core()).add(0, 0.5, 0);
         double speed = Math.min(MAX_SPEED, SPEED * context.strength());
         boolean mark = CircleRange.marksNow(context, PERIOD);
         for (ItemEntity item : context.level().getEntitiesOfClass(ItemEntity.class, CircleRange.box(context),

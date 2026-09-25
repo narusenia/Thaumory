@@ -11,8 +11,19 @@ import one.nxeu.thaumory.api.aspect.Aspect;
 public interface CircleContext {
     ServerLevel level();
 
-    /** The Core at the circle's centre. */
+    /**
+     * The Core running the effect: it holds the Essentia, and what the effect puts out comes up
+     * there. For a sub-circle this is a Core on a node of its parent's circle, not the centre.
+     */
     BlockPos core();
+
+    /**
+     * The centre of the effect's range: the Core itself, or for a sub-circle the parent's Core.
+     * Measure the range from here.
+     */
+    default BlockPos centre() {
+        return core();
+    }
 
     /** The slot 3 rune's aspect, if any. What it means is up to the effect. */
     Optional<Aspect> parameter();
@@ -20,7 +31,7 @@ public interface CircleContext {
     /** 1 for a plain circle; amplifying modifiers raise it, economizing ones lower it. */
     double strength();
 
-    /** How far the effect reaches from the Core, in blocks, after the extending modifiers. */
+    /** How far the effect reaches from {@link #centre()}, in blocks, after the extending modifiers. */
     double radius();
 
     /** Who activated a triggered circle, if anyone did. Always empty for sustained circles. */

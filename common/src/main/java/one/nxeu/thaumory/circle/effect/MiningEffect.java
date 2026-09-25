@@ -123,7 +123,7 @@ final class MiningEffect implements CircleEffect {
     /** The square {@code depth} blocks behind the circle's face, or nothing past the world's edge. */
     private static List<BlockPos> layer(CircleContext context, int depth) {
         Direction front = context.level().getBlockState(context.core()).getOptionalValue(CircleCoreBlock.FACING).orElse(Direction.UP);
-        BlockPos centre = context.core().relative(front.getOpposite(), depth);
+        BlockPos centre = context.centre().relative(front.getOpposite(), depth);
         if (context.level().isOutsideBuildHeight(centre)) {
             return List.of();
         }
