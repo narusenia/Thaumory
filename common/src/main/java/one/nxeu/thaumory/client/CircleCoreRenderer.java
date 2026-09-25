@@ -27,7 +27,7 @@ import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 
 /**
  * Draws a ring around the Core's centre mark for each rune, in that rune's aspect color. The rings
- * glow and turn slowly, each the other way from the one inside it, on whichever face the Core is
+ * glow, with their light bleeding softly around them, and turn slowly, each the other way from the one inside it, on whichever face the Core is
  * drawn on. With a pedestal built in, a
  * ring of glyphs also turns around its column, and the item on it floats over the top.
  */
@@ -36,6 +36,14 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
             RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/circle_core_ring_1.png")),
             RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/circle_core_ring_2.png")),
             RenderTypes.entityTranslucentEmissive(Thaumory.id("textures/block/circle_core_ring_3.png")));
+    /** The light that bleeds out around each ring, made from the ring itself (see {@link RingGlows}). */
+    private static final List<RenderType> GLOWS = List.of(
+            RenderTypes.entityTranslucentEmissive(RingGlows.glow(0)),
+            RenderTypes.entityTranslucentEmissive(RingGlows.glow(1)),
+            RenderTypes.entityTranslucentEmissive(RingGlows.glow(2)));
+    private static final float GLOW_ALPHA = 0.28f;
+    /** How far the glow's colour leans towards white. */
+    private static final float GLOW_WHITEN = 0.1f;
     /** Degrees per tick, inner ring first. */
     private static final float[] SPEEDS = {1.2f, -0.8f, 0.5f};
     /** For a rune whose aspect is no longer registered. */
@@ -93,12 +101,11 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
             pose.rotateAround(state.front.getRotation(), 0.5f, 0.5f, 0.5f);
             pose.translate(0.5f, 0, 0.5f);
             pose.rotateDegrees(Axis.YP, (state.time * SPEEDS[i]) % 360);
-            collector.submitCustomGeometry(pose, RINGS.get(i), (p, consumer) -> {
-                vertex(consumer, p, argb, -0.5f, height, -0.5f, 0, 0);
-                vertex(consumer, p, argb, -0.5f, height, 0.5f, 0, 1);
-                vertex(consumer, p, argb, 0.5f, height, 0.5f, 1, 1);
-                vertex(consumer, p, argb, 0.5f, height, -0.5f, 1, 0);
-            });
+            collector.submitCustomGeometry(pose, RINGS.get(i), (p, consumer) -> quad(consumer, p, argb, height, 0.5f));
+            // Just under its ring, so the two never fight over the same depth.
+            int glow = glow(state.colors[i], GLOW_ALPHA);
+            float glowHeight = height - RING_STEP / 2;
+            collector.submitCustomGeometry(pose, GLOWS.get(i), (p, consumer) -> quad(consumer, p, glow, glowHeight, 0.5f * RingGlows.scale()));
             pose.popPose();
         }
         if (state.pedestal) {
@@ -136,6 +143,25 @@ final class CircleCoreRenderer implements BlockEntityRenderer<CircleCoreBlockEnt
     private static void glyphVertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float z, float u, float v, float normal) {
         consumer.addVertex(pose, x, 0, z).setColor(GLYPH_RING_COLOR).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(LightCoordsUtil.FULL_BRIGHT).setNormal(pose, 0, normal, 0);
+    }
+
+    private static void quad(VertexConsumer consumer, PoseStack.Pose pose, int argb, float height, float half) {
+        vertex(consumer, pose, argb, -half, height, -half, 0, 0);
+        vertex(consumer, pose, argb, -half, height, half, 0, 1);
+        vertex(consumer, pose, argb, half, height, half, 1, 1);
+        vertex(consumer, pose, argb, half, height, -half, 1, 0);
+    }
+
+    /** {@code rgb} leant towards white, at {@code alpha}. */
+    private static int glow(int rgb, float alpha) {
+        int r = whiten((rgb >> 16) & 0xFF);
+        int g = whiten((rgb >> 8) & 0xFF);
+        int b = whiten(rgb & 0xFF);
+        return Math.round(alpha * 255) << 24 | r << 16 | g << 8 | b;
+    }
+
+    private static int whiten(int channel) {
+        return Math.round(channel + (255 - channel) * GLOW_WHITEN);
     }
 
     private static void vertex(VertexConsumer consumer, PoseStack.Pose pose, int argb, float x, float y, float z, float u, float v) {

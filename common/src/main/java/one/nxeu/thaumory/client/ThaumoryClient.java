@@ -8,6 +8,7 @@ import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.client.ClientTooltipEvent;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.transformers.SplitPacketTransformer;
+import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
@@ -20,10 +21,10 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import one.nxeu.thaumory.Thaumory;
-import one.nxeu.thaumory.client.particle.AspectMoteParticle;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.Aspect;
 import one.nxeu.thaumory.api.aspect.AspectList;
@@ -32,6 +33,7 @@ import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.client.codex.ArcaneCodexScreen;
 import one.nxeu.thaumory.client.entity.VoidRemnantRenderer;
+import one.nxeu.thaumory.client.particle.AspectMoteParticle;
 import one.nxeu.thaumory.entity.ThaumoryEntities;
 import one.nxeu.thaumory.infusion.Infusion;
 import one.nxeu.thaumory.infusion.InfusionText;
@@ -44,7 +46,6 @@ import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
 import one.nxeu.thaumory.knowledge.Transcript.AspectTranscript;
 import one.nxeu.thaumory.knowledge.Transcript.CircleTranscript;
-import one.nxeu.thaumory.particle.ThaumoryParticles;
 import one.nxeu.thaumory.network.AspectSyncPayload;
 import one.nxeu.thaumory.network.CapacitySyncPayload;
 import one.nxeu.thaumory.network.FluxReadingPayload;
@@ -52,6 +53,7 @@ import one.nxeu.thaumory.network.KnowledgeSyncPayload;
 import one.nxeu.thaumory.network.PipeReadingPayload;
 import one.nxeu.thaumory.network.ResearchViewPayload;
 import one.nxeu.thaumory.network.UseInfusionPayload;
+import one.nxeu.thaumory.particle.ThaumoryParticles;
 import org.slf4j.Logger;
 
 public final class ThaumoryClient {
@@ -92,6 +94,7 @@ public final class ThaumoryClient {
             ClientResearch.clear();
         });
         KeyMappingRegistry.register(USE_INFUSION);
+        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new RingGlows(), Thaumory.id("ring_glows"));
         ClientTickEvent.CLIENT_POST.register(minecraft -> {
             while (USE_INFUSION.consumeClick()) {
                 if (minecraft.player != null) {
