@@ -41,6 +41,11 @@ public final class ThaumoryItems {
             register("arcane_loupe", ArcaneLoupeItem::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<WandItem> WAND =
             register("wand", WandItem::new, new Item.Properties().stacksTo(1));
+    /** Wand parts (requirements §7.1): caps set how much Essentia a wand holds, cores how strongly it casts. */
+    public static final RegistrySupplier<Item> GOLD_WAND_CAP = register("gold_wand_cap", Item::new, new Item.Properties());
+    public static final RegistrySupplier<Item> ARCANE_IRON_WAND_CAP = register("arcane_iron_wand_cap", Item::new, new Item.Properties());
+    public static final RegistrySupplier<Item> AETHER_SILVER_WAND_CAP = register("aether_silver_wand_cap", Item::new, new Item.Properties());
+    public static final RegistrySupplier<Item> CRYSTAL_WAND_CORE = register("crystal_wand_core", Item::new, new Item.Properties());
     public static final RegistrySupplier<ArcaneCodexItem> ARCANE_CODEX =
             register("arcane_codex", ArcaneCodexItem::new, new Item.Properties().stacksTo(1));
     /** Made from the book only, so it is not in the creative tab. */
@@ -134,7 +139,8 @@ public final class ThaumoryItems {
      * the empty jar is followed by a full one for each aspect.
      */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
-            ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE,
+            ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, GOLD_WAND_CAP, ARCANE_IRON_WAND_CAP, AETHER_SILVER_WAND_CAP,
+            CRYSTAL_WAND_CORE, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE,
             ARCANE_IRON_CIRCLE_CORE, AETHER_SILVER_CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET, BLANK_CIRCLE_STONE,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE, FLUX_CRYSTAL);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =

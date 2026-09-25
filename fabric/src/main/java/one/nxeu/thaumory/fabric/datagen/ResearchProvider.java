@@ -96,7 +96,7 @@ final class ResearchProvider {
             output.accept(INQUIRY, chapter(ThaumoryItems.WAND.get(), BASICS, 2, 0, List.of(ASPECTS),
                     List.of(ResearchCondition.Aspects.count(12)), List.of()));
             output.accept(ARCANE_METALS, chapter(ThaumoryItems.ARCANE_IRON.ingot().get(), METALS, 0, 0, List.of(CIRCLES),
-                    List.of(ResearchCondition.Scanned.item(key(Items.IRON_INGOT))), List.of(alchemy("arcane_iron_ingot"))));
+                    List.of(ResearchCondition.Scanned.item(key(Items.IRON_INGOT))), List.of(alchemy("arcane_iron_ingot"), alchemy("crystal_wand_core"))));
             output.accept(AETHER_SILVER, chapter(ThaumoryItems.AETHER_SILVER.ingot().get(), METALS, 1, 0, List.of(ARCANE_METALS),
                     List.of(ResearchCondition.Scanned.item(key(ThaumoryItems.ARCANE_IRON.ingot().get())),
                             ResearchCondition.Aspects.all(List.of(AER.id(), LUX.id()))),

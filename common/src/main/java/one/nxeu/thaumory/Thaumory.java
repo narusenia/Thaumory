@@ -40,6 +40,7 @@ import one.nxeu.thaumory.jar.JarSettings;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.network.AspectSync;
 import one.nxeu.thaumory.network.CapacitySync;
+import one.nxeu.thaumory.network.WandPartSync;
 import one.nxeu.thaumory.pipe.PipeNetworks;
 import one.nxeu.thaumory.pipe.PipeReadings;
 import one.nxeu.thaumory.pipe.PipeSettings;
@@ -50,6 +51,7 @@ import one.nxeu.thaumory.scan.ItemScanner;
 import one.nxeu.thaumory.scan.ScanSettings;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
 import one.nxeu.thaumory.sound.ThaumorySounds;
+import one.nxeu.thaumory.wand.WandParts;
 import one.nxeu.thaumory.world.ThaumoryFeatures;
 
 public final class Thaumory {
@@ -96,6 +98,7 @@ public final class Thaumory {
                 id("thaumory/pipe.json"), PipeSettings.CODEC, PipeSettings.DEFAULT, PipeNetworks::updateSettings), id("pipe"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new CircleDefinitionReloadListener(), id("circle_definitions"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, InfusionCapacities.reloadListener(), id("infusion_capacity"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, WandParts.reloadListener(), id("wand_parts"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new PollutionRules(), id("pollution"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.chapterListener(), id("research_chapters"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.hintListener(), id("research_hints"));
@@ -105,6 +108,7 @@ public final class Thaumory {
         AspectEstimation.registerEvents();
         AspectSync.register();
         CapacitySync.register();
+        WandPartSync.register();
         InfusionRuntime.register();
         knowledge.registerEvents();
         ResearchProgress research = new ResearchProgress();

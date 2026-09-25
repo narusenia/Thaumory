@@ -13,6 +13,8 @@ import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.Stream;
@@ -43,6 +45,7 @@ import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.item.ArcaneCodexItem;
 import one.nxeu.thaumory.item.RuneItem;
 import one.nxeu.thaumory.item.ThaumoryComponents;
+import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.item.TranscriptItem;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.CircleCombination;
@@ -56,7 +59,11 @@ import one.nxeu.thaumory.network.KnowledgeSyncPayload;
 import one.nxeu.thaumory.network.PipeReadingPayload;
 import one.nxeu.thaumory.network.ResearchViewPayload;
 import one.nxeu.thaumory.network.UseInfusionPayload;
+import one.nxeu.thaumory.network.WandPartSyncPayload;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
+import one.nxeu.thaumory.wand.WandBuild;
+import one.nxeu.thaumory.wand.WandPart;
+import one.nxeu.thaumory.wand.WandParts;
 import org.slf4j.Logger;
 
 public final class ThaumoryClient {
@@ -76,6 +83,8 @@ public final class ThaumoryClient {
                 }));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CapacitySyncPayload.TYPE, CapacitySyncPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> ClientCapacities.replace(payload.items(), payload.itemEssentia())));
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, WandPartSyncPayload.TYPE, WandPartSyncPayload.STREAM_CODEC,
+                (payload, context) -> context.queue(() -> ClientWandParts.replace(payload.parts())));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, KnowledgeSyncPayload.TYPE, KnowledgeSyncPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> {
                     ClientKnowledge.replace(payload.knowledge());
@@ -125,6 +134,7 @@ public final class ThaumoryClient {
             appendTranscript(stack, lines);
             appendInfusions(stack, lines);
             appendBurntCircle(stack, lines);
+            appendWandBuild(stack, lines);
             appendAspects(stack.getItem(), lines);
         });
     }
@@ -152,6 +162,27 @@ public final class ThaumoryClient {
                     .orElseGet(() -> Component.literal(id.toString())));
         }
         lines.add(line);
+    }
+
+    /** A wand's caps and core, with what each gives as the server last sent it. */
+    private static void appendWandBuild(ItemStack stack, List<Component> lines) {
+        if (!stack.is(ThaumoryItems.WAND.get())) {
+            return;
+        }
+        WandBuild build = stack.getOrDefault(ThaumoryComponents.WAND_BUILD.get(), WandBuild.DEFAULT);
+        Map<Identifier, WandPart> parts = ClientWandParts.get();
+        MutableComponent cap = Component.translatable("tooltip.thaumory.wand.cap", partName(build.cap()));
+        WandParts.cap(parts, build.cap()).ifPresent(c -> cap.append(Component.translatable("tooltip.thaumory.wand.cap_stats", c.essentia())));
+        lines.add(cap.withColor(0xAAAAAA));
+        MutableComponent core = Component.translatable("tooltip.thaumory.wand.core", partName(build.core()));
+        WandParts.core(parts, build.core()).ifPresent(c -> core.append(Component.translatable("tooltip.thaumory.wand.core_stats",
+                String.format(Locale.ROOT, "%.2f", c.power()),
+                Component.translatableWithFallback("tooltip.thaumory.wand.tier." + c.incorrectFor().toLanguageKey(), c.incorrectFor().toString()))));
+        lines.add(core.withColor(0xAAAAAA));
+    }
+
+    private static Component partName(Identifier item) {
+        return BuiltInRegistries.ITEM.getOptional(item).map(i -> (Component) new ItemStack(i).getHoverName()).orElseGet(() -> Component.literal(item.toString()));
     }
 
     private static void appendRuneAspect(ItemStack stack, List<Component> lines) {

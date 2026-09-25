@@ -12,6 +12,7 @@ import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.aspect.AspectCodecs;
 import one.nxeu.thaumory.block.stone.BurntCircle;
+import one.nxeu.thaumory.wand.WandBuild;
 import one.nxeu.thaumory.infusion.Infusions;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.knowledge.Transcript;
@@ -70,6 +71,13 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<BurntCircle>builder()
                     .persistent(BurntCircle.CODEC)
                     .networkSynchronized(BurntCircle.STREAM_CODEC)
+                    .build());
+
+    /** What a wand is made of (requirements §7.1). A wand without it has gold caps on a wooden core. */
+    public static final RegistrySupplier<DataComponentType<WandBuild>> WAND_BUILD = COMPONENTS.register("wand_build",
+            () -> DataComponentType.<WandBuild>builder()
+                    .persistent(WandBuild.CODEC)
+                    .networkSynchronized(WandBuild.STREAM_CODEC)
                     .build());
 
     private ThaumoryComponents() {}

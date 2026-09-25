@@ -8,6 +8,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import one.nxeu.thaumory.wand.WandAssemblyRecipe;
+import one.nxeu.thaumory.wand.WandRebuildRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.estimate.EstimationRecipe;
@@ -25,6 +27,11 @@ public final class ThaumoryRecipes {
     });
     public static final RegistrySupplier<RecipeSerializer<AlchemyRecipe>> ALCHEMY_SERIALIZER = SERIALIZERS.register("alchemy",
             () -> new RecipeSerializer<>(AlchemyRecipe.CODEC, AlchemyRecipe.STREAM_CODEC));
+
+    public static final RegistrySupplier<RecipeSerializer<WandAssemblyRecipe>> WAND_ASSEMBLY_SERIALIZER = SERIALIZERS.register("wand_assembly",
+            () -> new RecipeSerializer<>(WandAssemblyRecipe.CODEC, WandAssemblyRecipe.STREAM_CODEC));
+    public static final RegistrySupplier<RecipeSerializer<WandRebuildRecipe>> WAND_REBUILD_SERIALIZER = SERIALIZERS.register("wand_rebuild",
+            () -> new RecipeSerializer<>(WandRebuildRecipe.CODEC, WandRebuildRecipe.STREAM_CODEC));
 
     private ThaumoryRecipes() {}
 

@@ -1,0 +1,11 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:arcanum": 8,
+    "thaumory:lux": 4
+  },
+  "catalyst": "minecraft:stick",
+  "result": {
+    "id": "thaumory:crystal_wand_core"
+  }
+}

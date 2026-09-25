@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "thaumory:arcane_iron_ingot",
+    "minecraft:gold_nugget"
+  ],
+  "result": {
+    "id": "thaumory:arcane_iron_wand_cap"
+  }
+}

@@ -5,26 +5,28 @@ import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.alchemy.AlchemyRecipe;
 import one.nxeu.thaumory.api.ThaumoryApi;
 import one.nxeu.thaumory.api.aspect.AspectList;
 import one.nxeu.thaumory.api.aspect.AspectStack;
-import net.minecraft.world.item.crafting.Recipe;
 import one.nxeu.thaumory.item.EquipmentSet;
 import one.nxeu.thaumory.item.ThaumoryItems;
-
+import one.nxeu.thaumory.wand.WandAssemblyRecipe;
+import one.nxeu.thaumory.wand.WandRebuildRecipe;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AER;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AQUA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
@@ -70,6 +72,7 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 alchemy("aether_silver_ingot", ThaumoryItems.ARCANE_IRON.ingot().get(), ThaumoryItems.AETHER_SILVER.ingot().get(),
                         new AspectStack(AER, 16), new AspectStack(LUX, 16));
                 alchemy("monocle", ThaumoryItems.ARCANE_LOUPE.get(), ThaumoryItems.MONOCLE.get(), new AspectStack(LUX, 12), new AspectStack(ARCANUM, 8));
+                alchemy("crystal_wand_core", Items.STICK, ThaumoryItems.CRYSTAL_WAND_CORE.get(), new AspectStack(ARCANUM, 8), new AspectStack(LUX, 4));
                 // A gold chain with an Arcane Iron charm hanging from it.
                 shaped(RecipeCategory.TOOLS, ThaumoryItems.AMULET.get())
                         .pattern("N N")
@@ -119,13 +122,22 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         .define('G', Items.GLASS)
                         .unlockedBy(getHasName(Items.GLASS), has(Items.GLASS))
                         .save(output);
-                shaped(RecipeCategory.TOOLS, ThaumoryItems.WAND.get())
-                        .pattern("  G")
-                        .pattern(" S ")
-                        .pattern("G  ")
-                        .define('G', Items.GOLD_NUGGET)
-                        .define('S', Items.STICK)
+                // A wand is two of the same caps and a core in a diagonal line, whatever the parts (requirements §7.1).
+                SpecialRecipeBuilder.special(() -> WandAssemblyRecipe.INSTANCE).save(output, "wand_assembly");
+                SpecialRecipeBuilder.special(() -> WandRebuildRecipe.INSTANCE).save(output, "wand_rebuild");
+                shapeless(RecipeCategory.TOOLS, ThaumoryItems.GOLD_WAND_CAP.get())
+                        .requires(Items.GOLD_NUGGET, 2)
                         .unlockedBy(getHasName(Items.GOLD_NUGGET), has(Items.GOLD_NUGGET))
+                        .save(output);
+                shapeless(RecipeCategory.TOOLS, ThaumoryItems.ARCANE_IRON_WAND_CAP.get())
+                        .requires(ThaumoryItems.ARCANE_IRON.ingot().get())
+                        .requires(Items.GOLD_NUGGET)
+                        .unlockedBy(getHasName(ThaumoryItems.ARCANE_IRON.ingot().get()), has(ThaumoryItems.ARCANE_IRON.ingot().get()))
+                        .save(output);
+                shapeless(RecipeCategory.TOOLS, ThaumoryItems.AETHER_SILVER_WAND_CAP.get())
+                        .requires(ThaumoryItems.AETHER_SILVER.ingot().get())
+                        .requires(Items.GOLD_NUGGET)
+                        .unlockedBy(getHasName(ThaumoryItems.AETHER_SILVER.ingot().get()), has(ThaumoryItems.AETHER_SILVER.ingot().get()))
                         .save(output);
                 shaped(RecipeCategory.MISC, ThaumoryItems.CIRCLE_CORE.get())
                         .pattern("SGS")

@@ -11,7 +11,8 @@
     "thaumory:circles"
   ],
   "unlocks": [
-    "thaumory:alchemy/arcane_iron_ingot"
+    "thaumory:alchemy/arcane_iron_ingot",
+    "thaumory:alchemy/crystal_wand_core"
   ],
   "x": 0,
   "y": 0

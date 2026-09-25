@@ -1,0 +1,7 @@
+{
+  "core": {
+    "incorrect_for": "minecraft:incorrect_for_stone_tool",
+    "power": 1.0
+  },
+  "item": "minecraft:stick"
+}

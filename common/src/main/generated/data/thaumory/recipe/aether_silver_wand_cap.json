@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "thaumory:aether_silver_ingot",
+    "minecraft:gold_nugget"
+  ],
+  "result": {
+    "id": "thaumory:aether_silver_wand_cap"
+  }
+}

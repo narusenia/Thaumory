@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_gold_nugget": {
+    "has_arcane_iron_ingot": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:gold_nugget"
+            "items": "thaumory:arcane_iron_ingot"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "thaumory:wand"
+        "recipes": "thaumory:arcane_iron_wand_cap"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_gold_nugget"
+      "has_arcane_iron_ingot"
     ]
   ],
   "rewards": {
     "recipes": [
-      "thaumory:wand"
+      "thaumory:arcane_iron_wand_cap"
     ]
   }
 }

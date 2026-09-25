@@ -1,0 +1,7 @@
+{
+  "core": {
+    "incorrect_for": "minecraft:incorrect_for_iron_tool",
+    "power": 1.25
+  },
+  "item": "thaumory:crystal_wand_core"
+}
