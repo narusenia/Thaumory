@@ -39,7 +39,7 @@ docs/     requirements.md, plan.md
 - **Keep logic testable.** Aspect math, recipe-based aspect estimation, circle validation, instability, Flux accumulation/decay, and potion path math belong in plain Java classes with no Minecraft dependencies, covered by JUnit tests. Minecraft-facing code is a thin adapter over them.
 - **Performance.** Circle scans, pipe networks, and Flux processing run on intervals, not every tick. Pipe networks are computed per network and rebuilt only on change.
 - **Loader-specific APIs.** Fabric Data Attachment and Transfer API are used through small interfaces in `common` so NeoForge can implement them in M4. Each loader hands its implementations to `Thaumory.init` through `ThaumoryPlatform` (e.g. `FluxStorage`).
-- **Stability labels.** API extension points 4–6 and 9 (infusion effects, potion map, research entries, recipe adapters) are experimental until M4. Mark them with `@one.nxeu.thaumory.api.Experimental`.
+- **Stability labels.** API extension points 4–6, 9 and 11 (infusion effects, potion map, research entries, recipe adapters, wand focus spells) are experimental until M4. Mark them with `@one.nxeu.thaumory.api.Experimental`.
 
 ## Localization
 
