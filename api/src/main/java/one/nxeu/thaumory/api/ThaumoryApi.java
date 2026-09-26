@@ -6,6 +6,7 @@ import one.nxeu.thaumory.api.circle.CircleEffectRegistry;
 import one.nxeu.thaumory.api.estimate.RecipeAdapterRegistry;
 import one.nxeu.thaumory.api.infusion.InfusionEffectRegistry;
 import one.nxeu.thaumory.api.flux.ChunkFlux;
+import one.nxeu.thaumory.api.wand.FocusSpellRegistry;
 
 /** Entry point for addons. */
 public final class ThaumoryApi {
@@ -15,6 +16,7 @@ public final class ThaumoryApi {
     private static final RecipeAdapterRegistry RECIPE_ADAPTERS = new RecipeAdapterRegistry();
     private static final CircleEffectRegistry CIRCLE_EFFECTS = new CircleEffectRegistry();
     private static final InfusionEffectRegistry INFUSION_EFFECTS = new InfusionEffectRegistry();
+    private static final FocusSpellRegistry FOCUS_SPELLS = new FocusSpellRegistry();
     private static volatile ChunkFlux flux;
 
     private ThaumoryApi() {}
@@ -35,6 +37,12 @@ public final class ThaumoryApi {
     @Experimental
     public static InfusionEffectRegistry infusionEffects() {
         return INFUSION_EFFECTS;
+    }
+
+    /** What wand foci cast. Which item carries a spell, and what it costs, comes from the datapack. */
+    @Experimental
+    public static FocusSpellRegistry focusSpells() {
+        return FOCUS_SPELLS;
     }
 
     /** Recipe types that aspect estimation reads. */
