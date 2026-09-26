@@ -212,19 +212,12 @@ public final class ThaumoryClient {
             return;
         }
         PlayerKnowledge knowledge = ClientKnowledge.get();
-        MutableComponent line = Component.translatable("tooltip.thaumory.stored_essentia").withColor(0xAAAAAA);
-        boolean first = true;
+        lines.add(Component.translatable("tooltip.thaumory.stored_essentia").withColor(0xAAAAAA));
         for (Identifier id : shown) {
-            Optional<Aspect> aspect = ThaumoryApi.aspects().get(id);
-            if (aspect.isEmpty()) {
-                continue;
-            }
-            line.append(Component.literal(first ? " " : " · "))
-                    .append(AspectText.name(aspect.get(), knowledge.knowsAspect(id)))
-                    .append(Component.literal(" " + stored.amount(aspect.get()) + "/" + capacity).withColor(0xAAAAAA));
-            first = false;
+            ThaumoryApi.aspects().get(id).ifPresent(aspect -> lines.add(Component.literal("  ")
+                    .append(AspectText.name(aspect, knowledge.knowsAspect(id)))
+                    .append(Component.literal(" " + stored.amount(aspect) + "/" + capacity).withColor(0xAAAAAA))));
         }
-        lines.add(line);
     }
 
     private static Component partName(Identifier item) {
