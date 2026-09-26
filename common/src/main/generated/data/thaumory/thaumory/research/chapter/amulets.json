@@ -1,0 +1,19 @@
+{
+  "category": "thaumory:infusion",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:gold_ingot"
+    }
+  ],
+  "icon": "thaumory:amulet",
+  "requires": [
+    "thaumory:infusion",
+    "thaumory:arcane_metals"
+  ],
+  "unlocks": [
+    "thaumory:amulet"
+  ],
+  "x": 1,
+  "y": 1
+}

@@ -1,0 +1,18 @@
+{
+  "category": "thaumory:infusion",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:paper"
+    }
+  ],
+  "icon": "thaumory:scroll",
+  "requires": [
+    "thaumory:infusion"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/blank_scroll"
+  ],
+  "x": 1,
+  "y": 0
+}

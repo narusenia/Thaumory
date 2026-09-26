@@ -1,0 +1,18 @@
+{
+  "category": "thaumory:infusion",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:stone_bricks"
+    }
+  ],
+  "icon": "thaumory:blank_circle_stone",
+  "requires": [
+    "thaumory:infusion"
+  ],
+  "unlocks": [
+    "thaumory:blank_circle_stone"
+  ],
+  "x": 2,
+  "y": 0
+}

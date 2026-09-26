@@ -1,0 +1,19 @@
+{
+  "category": "thaumory:infusion",
+  "conditions": [
+    {
+      "type": "thaumory:circles",
+      "count": 2,
+      "outcome": "success"
+    }
+  ],
+  "icon": "thaumory:pedestal",
+  "requires": [
+    "thaumory:circles"
+  ],
+  "unlocks": [
+    "thaumory:pedestal"
+  ],
+  "x": 0,
+  "y": 0
+}

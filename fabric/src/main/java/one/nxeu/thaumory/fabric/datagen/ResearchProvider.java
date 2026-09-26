@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider;
 import net.minecraft.core.HolderLookup;
@@ -67,11 +68,35 @@ final class ResearchProvider {
     static final Identifier WAND_FOCI = Thaumory.id("wand_foci");
     static final Identifier BATTLE_FOCI = Thaumory.id("battle_foci");
     static final Identifier WORK_FOCI = Thaumory.id("work_foci");
+    static final Identifier TRANSCRIPTS = Thaumory.id("transcripts");
+    static final Identifier CRYSTALS = Thaumory.id("crystals");
+    static final Identifier RUINS = Thaumory.id("ruins");
+    static final Identifier JARS = Thaumory.id("jars");
+    static final Identifier PIPES = Thaumory.id("pipes");
+    static final Identifier PIPE_CONTROL = Thaumory.id("pipe_control");
+    static final Identifier POUCH = Thaumory.id("pouch");
+    static final Identifier POLLUTION = Thaumory.id("pollution");
+    static final Identifier CONTAINMENT = Thaumory.id("containment");
+    static final Identifier WALL_CIRCLES = Thaumory.id("wall_circles");
+    static final Identifier CIRCLE_RANKS = Thaumory.id("circle_ranks");
+    static final Identifier SUB_CIRCLES = Thaumory.id("sub_circles");
+    static final Identifier FARM_CIRCLES = Thaumory.id("farm_circles");
+    static final Identifier INDUSTRY_CIRCLES = Thaumory.id("industry_circles");
+    static final Identifier DEFENCE_CIRCLES = Thaumory.id("defence_circles");
+    static final Identifier LIFE_CIRCLES = Thaumory.id("life_circles");
+    static final Identifier INFUSION = Thaumory.id("infusion");
+    static final Identifier SCROLLS = Thaumory.id("scrolls");
+    static final Identifier CIRCLE_STONES = Thaumory.id("circle_stones");
+    static final Identifier AMULETS = Thaumory.id("amulets");
+    static final Identifier CHARGING = Thaumory.id("charging");
+    static final Identifier WAND_PARTS = Thaumory.id("wand_parts");
 
     static final Identifier BASICS = Chapter.BASICS;
     static final Identifier ALCHEMY = Thaumory.id("alchemy");
     static final Identifier CIRCLES_CATEGORY = Thaumory.id("circles");
     static final Identifier METALS = Thaumory.id("metals");
+    static final Identifier ARTIFICE = Thaumory.id("artifice");
+    static final Identifier INFUSION_CATEGORY = Thaumory.id("infusion");
 
     private ResearchProvider() {}
 
@@ -83,37 +108,109 @@ final class ResearchProvider {
 
         @Override
         protected void configure(BiConsumer<Identifier, Chapter> output, HolderLookup.Provider registries) {
+            // Basics
             output.accept(BEGINNING, chapter(ThaumoryItems.ARCANE_CODEX.get(), BASICS, 0, 0, List.of(), List.of(), List.of()));
             output.accept(ASPECTS, chapter(ThaumoryItems.ARCANE_LOUPE.get(), BASICS, 1, 0, List.of(BEGINNING),
                     List.of(ResearchCondition.Aspects.count(1)), List.of()));
-            output.accept(CRUCIBLE, chapter(ThaumoryItems.CRUCIBLE.get(), ALCHEMY, 0, 0, List.of(BEGINNING),
-                    List.of(ResearchCondition.Scanned.item(key(ThaumoryItems.CRUCIBLE.get()))), List.of()));
-            output.accept(RUNES, chapter(ThaumoryItems.BLANK_RUNE.get(), ALCHEMY, 1, 0, List.of(ASPECTS, CRUCIBLE),
-                    List.of(ResearchCondition.Aspects.count(3)), List.of(alchemy("blank_rune"), alchemy("chalk"))));
-            output.accept(CIRCLES, chapter(ThaumoryItems.CIRCLE_CORE.get(), CIRCLES_CATEGORY, 0, 0, List.of(RUNES),
-                    List.of(new ResearchCondition.Circles(true, 1, Optional.empty())),
-                    List.of(alchemy("amplifying_chalk"), alchemy("extending_chalk"), alchemy("economizing_chalk"), alchemy("stabilizing_chalk"),
-                            alchemy("blank_scroll"))));
-            output.accept(FLUX, chapter(ThaumoryItems.POLLUTED_SOIL.get(), CIRCLES_CATEGORY, 1, 0, List.of(CIRCLES),
-                    List.of(new ResearchCondition.Circles(false, 1, Optional.empty())), List.of()));
             output.accept(INQUIRY, chapter(ThaumoryItems.WAND.get(), BASICS, 2, 0, List.of(ASPECTS),
                     List.of(ResearchCondition.Aspects.count(12)), List.of()));
-            output.accept(ARCANE_METALS, chapter(ThaumoryItems.ARCANE_IRON.ingot().get(), METALS, 0, 0, List.of(CIRCLES),
-                    List.of(ResearchCondition.Scanned.item(key(Items.IRON_INGOT))), List.of(alchemy("arcane_iron_ingot"), alchemy("crystal_wand_core"))));
-            output.accept(AETHER_SILVER, chapter(ThaumoryItems.AETHER_SILVER.ingot().get(), METALS, 1, 0, List.of(ARCANE_METALS),
-                    List.of(ResearchCondition.Scanned.item(key(ThaumoryItems.ARCANE_IRON.ingot().get())),
-                            ResearchCondition.Aspects.all(List.of(AER.id(), LUX.id()))),
-                    List.of(alchemy("aether_silver_ingot"))));
+            output.accept(TRANSCRIPTS, chapter(ThaumoryItems.TRANSCRIPT.get(), BASICS, 3, 0, List.of(INQUIRY),
+                    List.of(ResearchCondition.Aspects.count(12)), List.of()));
+            output.accept(CRYSTALS, chapter(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), BASICS, 0, 1, List.of(BEGINNING),
+                    List.of(scanned(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get())), List.of()));
+            output.accept(RUINS, chapter(Items.MOSSY_STONE_BRICKS, BASICS, 1, 1, List.of(ASPECTS),
+                    List.of(scanned(Items.MOSSY_STONE_BRICKS)), List.of()));
             output.accept(MONOCLE, chapter(ThaumoryItems.MONOCLE.get(), BASICS, 2, 1, List.of(ASPECTS, CRUCIBLE),
                     List.of(ResearchCondition.Aspects.all(List.of(LUX.id(), ARCANUM.id()))), List.of(alchemy("monocle"))));
+            // Alchemy
+            output.accept(CRUCIBLE, chapter(ThaumoryItems.CRUCIBLE.get(), ALCHEMY, 0, 0, List.of(BEGINNING),
+                    List.of(scanned(ThaumoryItems.CRUCIBLE.get())), List.of()));
+            output.accept(RUNES, chapter(ThaumoryItems.BLANK_RUNE.get(), ALCHEMY, 1, 0, List.of(ASPECTS, CRUCIBLE),
+                    List.of(ResearchCondition.Aspects.count(3)), List.of(alchemy("blank_rune"), alchemy("chalk"), craft("circle_core"))));
+            // Artifice
+            output.accept(JARS, chapter(ThaumoryItems.JAR.get(), ARTIFICE, 0, 0, List.of(CRUCIBLE),
+                    List.of(scanned(Items.GLASS)), List.of(craft("jar"), craft("label"))));
+            output.accept(PIPES, chapter(ThaumoryItems.PIPE.get(), ARTIFICE, 1, 0, List.of(JARS),
+                    List.of(scanned(ThaumoryItems.JAR.get())), List.of(craft("pipe"))));
+            output.accept(PIPE_CONTROL, chapter(ThaumoryItems.VALVE.get(), ARTIFICE, 2, 0, List.of(PIPES),
+                    List.of(scanned(ThaumoryItems.PIPE.get())), List.of(craft("filter_pipe"), craft("valve"), craft("pump"))));
+            output.accept(POUCH, chapter(ThaumoryItems.ESSENTIA_POUCH.get(), ARTIFICE, 1, 1, List.of(JARS, ARCANE_METALS),
+                    List.of(scanned(Items.LEATHER)), List.of(craft("essentia_pouch"))));
+            // Circles
+            output.accept(CIRCLES, chapter(ThaumoryItems.CIRCLE_CORE.get(), CIRCLES_CATEGORY, 0, 0, List.of(RUNES),
+                    List.of(circles(true, 1)),
+                    List.of(alchemy("amplifying_chalk"), alchemy("extending_chalk"), alchemy("economizing_chalk"), alchemy("stabilizing_chalk"))));
+            output.accept(FLUX, chapter(ThaumoryItems.POLLUTED_SOIL.get(), CIRCLES_CATEGORY, 1, 0, List.of(CIRCLES),
+                    List.of(circles(false, 1)), List.of()));
+            output.accept(POLLUTION, chapter(ThaumoryItems.POLLUTED_STONE.get(), CIRCLES_CATEGORY, 2, 0, List.of(FLUX),
+                    List.of(scanned(ThaumoryItems.POLLUTED_SOIL.get())), List.of()));
+            output.accept(CONTAINMENT, chapter(ThaumoryItems.FLUX_CRYSTAL.get(), CIRCLES_CATEGORY, 3, 0, List.of(POLLUTION),
+                    List.of(ResearchCondition.Aspects.all(List.of(SORDES.id()))), List.of()));
+            output.accept(WALL_CIRCLES, chapter(ThaumoryItems.CHALK.get(), CIRCLES_CATEGORY, 0, 1, List.of(CIRCLES),
+                    List.of(circles(true, 3)), List.of()));
+            output.accept(CIRCLE_RANKS, chapter(ThaumoryItems.ARCANE_IRON_CIRCLE_CORE.get(), CIRCLES_CATEGORY, 1, 1, List.of(CIRCLES, ARCANE_METALS),
+                    List.of(scanned(ThaumoryItems.ARCANE_IRON.ingot().get())),
+                    List.of(craft("arcane_iron_circle_core"), craft("aether_silver_circle_core"))));
+            output.accept(SUB_CIRCLES, chapter(ThaumoryItems.AETHER_SILVER_CIRCLE_CORE.get(), CIRCLES_CATEGORY, 2, 1, List.of(CIRCLE_RANKS),
+                    List.of(circles(true, 5)), List.of()));
+            output.accept(FARM_CIRCLES, chapter(Items.WHEAT, CIRCLES_CATEGORY, 0, 2, List.of(CIRCLES),
+                    List.of(ResearchCondition.Aspects.all(List.of(HERBA.id()))), List.of()));
+            output.accept(INDUSTRY_CIRCLES, chapter(Items.FURNACE, CIRCLES_CATEGORY, 1, 2, List.of(CIRCLES),
+                    List.of(ResearchCondition.Aspects.all(List.of(METALLUM.id()))), List.of()));
+            output.accept(DEFENCE_CIRCLES, chapter(Items.SHIELD, CIRCLES_CATEGORY, 2, 2, List.of(CIRCLES),
+                    List.of(ResearchCondition.Aspects.all(List.of(BELLUM.id()))), List.of()));
+            output.accept(LIFE_CIRCLES, chapter(Items.FEATHER, CIRCLES_CATEGORY, 3, 2, List.of(CIRCLES),
+                    List.of(ResearchCondition.Aspects.all(List.of(VITA.id()))), List.of()));
+            // Infusion
+            output.accept(INFUSION, chapter(ThaumoryItems.PEDESTAL.get(), INFUSION_CATEGORY, 0, 0, List.of(CIRCLES),
+                    List.of(circles(true, 2)), List.of(craft("pedestal"))));
+            output.accept(SCROLLS, chapter(ThaumoryItems.SCROLL.get(), INFUSION_CATEGORY, 1, 0, List.of(INFUSION),
+                    List.of(scanned(Items.PAPER)), List.of(alchemy("blank_scroll"))));
+            output.accept(CIRCLE_STONES, chapter(ThaumoryItems.BLANK_CIRCLE_STONE.get(), INFUSION_CATEGORY, 2, 0, List.of(INFUSION),
+                    List.of(scanned(Items.STONE_BRICKS)), List.of(craft("blank_circle_stone"))));
+            output.accept(AMULETS, chapter(ThaumoryItems.AMULET.get(), INFUSION_CATEGORY, 1, 1, List.of(INFUSION, ARCANE_METALS),
+                    List.of(scanned(Items.GOLD_INGOT)), List.of(craft("amulet"))));
+            output.accept(CHARGING, chapter(ThaumoryItems.RUNE.get(), INFUSION_CATEGORY, 2, 1, List.of(INFUSION),
+                    List.of(circles(true, 3)), List.of()));
+            // Metals and equipment
+            output.accept(ARCANE_METALS, chapter(ThaumoryItems.ARCANE_IRON.ingot().get(), METALS, 0, 0, List.of(CIRCLES),
+                    List.of(scanned(Items.IRON_INGOT)), with(alchemy("arcane_iron_ingot"), equipment("arcane_iron"))));
+            output.accept(AETHER_SILVER, chapter(ThaumoryItems.AETHER_SILVER.ingot().get(), METALS, 1, 0, List.of(ARCANE_METALS),
+                    List.of(scanned(ThaumoryItems.ARCANE_IRON.ingot().get()), ResearchCondition.Aspects.all(List.of(AER.id(), LUX.id()))),
+                    with(alchemy("aether_silver_ingot"), equipment("aether_silver"))));
+            output.accept(WAND_PARTS, chapter(ThaumoryItems.GOLD_WAND_CAP.get(), METALS, 0, 1, List.of(ARCANE_METALS),
+                    List.of(scanned(Items.STICK)),
+                    List.of(craft("arcane_iron_wand_cap"), craft("aether_silver_wand_cap"), alchemy("crystal_wand_core"))));
             output.accept(WAND_FOCI, chapter(ThaumoryItems.LIGHT_FOCUS.get(), METALS, 1, 1, List.of(ARCANE_METALS),
-                    List.of(ResearchCondition.Scanned.item(key(Items.GLOWSTONE_DUST))), List.of(alchemy("light_focus"))));
+                    List.of(scanned(Items.GLOWSTONE_DUST)), List.of(craft("blank_focus"), alchemy("light_focus"))));
             output.accept(BATTLE_FOCI, chapter(ThaumoryItems.FIRE_FOCUS.get(), METALS, 2, 1, List.of(WAND_FOCI),
                     List.of(ResearchCondition.Aspects.all(List.of(TEMPESTAS.id()))),
                     List.of(alchemy("fire_focus"), alchemy("frost_focus"), alchemy("lightning_focus"))));
             output.accept(WORK_FOCI, chapter(ThaumoryItems.DIGGING_FOCUS.get(), METALS, 1, 2, List.of(WAND_FOCI),
-                    List.of(ResearchCondition.Scanned.item(key(Items.DIAMOND_PICKAXE))),
+                    List.of(scanned(Items.DIAMOND_PICKAXE)),
                     List.of(alchemy("digging_focus"), alchemy("leap_focus"), alchemy("exchange_focus"))));
+        }
+
+        private static ResearchCondition scanned(ItemLike item) {
+            return ResearchCondition.Scanned.item(key(item));
+        }
+
+        private static ResearchCondition circles(boolean success, int count) {
+            return new ResearchCondition.Circles(success, count, Optional.empty());
+        }
+
+        /** The crafting-table recipes for a metal's five tools and four pieces of armor. */
+        private static List<Identifier> equipment(String metal) {
+            return Stream.of("axe", "hoe", "pickaxe", "shovel", "sword", "helmet", "chestplate", "leggings", "boots")
+                    .map(piece -> craft(metal + "_" + piece)).toList();
+        }
+
+        private static List<Identifier> with(Identifier first, List<Identifier> rest) {
+            return Stream.concat(Stream.of(first), rest.stream()).toList();
+        }
+
+        private static Identifier craft(String name) {
+            return Thaumory.id(name);
         }
 
         private static Chapter chapter(ItemLike icon, Identifier category, int x, int y, List<Identifier> requires,
@@ -145,8 +242,10 @@ final class ResearchProvider {
         protected void configure(BiConsumer<Identifier, Category> output, HolderLookup.Provider registries) {
             output.accept(BASICS, new Category(Chapters.key(ThaumoryItems.ARCANE_CODEX.get()), 0, block("dark_oak_planks")));
             output.accept(ALCHEMY, new Category(Chapters.key(ThaumoryItems.CRUCIBLE.get()), 1, block("polished_blackstone_bricks")));
-            output.accept(CIRCLES_CATEGORY, new Category(Chapters.key(ThaumoryItems.CIRCLE_CORE.get()), 2, block("end_stone")));
-            output.accept(METALS, new Category(Chapters.key(ThaumoryItems.ARCANE_IRON.ingot().get()), 3, block("iron_block")));
+            output.accept(ARTIFICE, new Category(Chapters.key(ThaumoryItems.PIPE.get()), 2, block("cut_copper")));
+            output.accept(CIRCLES_CATEGORY, new Category(Chapters.key(ThaumoryItems.CIRCLE_CORE.get()), 3, block("end_stone")));
+            output.accept(INFUSION_CATEGORY, new Category(Chapters.key(ThaumoryItems.PEDESTAL.get()), 4, block("quartz_block_side")));
+            output.accept(METALS, new Category(Chapters.key(ThaumoryItems.ARCANE_IRON.ingot().get()), 5, block("iron_block")));
         }
 
         private static Identifier block(String name) {

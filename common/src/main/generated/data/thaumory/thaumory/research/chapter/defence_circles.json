@@ -1,0 +1,17 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:bellum"
+      ]
+    }
+  ],
+  "icon": "minecraft:shield",
+  "requires": [
+    "thaumory:circles"
+  ],
+  "x": 2,
+  "y": 2
+}

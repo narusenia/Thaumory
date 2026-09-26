@@ -13,7 +13,8 @@
   ],
   "unlocks": [
     "thaumory:alchemy/blank_rune",
-    "thaumory:alchemy/chalk"
+    "thaumory:alchemy/chalk",
+    "thaumory:circle_core"
   ],
   "x": 1,
   "y": 0

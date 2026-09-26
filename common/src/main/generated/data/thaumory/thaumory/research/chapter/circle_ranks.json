@@ -1,0 +1,20 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "thaumory:arcane_iron_ingot"
+    }
+  ],
+  "icon": "thaumory:arcane_iron_circle_core",
+  "requires": [
+    "thaumory:circles",
+    "thaumory:arcane_metals"
+  ],
+  "unlocks": [
+    "thaumory:arcane_iron_circle_core",
+    "thaumory:aether_silver_circle_core"
+  ],
+  "x": 1,
+  "y": 1
+}

@@ -1,0 +1,14 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:mossy_stone_bricks"
+    }
+  ],
+  "icon": "minecraft:mossy_stone_bricks",
+  "requires": [
+    "thaumory:aspects"
+  ],
+  "x": 1,
+  "y": 1
+}

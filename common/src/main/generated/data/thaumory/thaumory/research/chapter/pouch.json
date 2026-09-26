@@ -1,0 +1,19 @@
+{
+  "category": "thaumory:artifice",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:leather"
+    }
+  ],
+  "icon": "thaumory:essentia_pouch",
+  "requires": [
+    "thaumory:jars",
+    "thaumory:arcane_metals"
+  ],
+  "unlocks": [
+    "thaumory:essentia_pouch"
+  ],
+  "x": 1,
+  "y": 1
+}

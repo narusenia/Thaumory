@@ -1,0 +1,17 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:metallum"
+      ]
+    }
+  ],
+  "icon": "minecraft:furnace",
+  "requires": [
+    "thaumory:circles"
+  ],
+  "x": 1,
+  "y": 2
+}

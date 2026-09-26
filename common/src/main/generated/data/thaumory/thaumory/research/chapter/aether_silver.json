@@ -18,7 +18,16 @@
     "thaumory:arcane_metals"
   ],
   "unlocks": [
-    "thaumory:alchemy/aether_silver_ingot"
+    "thaumory:alchemy/aether_silver_ingot",
+    "thaumory:aether_silver_axe",
+    "thaumory:aether_silver_hoe",
+    "thaumory:aether_silver_pickaxe",
+    "thaumory:aether_silver_shovel",
+    "thaumory:aether_silver_sword",
+    "thaumory:aether_silver_helmet",
+    "thaumory:aether_silver_chestplate",
+    "thaumory:aether_silver_leggings",
+    "thaumory:aether_silver_boots"
   ],
   "x": 1,
   "y": 0

@@ -1,0 +1,14 @@
+{
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "thaumory:arcane_crystal_shard"
+    }
+  ],
+  "icon": "thaumory:arcane_crystal_shard",
+  "requires": [
+    "thaumory:beginning"
+  ],
+  "x": 0,
+  "y": 1
+}

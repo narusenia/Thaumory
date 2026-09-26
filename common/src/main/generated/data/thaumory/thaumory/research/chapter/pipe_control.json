@@ -1,0 +1,20 @@
+{
+  "category": "thaumory:artifice",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "thaumory:pipe"
+    }
+  ],
+  "icon": "thaumory:valve",
+  "requires": [
+    "thaumory:pipes"
+  ],
+  "unlocks": [
+    "thaumory:filter_pipe",
+    "thaumory:valve",
+    "thaumory:pump"
+  ],
+  "x": 2,
+  "y": 0
+}

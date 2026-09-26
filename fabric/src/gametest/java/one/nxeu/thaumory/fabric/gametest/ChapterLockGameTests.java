@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.CrafterBlock;
+import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.research.ResearchProgress;
 
 /**
@@ -34,6 +35,9 @@ public class ChapterLockGameTests {
         ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
         helper.assertFalse(ResearchProgress.canUse(Optional.of(player), BUTTON), "the button is open");
         helper.assertTrue(ResearchProgress.canUse(Optional.of(player), Identifier.withDefaultNamespace("oak_button")), "the oak button is locked");
+        // Thaumory's own: the jar waits for the chapter "Jars", the Crucible needs none.
+        helper.assertFalse(ResearchProgress.canUse(Optional.of(player), Thaumory.id("jar")), "the jar is open");
+        helper.assertTrue(ResearchProgress.canUse(Optional.of(player), Thaumory.id("crucible")), "the Crucible is locked");
         helper.succeed();
     }
 }

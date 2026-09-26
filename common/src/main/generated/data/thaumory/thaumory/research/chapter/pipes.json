@@ -1,0 +1,18 @@
+{
+  "category": "thaumory:artifice",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "thaumory:jar"
+    }
+  ],
+  "icon": "thaumory:pipe",
+  "requires": [
+    "thaumory:jars"
+  ],
+  "unlocks": [
+    "thaumory:pipe"
+  ],
+  "x": 1,
+  "y": 0
+}

@@ -1,0 +1,17 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:sordes"
+      ]
+    }
+  ],
+  "icon": "thaumory:flux_crystal",
+  "requires": [
+    "thaumory:pollution"
+  ],
+  "x": 3,
+  "y": 0
+}

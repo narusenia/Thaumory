@@ -1,0 +1,16 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:circles",
+      "count": 5,
+      "outcome": "success"
+    }
+  ],
+  "icon": "thaumory:aether_silver_circle_core",
+  "requires": [
+    "thaumory:circle_ranks"
+  ],
+  "x": 2,
+  "y": 1
+}

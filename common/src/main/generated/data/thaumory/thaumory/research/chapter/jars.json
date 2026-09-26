@@ -1,0 +1,19 @@
+{
+  "category": "thaumory:artifice",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:glass"
+    }
+  ],
+  "icon": "thaumory:jar",
+  "requires": [
+    "thaumory:crucible"
+  ],
+  "unlocks": [
+    "thaumory:jar",
+    "thaumory:label"
+  ],
+  "x": 0,
+  "y": 0
+}

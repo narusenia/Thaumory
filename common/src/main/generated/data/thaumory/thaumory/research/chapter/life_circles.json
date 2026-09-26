@@ -1,0 +1,17 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:vita"
+      ]
+    }
+  ],
+  "icon": "minecraft:feather",
+  "requires": [
+    "thaumory:circles"
+  ],
+  "x": 3,
+  "y": 2
+}

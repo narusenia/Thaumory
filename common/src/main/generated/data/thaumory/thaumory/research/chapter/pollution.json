@@ -1,0 +1,15 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "thaumory:polluted_soil"
+    }
+  ],
+  "icon": "thaumory:polluted_stone",
+  "requires": [
+    "thaumory:flux"
+  ],
+  "x": 2,
+  "y": 0
+}

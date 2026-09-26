@@ -11,6 +11,7 @@
     "thaumory:arcane_metals"
   ],
   "unlocks": [
+    "thaumory:blank_focus",
     "thaumory:alchemy/light_focus"
   ],
   "x": 1,

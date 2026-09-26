@@ -1,0 +1,16 @@
+{
+  "category": "thaumory:infusion",
+  "conditions": [
+    {
+      "type": "thaumory:circles",
+      "count": 3,
+      "outcome": "success"
+    }
+  ],
+  "icon": "thaumory:rune",
+  "requires": [
+    "thaumory:infusion"
+  ],
+  "x": 2,
+  "y": 1
+}

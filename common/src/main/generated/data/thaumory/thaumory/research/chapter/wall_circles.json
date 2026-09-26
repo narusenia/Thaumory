@@ -1,0 +1,16 @@
+{
+  "category": "thaumory:circles",
+  "conditions": [
+    {
+      "type": "thaumory:circles",
+      "count": 3,
+      "outcome": "success"
+    }
+  ],
+  "icon": "thaumory:chalk",
+  "requires": [
+    "thaumory:circles"
+  ],
+  "x": 0,
+  "y": 1
+}
