@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "thaumory:item/wand_cap_arcane_iron"
+  }
+}

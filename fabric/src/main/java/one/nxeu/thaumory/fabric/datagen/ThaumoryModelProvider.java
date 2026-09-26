@@ -2,9 +2,12 @@ package one.nxeu.thaumory.fabric.datagen;
 
 import com.mojang.math.OctahedralGroup;
 import com.mojang.math.Quadrant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -20,6 +23,9 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.renderer.block.dispatch.VariantMutator;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.renderer.item.SelectItemModel;
+import net.minecraft.client.renderer.item.properties.select.ComponentContents;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
@@ -28,18 +34,20 @@ import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.block.ThaumoryBlocks;
 import one.nxeu.thaumory.block.chalk.ChalkPatternBlock;
 import one.nxeu.thaumory.block.core.CircleCoreBlock;
-import one.nxeu.thaumory.block.stone.CircleStoneBlock;
 import one.nxeu.thaumory.block.crucible.CrucibleBlock;
 import one.nxeu.thaumory.block.jar.JarBlock;
 import one.nxeu.thaumory.block.pipe.EssentiaPipeBlock;
 import one.nxeu.thaumory.block.pipe.FilterPipeBlock;
 import one.nxeu.thaumory.block.pipe.PumpBlock;
 import one.nxeu.thaumory.block.pipe.ValveBlock;
+import one.nxeu.thaumory.block.stone.CircleStoneBlock;
 import one.nxeu.thaumory.circle.CirclePlane;
 import one.nxeu.thaumory.client.RuneTint;
 import one.nxeu.thaumory.item.EquipmentSet;
 import one.nxeu.thaumory.item.RuneItem;
+import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
+import one.nxeu.thaumory.wand.WandBuild;
 
 final class ThaumoryModelProvider extends FabricModelProvider {
     ThaumoryModelProvider(FabricPackOutput output) {
@@ -231,6 +239,44 @@ final class ThaumoryModelProvider extends FabricModelProvider {
      * Turns a floor model by {@code turn} about the vertical, then onto the face {@code front} points
      * away from ({@link CirclePlane}), as the one x, y and z rotation that does both.
      */
+    /** Wand caps and cores by item, each with its layer of the wand's picture (requirements §7.1). */
+    private static final List<Map.Entry<Identifier, String>> WAND_CAPS = List.of(
+            Map.entry(Thaumory.id("gold_wand_cap"), "wand_cap_gold"),
+            Map.entry(Thaumory.id("arcane_iron_wand_cap"), "wand_cap_arcane_iron"),
+            Map.entry(Thaumory.id("aether_silver_wand_cap"), "wand_cap_aether_silver"));
+    private static final List<Map.Entry<Identifier, String>> WAND_CORES = List.of(
+            Map.entry(Identifier.withDefaultNamespace("stick"), "wand_core_wood"),
+            Map.entry(Thaumory.id("crystal_wand_core"), "wand_core_crystal"));
+
+    /**
+     * A wand shows what it is made of: its core's shaft, and its caps' ends over it. Each layer picks
+     * its picture by the wand's parts; a wand with none recorded, or with parts from an addon, is
+     * gold on wood.
+     */
+    private static void wand(ItemModelGenerators generators) {
+        ComponentContents<WandBuild> build = new ComponentContents<>(ThaumoryComponents.WAND_BUILD.get());
+        Map<String, ItemModel.Unbaked> layers = new HashMap<>();
+        Function<String, ItemModel.Unbaked> layer = name -> layers.computeIfAbsent(name, n -> wandLayer(generators, n));
+        List<SelectItemModel.SwitchCase<WandBuild>> cores = new ArrayList<>();
+        for (Map.Entry<Identifier, String> core : WAND_CORES) {
+            cores.add(ItemModelUtils.when(WAND_CAPS.stream().map(cap -> new WandBuild(cap.getKey(), core.getKey())).toList(),
+                    layer.apply(core.getValue())));
+        }
+        List<SelectItemModel.SwitchCase<WandBuild>> caps = new ArrayList<>();
+        for (Map.Entry<Identifier, String> cap : WAND_CAPS) {
+            caps.add(ItemModelUtils.when(WAND_CORES.stream().map(core -> new WandBuild(cap.getKey(), core.getKey())).toList(),
+                    layer.apply(cap.getValue())));
+        }
+        generators.itemModelOutput.accept(ThaumoryItems.WAND.get(), ItemModelUtils.composite(
+                ItemModelUtils.select(build, layer.apply("wand_core_wood"), cores),
+                ItemModelUtils.select(build, layer.apply("wand_cap_gold"), caps)));
+    }
+
+    private static ItemModel.Unbaked wandLayer(ItemModelGenerators generators, String name) {
+        Identifier texture = Thaumory.id("item/" + name);
+        return ItemModelUtils.plainModel(ModelTemplates.FLAT_HANDHELD_ITEM.create(texture, TextureMapping.layer0(new Material(texture)), generators.modelOutput));
+    }
+
     private static VariantMutator onFace(Direction front, Quadrant turn) {
         OctahedralGroup wanted = CirclePlane.rotation(front).compose(turn.rotationY);
         for (Quadrant x : Quadrant.values()) {
@@ -251,7 +297,7 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.MONOCLE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.FLUX_CRYSTAL.get(), ModelTemplates.FLAT_ITEM);
-        generators.generateFlatItem(ThaumoryItems.WAND.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        wand(generators);
         generators.generateFlatItem(ThaumoryItems.ARCANE_CODEX.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_RUNE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.CIRCLE_CORE.get(), ModelTemplates.FLAT_ITEM);

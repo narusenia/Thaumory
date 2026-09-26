@@ -1,6 +1,117 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "thaumory:item/wand"
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:select",
+        "cases": [
+          {
+            "model": {
+              "type": "minecraft:model",
+              "model": "thaumory:item/wand_core_wood"
+            },
+            "when": [
+              {
+                "cap": "thaumory:gold_wand_cap",
+                "core": "minecraft:stick"
+              },
+              {
+                "cap": "thaumory:arcane_iron_wand_cap",
+                "core": "minecraft:stick"
+              },
+              {
+                "cap": "thaumory:aether_silver_wand_cap",
+                "core": "minecraft:stick"
+              }
+            ]
+          },
+          {
+            "model": {
+              "type": "minecraft:model",
+              "model": "thaumory:item/wand_core_crystal"
+            },
+            "when": [
+              {
+                "cap": "thaumory:gold_wand_cap",
+                "core": "thaumory:crystal_wand_core"
+              },
+              {
+                "cap": "thaumory:arcane_iron_wand_cap",
+                "core": "thaumory:crystal_wand_core"
+              },
+              {
+                "cap": "thaumory:aether_silver_wand_cap",
+                "core": "thaumory:crystal_wand_core"
+              }
+            ]
+          }
+        ],
+        "component": "thaumory:wand_build",
+        "fallback": {
+          "type": "minecraft:model",
+          "model": "thaumory:item/wand_core_wood"
+        },
+        "property": "minecraft:component"
+      },
+      {
+        "type": "minecraft:select",
+        "cases": [
+          {
+            "model": {
+              "type": "minecraft:model",
+              "model": "thaumory:item/wand_cap_gold"
+            },
+            "when": [
+              {
+                "cap": "thaumory:gold_wand_cap",
+                "core": "minecraft:stick"
+              },
+              {
+                "cap": "thaumory:gold_wand_cap",
+                "core": "thaumory:crystal_wand_core"
+              }
+            ]
+          },
+          {
+            "model": {
+              "type": "minecraft:model",
+              "model": "thaumory:item/wand_cap_arcane_iron"
+            },
+            "when": [
+              {
+                "cap": "thaumory:arcane_iron_wand_cap",
+                "core": "minecraft:stick"
+              },
+              {
+                "cap": "thaumory:arcane_iron_wand_cap",
+                "core": "thaumory:crystal_wand_core"
+              }
+            ]
+          },
+          {
+            "model": {
+              "type": "minecraft:model",
+              "model": "thaumory:item/wand_cap_aether_silver"
+            },
+            "when": [
+              {
+                "cap": "thaumory:aether_silver_wand_cap",
+                "core": "minecraft:stick"
+              },
+              {
+                "cap": "thaumory:aether_silver_wand_cap",
+                "core": "thaumory:crystal_wand_core"
+              }
+            ]
+          }
+        ],
+        "component": "thaumory:wand_build",
+        "fallback": {
+          "type": "minecraft:model",
+          "model": "thaumory:item/wand_cap_gold"
+        },
+        "property": "minecraft:component"
+      }
+    ]
   }
 }
