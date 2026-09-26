@@ -17,6 +17,12 @@ public final class ThaumoryEntities {
             () -> EntityType.Builder.of(VoidRemnant::new, MobCategory.MONSTER).sized(0.4f, 0.8f).clientTrackingRange(8)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Thaumory.id("void_remnant"))));
 
+    /** What the fire focus shoots (requirements §17.7). */
+    public static final RegistrySupplier<EntityType<FocusFireball>> FOCUS_FIREBALL = ENTITIES.register("focus_fireball",
+            () -> EntityType.Builder.<FocusFireball>of(FocusFireball::new, MobCategory.MISC).sized(0.3125f, 0.3125f)
+                    .clientTrackingRange(4).updateInterval(10)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Thaumory.id("focus_fireball"))));
+
     private ThaumoryEntities() {}
 
     public static void register() {

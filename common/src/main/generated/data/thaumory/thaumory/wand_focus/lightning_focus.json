@@ -1,0 +1,14 @@
+{
+  "cooldown": 30,
+  "cost": {
+    "thaumory:tempestas": 3
+  },
+  "effect": "thaumory:lightning",
+  "item": "thaumory:lightning_focus",
+  "settings": {
+    "chain_count": 2.0,
+    "chain_radius": 4.0,
+    "damage": 5.0,
+    "range": 24.0
+  }
+}

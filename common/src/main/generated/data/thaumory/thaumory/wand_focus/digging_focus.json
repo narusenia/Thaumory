@@ -1,0 +1,12 @@
+{
+  "cooldown": 5,
+  "cost": {
+    "thaumory:bellum": 1,
+    "thaumory:terra": 1
+  },
+  "effect": "thaumory:digging",
+  "item": "thaumory:digging_focus",
+  "settings": {
+    "range": 16.0
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "cooldown": 20,
+  "cost": {
+    "thaumory:aqua": 2
+  },
+  "effect": "thaumory:frost",
+  "item": "thaumory:frost_focus",
+  "settings": {
+    "half_angle": 30.0,
+    "range": 6.0,
+    "slow_seconds": 5.0
+  }
+}

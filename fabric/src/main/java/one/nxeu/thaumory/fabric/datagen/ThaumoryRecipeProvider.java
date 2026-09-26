@@ -30,9 +30,13 @@ import one.nxeu.thaumory.wand.WandRebuildRecipe;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AER;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.AQUA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARCANUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.ARTIFICIUM;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.BELLUM;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.IGNIS;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.LUX;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.ORDO;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.TEMPESTAS;
+import static one.nxeu.thaumory.aspect.ThaumoryAspects.TERRA;
 import static one.nxeu.thaumory.aspect.ThaumoryAspects.VINCULUM;
 
 /** Crafting table recipes and Crucible alchemy recipes. */
@@ -74,6 +78,15 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 alchemy("monocle", ThaumoryItems.ARCANE_LOUPE.get(), ThaumoryItems.MONOCLE.get(), new AspectStack(LUX, 12), new AspectStack(ARCANUM, 8));
                 alchemy("crystal_wand_core", Items.STICK, ThaumoryItems.CRYSTAL_WAND_CORE.get(), new AspectStack(ARCANUM, 8), new AspectStack(LUX, 4));
                 alchemy("light_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.LIGHT_FOCUS.get(), new AspectStack(LUX, 12));
+                alchemy("fire_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.FIRE_FOCUS.get(), new AspectStack(IGNIS, 12));
+                alchemy("frost_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.FROST_FOCUS.get(), new AspectStack(AQUA, 12));
+                alchemy("lightning_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.LIGHTNING_FOCUS.get(), new AspectStack(TEMPESTAS, 12));
+                alchemy("digging_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.DIGGING_FOCUS.get(),
+                        new AspectStack(TERRA, 8), new AspectStack(BELLUM, 8));
+                alchemy("leap_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.LEAP_FOCUS.get(), new AspectStack(ARCANUM, 8), new AspectStack(AER, 8));
+                // Ordo and Chaos, what the focus pays with, would cancel out in the Crucible.
+                alchemy("exchange_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.EXCHANGE_FOCUS.get(),
+                        new AspectStack(ARTIFICIUM, 8), new AspectStack(ORDO, 4));
                 // A crystal shard held in a ring of gold (requirements §17.7).
                 shaped(RecipeCategory.TOOLS, ThaumoryItems.BLANK_FOCUS.get())
                         .pattern(" N ")

@@ -27,7 +27,8 @@
       "one.nxeu.thaumory.fabric.gametest.CircleChildGameTests",
       "one.nxeu.thaumory.fabric.gametest.CircleStoneGameTests",
       "one.nxeu.thaumory.fabric.gametest.WandPartGameTests",
-      "one.nxeu.thaumory.fabric.gametest.WandFocusGameTests"
+      "one.nxeu.thaumory.fabric.gametest.WandFocusGameTests",
+      "one.nxeu.thaumory.fabric.gametest.FocusSpellGameTests"
     ]
   },
   "depends": {

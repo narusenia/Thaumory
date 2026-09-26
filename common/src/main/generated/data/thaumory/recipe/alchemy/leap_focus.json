@@ -1,0 +1,11 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:aer": 8,
+    "thaumory:arcanum": 8
+  },
+  "catalyst": "thaumory:blank_focus",
+  "result": {
+    "id": "thaumory:leap_focus"
+  }
+}

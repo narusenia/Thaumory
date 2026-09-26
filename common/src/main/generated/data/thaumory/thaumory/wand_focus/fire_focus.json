@@ -1,0 +1,13 @@
+{
+  "cooldown": 15,
+  "cost": {
+    "thaumory:ignis": 2
+  },
+  "effect": "thaumory:fire",
+  "item": "thaumory:fire_focus",
+  "settings": {
+    "burn_seconds": 4.0,
+    "damage": 4.0,
+    "speed": 1.5
+  }
+}

@@ -320,6 +320,12 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.CRYSTAL_WAND_CORE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_FOCUS.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.LIGHT_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.FIRE_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.FROST_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.LIGHTNING_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.DIGGING_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.LEAP_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.EXCHANGE_FOCUS.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.CIRCLE_STONE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.SCROLL.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.AMULET.get(), ModelTemplates.FLAT_ITEM);

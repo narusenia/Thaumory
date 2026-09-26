@@ -1,0 +1,11 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:bellum": 8,
+    "thaumory:terra": 8
+  },
+  "catalyst": "thaumory:blank_focus",
+  "result": {
+    "id": "thaumory:digging_focus"
+  }
+}

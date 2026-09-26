@@ -21,6 +21,7 @@ import java.util.OptionalInt;
 import java.util.stream.Stream;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -134,6 +135,7 @@ public final class ThaumoryClient {
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_STONE_ENTITY.get(), CircleStoneRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.PIPE_ENTITY.get(), PipeRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
+        EntityRendererRegistry.register(ThaumoryEntities.FOCUS_FIREBALL, ThrownItemRenderer::new);
         particles.register(ThaumoryParticles.ASPECT_MOTE.get(), AspectMoteParticle.Provider::new);
         RuneTint.register();
         FilterPipeTint.register();

@@ -1,0 +1,12 @@
+{
+  "cooldown": 20,
+  "cost": {
+    "thaumory:aer": 2,
+    "thaumory:arcanum": 2
+  },
+  "effect": "thaumory:leap",
+  "item": "thaumory:leap_focus",
+  "settings": {
+    "distance": 8.0
+  }
+}

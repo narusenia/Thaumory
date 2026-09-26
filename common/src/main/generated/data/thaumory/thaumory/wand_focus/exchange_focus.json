@@ -1,0 +1,12 @@
+{
+  "cooldown": 5,
+  "cost": {
+    "thaumory:chaos": 1,
+    "thaumory:ordo": 1
+  },
+  "effect": "thaumory:exchange",
+  "item": "thaumory:exchange_focus",
+  "settings": {
+    "range": 6.0
+  }
+}

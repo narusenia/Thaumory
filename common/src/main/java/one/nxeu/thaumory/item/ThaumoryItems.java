@@ -50,6 +50,12 @@ public final class ThaumoryItems {
     public static final RegistrySupplier<Item> BLANK_FOCUS = register("blank_focus", Item::new, new Item.Properties().stacksTo(16));
     /** Goes onto a wand; what it casts comes from {@code thaumory/wand_focus} in the datapack. */
     public static final RegistrySupplier<Item> LIGHT_FOCUS = register("light_focus", Item::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<Item> FIRE_FOCUS = register("fire_focus", Item::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<Item> FROST_FOCUS = register("frost_focus", Item::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<Item> LIGHTNING_FOCUS = register("lightning_focus", Item::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<Item> DIGGING_FOCUS = register("digging_focus", Item::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<Item> LEAP_FOCUS = register("leap_focus", Item::new, new Item.Properties().stacksTo(1));
+    public static final RegistrySupplier<Item> EXCHANGE_FOCUS = register("exchange_focus", Item::new, new Item.Properties().stacksTo(1));
     public static final RegistrySupplier<ArcaneCodexItem> ARCANE_CODEX =
             register("arcane_codex", ArcaneCodexItem::new, new Item.Properties().stacksTo(1));
     /** Made from the book only, so it is not in the creative tab. */
@@ -144,7 +150,8 @@ public final class ThaumoryItems {
      */
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER = List.of(
             ARCANE_CRYSTAL, ARCANE_CRYSTAL_SHARD, ARCANE_LOUPE, MONOCLE, WAND, GOLD_WAND_CAP, ARCANE_IRON_WAND_CAP, AETHER_SILVER_WAND_CAP,
-            CRYSTAL_WAND_CORE, BLANK_FOCUS, LIGHT_FOCUS, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE,
+            CRYSTAL_WAND_CORE, BLANK_FOCUS, LIGHT_FOCUS, FIRE_FOCUS, FROST_FOCUS, LIGHTNING_FOCUS, DIGGING_FOCUS, LEAP_FOCUS,
+            EXCHANGE_FOCUS, ARCANE_CODEX, CRUCIBLE, JAR, LABEL, PIPE, FILTER_PIPE, VALVE, PUMP, BLANK_RUNE, RUNE, CIRCLE_CORE,
             ARCANE_IRON_CIRCLE_CORE, AETHER_SILVER_CIRCLE_CORE, PEDESTAL, BLANK_SCROLL, AMULET, BLANK_CIRCLE_STONE,
             CHALK, AMPLIFYING_CHALK, EXTENDING_CHALK, ECONOMIZING_CHALK, STABILIZING_CHALK, POLLUTED_SOIL, POLLUTED_STONE, FLUX_CRYSTAL);
     private static final List<RegistrySupplier<? extends Item>> TAB_ORDER_EQUIPMENT =

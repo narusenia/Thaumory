@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:aqua": 12
+  },
+  "catalyst": "thaumory:blank_focus",
+  "result": {
+    "id": "thaumory:frost_focus"
+  }
+}

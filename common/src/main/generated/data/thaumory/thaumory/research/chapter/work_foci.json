@@ -1,0 +1,20 @@
+{
+  "category": "thaumory:metals",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:diamond_pickaxe"
+    }
+  ],
+  "icon": "thaumory:digging_focus",
+  "requires": [
+    "thaumory:wand_foci"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/digging_focus",
+    "thaumory:alchemy/leap_focus",
+    "thaumory:alchemy/exchange_focus"
+  ],
+  "x": 1,
+  "y": 2
+}

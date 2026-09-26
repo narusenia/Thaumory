@@ -1,0 +1,22 @@
+{
+  "category": "thaumory:metals",
+  "conditions": [
+    {
+      "type": "thaumory:aspects",
+      "aspects": [
+        "thaumory:tempestas"
+      ]
+    }
+  ],
+  "icon": "thaumory:fire_focus",
+  "requires": [
+    "thaumory:wand_foci"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/fire_focus",
+    "thaumory:alchemy/frost_focus",
+    "thaumory:alchemy/lightning_focus"
+  ],
+  "x": 2,
+  "y": 1
+}

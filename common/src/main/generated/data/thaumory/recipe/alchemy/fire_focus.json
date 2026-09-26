@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:ignis": 12
+  },
+  "catalyst": "thaumory:blank_focus",
+  "result": {
+    "id": "thaumory:fire_focus"
+  }
+}
