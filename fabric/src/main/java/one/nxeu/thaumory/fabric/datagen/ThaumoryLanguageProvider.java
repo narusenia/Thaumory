@@ -106,6 +106,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.wand.focus", "Focus: %s");
             builder.add("hud.thaumory.wand.capacity", "Holds %s of each");
             builder.add("message.thaumory.focus.no_essentia", "The wand holds too little Essentia for its focus");
+            builder.add("message.thaumory.focus.none_in_inventory", "You carry no focus");
+            builder.add("key.thaumory.select_focus", "Choose Wand Focus");
+            builder.add("screen.thaumory.focus_menu", "Wand Focus");
+            builder.add("screen.thaumory.focus_menu.detach", "Take off");
             builder.add("tooltip.thaumory.wand.cap", "Caps: %s");
             builder.add("tooltip.thaumory.wand.cap_stats", " (holds %s)");
             builder.add("tooltip.thaumory.wand.core", "Core: %s");
@@ -425,6 +429,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("tooltip.thaumory.wand.focus", "焦点: %s");
             builder.add("hud.thaumory.wand.capacity", "容量 %s");
             builder.add("message.thaumory.focus.no_essentia", "焦点に使う Essentia が杖に足りない");
+            builder.add("message.thaumory.focus.none_in_inventory", "持ち物に焦点が無い");
+            builder.add("key.thaumory.select_focus", "焦点を選ぶ");
+            builder.add("screen.thaumory.focus_menu", "杖の焦点");
+            builder.add("screen.thaumory.focus_menu.detach", "外す");
             builder.add("tooltip.thaumory.wand.cap", "金具: %s");
             builder.add("tooltip.thaumory.wand.cap_stats", "（内蔵 %s）");
             builder.add("tooltip.thaumory.wand.core", "芯: %s");

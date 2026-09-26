@@ -51,6 +51,7 @@ import one.nxeu.thaumory.scan.ItemScanner;
 import one.nxeu.thaumory.scan.ScanSettings;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
 import one.nxeu.thaumory.sound.ThaumorySounds;
+import one.nxeu.thaumory.wand.FocusSelection;
 import one.nxeu.thaumory.wand.WandFoci;
 import one.nxeu.thaumory.wand.WandParts;
 import one.nxeu.thaumory.wand.spell.ThaumoryFocusSpells;
@@ -114,6 +115,7 @@ public final class Thaumory {
         CapacitySync.register();
         WandPartSync.register();
         InfusionRuntime.register();
+        FocusSelection.register();
         knowledge.registerEvents();
         ResearchProgress research = new ResearchProgress();
         research.register(knowledge);

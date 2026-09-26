@@ -7,6 +7,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -17,6 +18,8 @@ import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 import one.nxeu.thaumory.item.ThaumoryItems;
 import one.nxeu.thaumory.jar.JarContents;
+import one.nxeu.thaumory.network.SelectFocusPayload;
+import one.nxeu.thaumory.wand.FocusSelection;
 import one.nxeu.thaumory.wand.WandCasting;
 
 /** Casting from a wand's focus, and filling the wand for it (requirements §17.7). */
@@ -157,5 +160,36 @@ public class WandFocusGameTests {
             helper.assertTrue(stored.amount(ThaumoryAspects.LUX) >= 8, "Lux in the wand: " + stored);
             leave(helper, player);
         });
+    }
+
+    @GameTest
+    public void theMenuPutsAFocusFromTheInventoryOnTheWand(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ThaumoryItems.WAND.get()));
+        player.getInventory().setItem(5, new ItemStack(ThaumoryItems.LIGHT_FOCUS.get()));
+        player.getInventory().setItem(6, new ItemStack(Items.DIRT));
+
+        helper.assertFalse(FocusSelection.select(player, 6), "put dirt on the wand");
+        helper.assertTrue(FocusSelection.select(player, 5), "the wand did not change");
+        helper.assertValueEqual(player.getMainHandItem().get(ThaumoryComponents.WAND_FOCUS.get()), Thaumory.id("light_focus"), "focus");
+        helper.assertTrue(player.getInventory().getItem(5).isEmpty(), "the focus stayed in its slot");
+        leave(helper, player);
+        helper.succeed();
+    }
+
+    @GameTest
+    public void theMenuTakesTheFocusOffIntoTheInventory(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setItemInHand(InteractionHand.MAIN_HAND, lightWand(4));
+        player.getInventory().setItem(5, new ItemStack(ThaumoryItems.LIGHT_FOCUS.get()));
+
+        helper.assertFalse(FocusSelection.select(player, 5), "put on a focus of the same kind");
+        helper.assertTrue(FocusSelection.select(player, SelectFocusPayload.DETACH), "the wand did not change");
+        helper.assertFalse(player.getMainHandItem().has(ThaumoryComponents.WAND_FOCUS.get()), "the focus is still on");
+        helper.assertValueEqual(player.getInventory().countItem(ThaumoryItems.LIGHT_FOCUS.get()), 2, "foci in the inventory");
+        helper.assertValueEqual(stored(player.getMainHandItem()), AspectList.of(ThaumoryAspects.LUX, 4), "left in the wand");
+        helper.assertFalse(FocusSelection.select(player, SelectFocusPayload.DETACH), "took off a focus twice");
+        leave(helper, player);
+        helper.succeed();
     }
 }

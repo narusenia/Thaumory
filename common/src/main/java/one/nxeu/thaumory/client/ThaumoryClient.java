@@ -75,6 +75,9 @@ public final class ThaumoryClient {
     /** Uses the active effect of the item in hand, or of the armor worn (requirements §10.2). */
     private static final KeyMapping USE_INFUSION = new KeyMapping("key.thaumory.use_infusion", InputConstants.KEY_V,
             KeyMapping.Category.register(Thaumory.id("thaumory")));
+    /** Held to choose the focus of the wand in hand (requirements §17.7). */
+    private static final KeyMapping SELECT_FOCUS = new KeyMapping("key.thaumory.select_focus", InputConstants.KEY_G,
+            USE_INFUSION.getCategory());
 
     private ThaumoryClient() {}
 
@@ -109,11 +112,18 @@ public final class ThaumoryClient {
             ClientResearch.clear();
         });
         KeyMappingRegistry.register(USE_INFUSION);
+        KeyMappingRegistry.register(SELECT_FOCUS);
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new RingGlows(), Thaumory.id("ring_glows"));
         ClientTickEvent.CLIENT_POST.register(minecraft -> {
             while (USE_INFUSION.consumeClick()) {
                 if (minecraft.player != null) {
                     NetworkManager.sendToServer(UseInfusionPayload.INSTANCE);
+                }
+            }
+            while (SELECT_FOCUS.consumeClick()) {
+                if (minecraft.player != null && minecraft.gui.screen() == null && minecraft.player.getMainHandItem().is(ThaumoryItems.WAND.get())) {
+                    FocusMenuScreen.open(SELECT_FOCUS, minecraft.player).ifPresentOrElse(minecraft.gui::setScreen,
+                            () -> minecraft.player.sendOverlayMessage(Component.translatable("message.thaumory.focus.none_in_inventory")));
                 }
             }
         });
