@@ -272,7 +272,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.monocle", "Monocle of Revealing");
             builder.add("chapter.thaumory.monocle.text", "Steep a loupe deep in Lux and Arcanum, and it will stay at your eye. Worn on the head, it shows the Flux and what vessels, pipes and circles hold, without a hand to hold it. To name other things or to scan, you still need the loupe itself.");
             builder.add("chapter.thaumory.wand_foci", "Wand Foci");
-            builder.add("chapter.thaumory.wand_foci.text", "Set a crystal shard in a ring of gold nuggets and you have a blank focus. Steeped in an aspect, it learns a spell; put it on a wand and a right click into the air casts it, paid from the Essentia the wand holds. Hold the focus key to choose among the foci you carry. The wand takes in only what its focus uses, as much as its caps hold: pour a jar into it from the other hand, or stand in a charging circle. Steeped in Lux, a focus sets a light that never goes out where you look; sneak to take one away.");
+            builder.add("chapter.thaumory.wand_foci.text", "Set a crystal shard in a ring of gold nuggets and you have a blank focus. Steeped in an aspect, it learns a spell; put it on a wand and a right click into the air casts it, paid from the Essentia the wand holds. Hold the focus key to choose among the foci you carry. The wand takes in any aspect, as much of each as its caps hold, so fill it before you change foci: pour a jar into it from the other hand, or stand in a charging circle. Steeped in Lux, a focus sets a light that never goes out where you look; sneak to take one away.");
             builder.add("hint.thaumory.teleport", "Arcanum, bound with Aer, bends space.");
             builder.add("hint.thaumory.light", "Where Lux lies over Ignis, darkness gives way.");
             builder.add("hint.thaumory.purification", "Ordo and Lux clear what has stagnated.");
@@ -590,7 +590,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.monocle", "暴きのモノクル");
             builder.add("chapter.thaumory.monocle.text", "ルーペを Lux と Arcanum にたっぷりと浸せば、目に据わって離れなくなる。頭に着ければ、手に持たずとも Flux と、器・管・陣の中身が見える。ほかのものの名を知るにも、スキャンするにも、ルーペそのものが要る。");
             builder.add("chapter.thaumory.wand_foci", "杖の焦点");
-            builder.add("chapter.thaumory.wand_foci.text", "結晶のかけらを金塊の輪にはめれば、空の焦点になる。アスペクトに浸すと呪文を覚え、杖に付けて空へ右クリックすれば、杖に蓄えた Essentia を払って撃てる。焦点のキーを押している間、持ち物の焦点から選べる。杖が受け入れるのは焦点が使うものだけで、量は金具しだい。もう片方の手の瓶から注ぐか、充填の陣の中に立てばよい。Lux に浸した焦点は、見つめた場所に消えない光を置く。しゃがめば消せる。");
+            builder.add("chapter.thaumory.wand_foci.text", "結晶のかけらを金塊の輪にはめれば、空の焦点になる。アスペクトに浸すと呪文を覚え、杖に付けて空へ右クリックすれば、杖に蓄えた Essentia を払って撃てる。焦点のキーを押している間、持ち物の焦点から選べる。杖はどのアスペクトでも受け入れ、量は金具しだい。焦点を替える前に溜めておくとよい。もう片方の手の瓶から注ぐか、充填の陣の中に立てばよい。Lux に浸した焦点は、見つめた場所に消えない光を置く。しゃがめば消せる。");
             builder.add("hint.thaumory.teleport", "Arcanum は、Aer と結びつくとき、空間を歪める。");
             builder.add("hint.thaumory.light", "Lux が Ignis に重なるとき、闇は退く。");
             builder.add("hint.thaumory.purification", "Ordo と Lux は、淀みを澄ませる。");

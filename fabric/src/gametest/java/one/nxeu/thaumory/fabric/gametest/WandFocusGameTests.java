@@ -111,17 +111,17 @@ public class WandFocusGameTests {
         helper.succeed();
     }
 
-    /** The wand takes only what its focus uses, as far as its gold caps hold, and keeps the rest of an earlier focus. */
+    /** The wand takes every aspect, each as far as its gold caps hold, with or without a focus. */
     @GameTest
-    public void aWandTakesWhatItsFocusUsesUpToItsCaps(GameTestHelper helper) {
+    public void aWandTakesAnyAspectUpToItsCaps(GameTestHelper helper) {
         ItemStack wand = lightWand(0);
         wand.set(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.of(ThaumoryAspects.IGNIS, 5));
-        AspectList taken = WandCasting.fill(wand, AspectList.builder().add(ThaumoryAspects.LUX, 20).add(ThaumoryAspects.AQUA, 20).build());
+        AspectList taken = WandCasting.fill(wand, AspectList.builder().add(ThaumoryAspects.LUX, 20).add(ThaumoryAspects.IGNIS, 20).build());
 
-        helper.assertValueEqual(taken, AspectList.of(ThaumoryAspects.LUX, 16), "taken");
-        helper.assertValueEqual(stored(wand), AspectList.builder().add(ThaumoryAspects.LUX, 16).add(ThaumoryAspects.IGNIS, 5).build(), "stored");
-        helper.assertValueEqual(WandCasting.fill(new ItemStack(ThaumoryItems.WAND.get()), AspectList.of(ThaumoryAspects.LUX, 20)),
-                AspectList.empty(), "taken without a focus");
+        helper.assertValueEqual(taken, AspectList.builder().add(ThaumoryAspects.LUX, 16).add(ThaumoryAspects.IGNIS, 11).build(), "taken");
+        helper.assertValueEqual(stored(wand), AspectList.builder().add(ThaumoryAspects.LUX, 16).add(ThaumoryAspects.IGNIS, 16).build(), "stored");
+        helper.assertValueEqual(WandCasting.fill(new ItemStack(ThaumoryItems.WAND.get()), AspectList.of(ThaumoryAspects.AQUA, 20)),
+                AspectList.of(ThaumoryAspects.AQUA, 16), "taken without a focus");
         helper.succeed();
     }
 

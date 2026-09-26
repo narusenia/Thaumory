@@ -80,13 +80,13 @@ public final class JarItem extends BlockItem {
 
     /**
      * Pouring into an off-hand item whose active infusion stores Essentia (requirements §10.2), or into
-     * an off-hand wand with a focus (§17.7).
+     * an off-hand wand (§17.7).
      */
     private static boolean pouringIntoItem(Player player, InteractionHand hand) {
         ItemStack item = player.getOffhandItem();
         return hand == InteractionHand.MAIN_HAND && player.isSecondaryUseActive()
                 && (!item.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).storedAspects().isEmpty()
-                || WandCasting.focusItem(item).isPresent());
+                || item.is(ThaumoryItems.WAND.get()));
     }
 
     /** Pours what the off-hand item stores out of the jar, as much as fits; the rest stays in the jar. */

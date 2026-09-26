@@ -73,7 +73,7 @@
   "chapter.thaumory.runes": "ルーン",
   "chapter.thaumory.runes.text": "石に Arcanum と Aqua を沁ませれば空のルーンとなる。瓶の Essentia を注げば、それはそのアスペクトの鍵になる。粘土に同じく沁ませれば、陣を描くチョークが得られる。",
   "chapter.thaumory.wand_foci": "杖の焦点",
-  "chapter.thaumory.wand_foci.text": "結晶のかけらを金塊の輪にはめれば、空の焦点になる。アスペクトに浸すと呪文を覚え、杖に付けて空へ右クリックすれば、杖に蓄えた Essentia を払って撃てる。焦点のキーを押している間、持ち物の焦点から選べる。杖が受け入れるのは焦点が使うものだけで、量は金具しだい。もう片方の手の瓶から注ぐか、充填の陣の中に立てばよい。Lux に浸した焦点は、見つめた場所に消えない光を置く。しゃがめば消せる。",
+  "chapter.thaumory.wand_foci.text": "結晶のかけらを金塊の輪にはめれば、空の焦点になる。アスペクトに浸すと呪文を覚え、杖に付けて空へ右クリックすれば、杖に蓄えた Essentia を払って撃てる。焦点のキーを押している間、持ち物の焦点から選べる。杖はどのアスペクトでも受け入れ、量は金具しだい。焦点を替える前に溜めておくとよい。もう片方の手の瓶から注ぐか、充填の陣の中に立てばよい。Lux に浸した焦点は、見つめた場所に消えない光を置く。しゃがめば消せる。",
   "circle_effect.thaumory.attraction": "引き寄せ",
   "circle_effect.thaumory.binding": "束縛",
   "circle_effect.thaumory.breath": "息吹き",

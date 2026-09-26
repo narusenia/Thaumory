@@ -1,6 +1,8 @@
 package one.nxeu.thaumory.wand;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -18,8 +20,8 @@ import one.nxeu.thaumory.infusion.ItemEssentia;
 import one.nxeu.thaumory.item.ThaumoryComponents;
 
 /**
- * Casting from a wand's focus and filling the wand for it (requirements §17.7). The wand keeps its
- * Essentia in {@code thaumory:stored_essentia}, like infused items.
+ * Casting from a wand's focus and filling the wand (requirements §17.7). The wand keeps Essentia of any
+ * aspect in {@code thaumory:stored_essentia}, like infused items.
  */
 public final class WandCasting {
     /** A core no datapack describes: as strong as a wooden one. */
@@ -62,27 +64,18 @@ public final class WandCasting {
     }
 
     /**
-     * Takes from {@code offered} what the wand's focus uses, as far as its caps hold; the wand keeps
-     * it. Nothing goes in without a focus.
+     * Takes from {@code offered} every aspect, each as far as the wand's caps hold, whatever its focus;
+     * the wand keeps it.
      *
      * @return what was taken
      */
     public static AspectList fill(ItemStack wand, AspectList offered) {
-        Optional<WandFocus> focus = focus(wand);
-        if (focus.isEmpty()) {
-            return AspectList.empty();
-        }
-        ItemEssentia.Fill fill = ItemEssentia.fill(stored(wand), offered, focus.get().aspects(), capacity(wand));
+        Set<Identifier> every = offered.stacks().stream().map(stack -> stack.aspect().id()).collect(Collectors.toSet());
+        ItemEssentia.Fill fill = ItemEssentia.fill(stored(wand), offered, every, capacity(wand));
         if (!fill.taken().isEmpty()) {
             InfusionRuntime.setStored(wand, fill.stored());
         }
         return fill.taken();
-    }
-
-    /** Whether {@code wand} would take any of {@code offered}. */
-    public static boolean accepts(ItemStack wand, AspectList offered) {
-        return focus(wand).map(focus -> !ItemEssentia.fill(stored(wand), offered, focus.aspects(), capacity(wand)).taken().isEmpty())
-                .orElse(false);
     }
 
     /** Casts the spell of the focus on {@code wand}, paying from the wand, and rests the wand after. */

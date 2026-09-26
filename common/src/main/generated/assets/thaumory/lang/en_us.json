@@ -73,7 +73,7 @@
   "chapter.thaumory.runes": "Runes",
   "chapter.thaumory.runes.text": "Stone steeped in Arcanum and Aqua becomes a blank rune; pour a jar's Essentia into it and it becomes that aspect's key. Clay steeped the same way gives chalk to draw circles with.",
   "chapter.thaumory.wand_foci": "Wand Foci",
-  "chapter.thaumory.wand_foci.text": "Set a crystal shard in a ring of gold nuggets and you have a blank focus. Steeped in an aspect, it learns a spell; put it on a wand and a right click into the air casts it, paid from the Essentia the wand holds. Hold the focus key to choose among the foci you carry. The wand takes in only what its focus uses, as much as its caps hold: pour a jar into it from the other hand, or stand in a charging circle. Steeped in Lux, a focus sets a light that never goes out where you look; sneak to take one away.",
+  "chapter.thaumory.wand_foci.text": "Set a crystal shard in a ring of gold nuggets and you have a blank focus. Steeped in an aspect, it learns a spell; put it on a wand and a right click into the air casts it, paid from the Essentia the wand holds. Hold the focus key to choose among the foci you carry. The wand takes in any aspect, as much of each as its caps hold, so fill it before you change foci: pour a jar into it from the other hand, or stand in a charging circle. Steeped in Lux, a focus sets a light that never goes out where you look; sneak to take one away.",
   "circle_effect.thaumory.attraction": "Attraction",
   "circle_effect.thaumory.binding": "Binding",
   "circle_effect.thaumory.breath": "Breath",
