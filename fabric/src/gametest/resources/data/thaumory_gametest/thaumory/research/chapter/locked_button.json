@@ -1,0 +1,6 @@
+{
+  "icon": "minecraft:dark_oak_button",
+  "requires": ["thaumory:beginning"],
+  "conditions": [{"type": "thaumory:scanned", "count": 100000}],
+  "unlocks": ["minecraft:dark_oak_button"]
+}

@@ -8,6 +8,8 @@
     "FontPreparedTextBuilderMixin"
   ],
   "mixins": [
+    "CrafterBlockMixin",
+    "CraftingMenuMixin",
     "CropBlockMixin",
     "EntityMixin",
     "GameRulesMixin",

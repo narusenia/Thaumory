@@ -29,7 +29,8 @@
       "one.nxeu.thaumory.fabric.gametest.WandPartGameTests",
       "one.nxeu.thaumory.fabric.gametest.WandFocusGameTests",
       "one.nxeu.thaumory.fabric.gametest.FocusSpellGameTests",
-      "one.nxeu.thaumory.fabric.gametest.PouchGameTests"
+      "one.nxeu.thaumory.fabric.gametest.PouchGameTests",
+      "one.nxeu.thaumory.fabric.gametest.ChapterLockGameTests"
     ]
   },
   "depends": {

@@ -21,6 +21,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.alchemy.AlchemyRecipe;
 import one.nxeu.thaumory.api.ThaumoryApi;
@@ -28,6 +32,8 @@ import one.nxeu.thaumory.api.text.TextEffect;
 import one.nxeu.thaumory.aspect.AspectText;
 import one.nxeu.thaumory.knowledge.KnowledgeManager;
 import one.nxeu.thaumory.knowledge.PlayerKnowledge;
+import one.nxeu.thaumory.mixin.ShapedRecipeAccessor;
+import one.nxeu.thaumory.mixin.ShapelessRecipeAccessor;
 import one.nxeu.thaumory.network.ResearchViewPayload;
 import one.nxeu.thaumory.sound.ThaumorySounds;
 import one.nxeu.thaumory.text.ThaumoryText;
@@ -104,6 +110,16 @@ public final class ResearchProgress implements KnowledgeManager.Research {
         return ResearchData.research().canUse(recipe, player.map(p -> Thaumory.knowledge().get(p).chapters()).orElse(Set.of()));
     }
 
+    /** What a recipe a chapter unlocks makes, for the book: alchemy, and shaped or shapeless crafting. */
+    private static Optional<Item> result(Recipe<?> recipe) {
+        return switch (recipe) {
+            case AlchemyRecipe alchemy -> Optional.of(alchemy.result().create().getItem());
+            case ShapedRecipe shaped -> Optional.of(((ShapedRecipeAccessor) shaped).thaumory$result().create().getItem());
+            case ShapelessRecipe shapeless -> Optional.of(((ShapelessRecipeAccessor) shapeless).thaumory$result().create().getItem());
+            default -> Optional.empty();
+        };
+    }
+
     static ResearchView view(MinecraftServer server, PlayerKnowledge knowledge) {
         Research research = ResearchData.research();
         KnowledgeFacts facts = new KnowledgeFacts(knowledge);
@@ -115,8 +131,8 @@ public final class ResearchProgress implements KnowledgeManager.Research {
                     .toList();
             List<Identifier> unlocks = chapter.unlocks().stream()
                     .flatMap(recipe -> server.getRecipeManager().byKey(ResourceKey.create(Registries.RECIPE, recipe)).stream())
-                    .filter(holder -> holder.value() instanceof AlchemyRecipe)
-                    .map(holder -> BuiltInRegistries.ITEM.getKey(((AlchemyRecipe) holder.value()).result().create().getItem()))
+                    .flatMap(holder -> result(holder.value()).stream())
+                    .map(item -> BuiltInRegistries.ITEM.getKey(item))
                     .toList();
             chapters.add(new ResearchView.ChapterView(id, chapter.icon(), node(research, id), knowledge.hasCompleted(id), lines, unlocks));
         }
