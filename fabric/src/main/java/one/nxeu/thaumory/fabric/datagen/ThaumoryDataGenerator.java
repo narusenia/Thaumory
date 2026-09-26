@@ -19,6 +19,7 @@ public final class ThaumoryDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ScanSettingsProvider::new);
         pack.addProvider(CrucibleSettingsProvider::new);
         pack.addProvider(JarSettingsProvider::new);
+        pack.addProvider(PouchSettingsProvider::new);
         pack.addProvider(PipeSettingsProvider::new);
         pack.addProvider(RuneSettingsProvider::new);
         pack.addProvider(CircleSettingsProvider::new);

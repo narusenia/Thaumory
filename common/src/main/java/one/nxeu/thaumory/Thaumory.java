@@ -51,6 +51,9 @@ import one.nxeu.thaumory.scan.ItemScanner;
 import one.nxeu.thaumory.scan.ScanSettings;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
 import one.nxeu.thaumory.sound.ThaumorySounds;
+import one.nxeu.thaumory.pouch.PouchRuntime;
+import one.nxeu.thaumory.pouch.PouchSettings;
+import one.nxeu.thaumory.pouch.ThaumoryMenus;
 import one.nxeu.thaumory.wand.FocusSelection;
 import one.nxeu.thaumory.wand.WandFoci;
 import one.nxeu.thaumory.wand.WandParts;
@@ -84,6 +87,7 @@ public final class Thaumory {
         ThaumoryParticles.register();
         ThaumorySounds.register();
         ThaumoryRecipes.register();
+        ThaumoryMenus.register();
 
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemAspectReloadListener(), id("item_aspects"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
@@ -94,6 +98,8 @@ public final class Thaumory {
                 id("thaumory/crucible.json"), CrucibleSettings.CODEC, CrucibleSettings.DEFAULT, CrucibleBlockEntity::updateSettings), id("crucible"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/jar.json"), JarSettings.CODEC, JarSettings.DEFAULT, JarBlockEntity::updateSettings), id("jar"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
+                id("thaumory/pouch.json"), PouchSettings.CODEC, PouchSettings.DEFAULT, PouchRuntime::updateSettings), id("pouch"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
                 id("thaumory/rune.json"), RuneSettings.CODEC, RuneSettings.DEFAULT, RuneItem::updateSettings), id("rune"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new SettingsFileReloadListener<>(
@@ -116,6 +122,7 @@ public final class Thaumory {
         WandPartSync.register();
         InfusionRuntime.register();
         FocusSelection.register();
+        PouchRuntime.register();
         knowledge.registerEvents();
         ResearchProgress research = new ResearchProgress();
         research.register(knowledge);

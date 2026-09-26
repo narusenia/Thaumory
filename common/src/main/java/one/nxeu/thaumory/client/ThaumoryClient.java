@@ -63,6 +63,8 @@ import one.nxeu.thaumory.network.ResearchViewPayload;
 import one.nxeu.thaumory.network.UseInfusionPayload;
 import one.nxeu.thaumory.network.WandPartSyncPayload;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
+import one.nxeu.thaumory.pouch.EssentiaPouchItem;
+import one.nxeu.thaumory.pouch.ThaumoryMenus;
 import one.nxeu.thaumory.wand.WandBuild;
 import one.nxeu.thaumory.wand.WandDisplay;
 import one.nxeu.thaumory.wand.WandFocus;
@@ -82,7 +84,7 @@ public final class ThaumoryClient {
 
     private ThaumoryClient() {}
 
-    public static void init(ParticleProviders particles) {
+    public static void init(ParticleProviders particles, MenuScreenFactories screens) {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, AspectSyncPayload.TYPE, AspectSyncPayload.STREAM_CODEC,
                 List.of(new SplitPacketTransformer()), (payload, context) -> context.queue(() -> {
                     ClientItemAspects.replace(payload.items());
@@ -136,6 +138,7 @@ public final class ThaumoryClient {
         BlockEntityRendererRegistry.register(ThaumoryBlocks.PIPE_ENTITY.get(), PipeRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.VOID_REMNANT, VoidRemnantRenderer::new);
         EntityRendererRegistry.register(ThaumoryEntities.FOCUS_FIREBALL, ThrownItemRenderer::new);
+        screens.register(ThaumoryMenus.ESSENTIA_POUCH.get(), PouchScreen::new);
         particles.register(ThaumoryParticles.ASPECT_MOTE.get(), AspectMoteParticle.Provider::new);
         RuneTint.register();
         FilterPipeTint.register();
@@ -146,6 +149,7 @@ public final class ThaumoryClient {
         });
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
             appendJarContents(stack, lines);
+            appendPouchJars(stack, lines);
             appendRuneAspect(stack, lines);
             appendTranscript(stack, lines);
             appendInfusions(stack, lines);
@@ -159,6 +163,30 @@ public final class ThaumoryClient {
         JarContents contents = stack.get(ThaumoryComponents.JAR_CONTENTS.get());
         if (contents != null) {
             lines.addAll(JarText.describe(contents, OptionalInt.empty(), ClientKnowledge.get()));
+        }
+    }
+
+    /** What each jar in an Essentia pouch holds. */
+    private static void appendPouchJars(ItemStack stack, List<Component> lines) {
+        if (!stack.is(ThaumoryItems.ESSENTIA_POUCH.get())) {
+            return;
+        }
+        for (ItemStack jar : EssentiaPouchItem.jars(stack)) {
+            if (jar.isEmpty()) {
+                continue;
+            }
+            AspectList aspects = jar.getOrDefault(ThaumoryComponents.JAR_CONTENTS.get(), JarContents.EMPTY).aspects();
+            MutableComponent line = Component.literal("- ").withColor(0xAAAAAA);
+            if (aspects.isEmpty()) {
+                line.append(Component.translatable("tooltip.thaumory.pouch.empty_jar"));
+            }
+            boolean first = true;
+            for (AspectStack each : aspects.sortedByAmount()) {
+                line.append(first ? Component.empty() : Component.literal(" · "))
+                        .append(AspectText.stack(each, ClientKnowledge.get().knowsAspect(each.aspect().id())));
+                first = false;
+            }
+            lines.add(line);
         }
     }
 

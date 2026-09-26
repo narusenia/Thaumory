@@ -6,6 +6,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.util.ExtraCodecs;
 import one.nxeu.thaumory.Thaumory;
 import one.nxeu.thaumory.api.ThaumoryApi;
@@ -85,6 +86,13 @@ public final class ThaumoryComponents {
             () -> DataComponentType.<Identifier>builder()
                     .persistent(Identifier.CODEC)
                     .networkSynchronized(Identifier.STREAM_CODEC)
+                    .build());
+
+    /** The jars in an Essentia pouch (requirements §17.6), one per slot. */
+    public static final RegistrySupplier<DataComponentType<ItemContainerContents>> POUCH_CONTENTS = COMPONENTS.register("pouch_contents",
+            () -> DataComponentType.<ItemContainerContents>builder()
+                    .persistent(ItemContainerContents.CODEC)
+                    .networkSynchronized(ItemContainerContents.STREAM_CODEC)
                     .build());
 
     private ThaumoryComponents() {}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "thaumory:arcane_iron_ingot",
+    "L": "minecraft:leather",
+    "S": "minecraft:string"
+  },
+  "pattern": [
+    "LSL",
+    "LIL",
+    " L "
+  ],
+  "result": {
+    "id": "thaumory:essentia_pouch"
+  }
+}

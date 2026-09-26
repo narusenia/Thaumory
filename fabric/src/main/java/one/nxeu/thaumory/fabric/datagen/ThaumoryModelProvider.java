@@ -319,6 +319,7 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.AETHER_SILVER_WAND_CAP.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.CRYSTAL_WAND_CORE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.BLANK_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.ESSENTIA_POUCH.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.LIGHT_FOCUS.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.FIRE_FOCUS.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.FROST_FOCUS.get(), ModelTemplates.FLAT_ITEM);

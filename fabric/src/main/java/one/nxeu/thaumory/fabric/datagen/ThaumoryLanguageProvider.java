@@ -102,6 +102,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.AETHER_SILVER_WAND_CAP.get(), "Aether Silver Wand Caps");
             builder.add(ThaumoryItems.CRYSTAL_WAND_CORE.get(), "Crystal Wand Core");
             builder.add(ThaumoryItems.BLANK_FOCUS.get(), "Blank Focus");
+            builder.add(ThaumoryItems.ESSENTIA_POUCH.get(), "Essentia Pouch");
+            builder.add("tooltip.thaumory.pouch.empty_jar", "Empty jar");
             builder.add(ThaumoryItems.LIGHT_FOCUS.get(), "Focus of Light");
             builder.add(ThaumoryItems.FIRE_FOCUS.get(), "Focus of Fire");
             builder.add(ThaumoryItems.FROST_FOCUS.get(), "Focus of Frost");
@@ -436,6 +438,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.AETHER_SILVER_WAND_CAP.get(), "天銀の金具");
             builder.add(ThaumoryItems.CRYSTAL_WAND_CORE.get(), "結晶の芯");
             builder.add(ThaumoryItems.BLANK_FOCUS.get(), "空の焦点");
+            builder.add(ThaumoryItems.ESSENTIA_POUCH.get(), "Essentia の腕袋");
+            builder.add("tooltip.thaumory.pouch.empty_jar", "空の瓶");
             builder.add(ThaumoryItems.LIGHT_FOCUS.get(), "光の焦点");
             builder.add(ThaumoryItems.FIRE_FOCUS.get(), "火の焦点");
             builder.add(ThaumoryItems.FROST_FOCUS.get(), "凍気の焦点");

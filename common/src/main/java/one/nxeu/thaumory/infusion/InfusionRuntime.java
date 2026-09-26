@@ -119,6 +119,25 @@ public final class InfusionRuntime {
         }
     }
 
+    /**
+     * The items that keep Essentia for an active effect and work for the player: what they have
+     * equipped, then their amulets, each item once.
+     */
+    public static List<ItemStack> storingItems(ServerPlayer player) {
+        List<ItemStack> found = new ArrayList<>();
+        for (EquipmentSlot slot : EQUIPPED) {
+            found.add(player.getItemBySlot(slot));
+        }
+        found.addAll(amulets(player));
+        List<ItemStack> storing = new ArrayList<>();
+        for (ItemStack stack : found) {
+            if (!equipped(stack).storedAspects().isEmpty() && storing.stream().noneMatch(seen -> seen == stack)) {
+                storing.add(stack);
+            }
+        }
+        return storing;
+    }
+
     /** The amulets in the player's inventory, in slot order. */
     private static List<ItemStack> amulets(ServerPlayer player) {
         List<ItemStack> amulets = new ArrayList<>();

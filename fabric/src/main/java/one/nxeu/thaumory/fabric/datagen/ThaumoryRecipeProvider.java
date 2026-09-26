@@ -87,6 +87,16 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                 // Ordo and Chaos, what the focus pays with, would cancel out in the Crucible.
                 alchemy("exchange_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.EXCHANGE_FOCUS.get(),
                         new AspectStack(ARTIFICIUM, 8), new AspectStack(ORDO, 4));
+                // A leather pouch on a string, stiffened with Arcane Iron (requirements §17.6).
+                shaped(RecipeCategory.TOOLS, ThaumoryItems.ESSENTIA_POUCH.get())
+                        .pattern("LSL")
+                        .pattern("LIL")
+                        .pattern(" L ")
+                        .define('L', Items.LEATHER)
+                        .define('S', Items.STRING)
+                        .define('I', ThaumoryItems.ARCANE_IRON.ingot().get())
+                        .unlockedBy(getHasName(ThaumoryItems.ARCANE_IRON.ingot().get()), has(ThaumoryItems.ARCANE_IRON.ingot().get()))
+                        .save(output);
                 // A crystal shard held in a ring of gold (requirements §17.7).
                 shaped(RecipeCategory.TOOLS, ThaumoryItems.BLANK_FOCUS.get())
                         .pattern(" N ")
