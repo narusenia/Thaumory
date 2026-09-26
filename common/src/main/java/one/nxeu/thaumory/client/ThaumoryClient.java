@@ -84,7 +84,7 @@ public final class ThaumoryClient {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CapacitySyncPayload.TYPE, CapacitySyncPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> ClientCapacities.replace(payload.items(), payload.itemEssentia())));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, WandPartSyncPayload.TYPE, WandPartSyncPayload.STREAM_CODEC,
-                (payload, context) -> context.queue(() -> ClientWandParts.replace(payload.parts())));
+                (payload, context) -> context.queue(() -> ClientWandParts.replace(payload.parts(), payload.foci())));
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, KnowledgeSyncPayload.TYPE, KnowledgeSyncPayload.STREAM_CODEC,
                 (payload, context) -> context.queue(() -> {
                     ClientKnowledge.replace(payload.knowledge());
@@ -179,6 +179,40 @@ public final class ThaumoryClient {
                 String.format(Locale.ROOT, "%.2f", c.power()),
                 Component.translatableWithFallback("tooltip.thaumory.wand.tier." + c.incorrectFor().toLanguageKey(), c.incorrectFor().toString()))));
         lines.add(core.withColor(0xAAAAAA));
+        appendWandFocus(stack, WandParts.cap(parts, build.cap()).map(WandPart.Cap::essentia).orElse(0), lines);
+    }
+
+    /**
+     * The wand's focus, then its Essentia against what the caps hold: the aspects the focus uses first,
+     * then any others left from an earlier focus.
+     */
+    private static void appendWandFocus(ItemStack stack, int capacity, List<Component> lines) {
+        Identifier focusItem = stack.get(ThaumoryComponents.WAND_FOCUS.get());
+        if (focusItem != null) {
+            lines.add(Component.translatable("tooltip.thaumory.wand.focus", partName(focusItem)).withColor(0xAAAAAA));
+        }
+        AspectList stored = stack.getOrDefault(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.empty());
+        List<Identifier> used = focusItem == null ? List.of()
+                : Optional.ofNullable(ClientWandParts.foci().get(focusItem)).map(focus -> focus.aspects().stream().sorted().toList()).orElse(List.of());
+        List<Identifier> shown = Stream.concat(used.stream(), stored.stacks().stream().map(s -> s.aspect().id()).filter(id -> !used.contains(id)).sorted())
+                .toList();
+        if (shown.isEmpty()) {
+            return;
+        }
+        PlayerKnowledge knowledge = ClientKnowledge.get();
+        MutableComponent line = Component.translatable("tooltip.thaumory.stored_essentia").withColor(0xAAAAAA);
+        boolean first = true;
+        for (Identifier id : shown) {
+            Optional<Aspect> aspect = ThaumoryApi.aspects().get(id);
+            if (aspect.isEmpty()) {
+                continue;
+            }
+            line.append(Component.literal(first ? " " : " · "))
+                    .append(AspectText.name(aspect.get(), knowledge.knowsAspect(id)))
+                    .append(Component.literal(" " + stored.amount(aspect.get()) + "/" + capacity).withColor(0xAAAAAA));
+            first = false;
+        }
+        lines.add(line);
     }
 
     private static Component partName(Identifier item) {

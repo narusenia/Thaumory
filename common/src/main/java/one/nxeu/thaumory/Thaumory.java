@@ -51,7 +51,9 @@ import one.nxeu.thaumory.scan.ItemScanner;
 import one.nxeu.thaumory.scan.ScanSettings;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
 import one.nxeu.thaumory.sound.ThaumorySounds;
+import one.nxeu.thaumory.wand.WandFoci;
 import one.nxeu.thaumory.wand.WandParts;
+import one.nxeu.thaumory.wand.spell.ThaumoryFocusSpells;
 import one.nxeu.thaumory.world.ThaumoryFeatures;
 
 public final class Thaumory {
@@ -68,6 +70,7 @@ public final class Thaumory {
         ThaumoryRecipes.registerAdapters(ThaumoryApi.recipeAdapters());
         ThaumoryCircleEffects.register(ThaumoryApi.circleEffects());
         ThaumoryInfusionEffects.register(ThaumoryApi.infusionEffects());
+        ThaumoryFocusSpells.register(ThaumoryApi.focusSpells());
         flux = new FluxManager(platform.fluxStorage());
         essentia = platform.essentiaLookup();
         ThaumoryApi.provideFlux(flux);
@@ -99,6 +102,7 @@ public final class Thaumory {
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new CircleDefinitionReloadListener(), id("circle_definitions"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, InfusionCapacities.reloadListener(), id("infusion_capacity"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, WandParts.reloadListener(), id("wand_parts"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, WandFoci.reloadListener(), id("wand_foci"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new PollutionRules(), id("pollution"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.chapterListener(), id("research_chapters"));
         ReloadListenerRegistry.register(PackType.SERVER_DATA, ResearchData.hintListener(), id("research_hints"));

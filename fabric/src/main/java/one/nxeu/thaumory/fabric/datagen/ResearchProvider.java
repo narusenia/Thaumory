@@ -64,6 +64,7 @@ final class ResearchProvider {
     static final Identifier ARCANE_METALS = Thaumory.id("arcane_metals");
     static final Identifier AETHER_SILVER = Thaumory.id("aether_silver");
     static final Identifier MONOCLE = Thaumory.id("monocle");
+    static final Identifier WAND_FOCI = Thaumory.id("wand_foci");
 
     static final Identifier BASICS = Chapter.BASICS;
     static final Identifier ALCHEMY = Thaumory.id("alchemy");
@@ -103,6 +104,8 @@ final class ResearchProvider {
                     List.of(alchemy("aether_silver_ingot"))));
             output.accept(MONOCLE, chapter(ThaumoryItems.MONOCLE.get(), BASICS, 2, 1, List.of(ASPECTS, CRUCIBLE),
                     List.of(ResearchCondition.Aspects.all(List.of(LUX.id(), ARCANUM.id()))), List.of(alchemy("monocle"))));
+            output.accept(WAND_FOCI, chapter(ThaumoryItems.LIGHT_FOCUS.get(), METALS, 1, 1, List.of(ARCANE_METALS),
+                    List.of(ResearchCondition.Scanned.item(key(Items.GLOWSTONE_DUST))), List.of(alchemy("light_focus"))));
         }
 
         private static Chapter chapter(ItemLike icon, Identifier category, int x, int y, List<Identifier> requires,

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "thaumory:arcane_crystal_shard",
+    "N": "minecraft:gold_nugget"
+  },
+  "pattern": [
+    " N ",
+    "NCN",
+    " N "
+  ],
+  "result": {
+    "id": "thaumory:blank_focus"
+  }
+}

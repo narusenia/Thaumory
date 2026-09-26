@@ -1,0 +1,10 @@
+{
+  "type": "thaumory:alchemy",
+  "aspects": {
+    "thaumory:lux": 12
+  },
+  "catalyst": "thaumory:blank_focus",
+  "result": {
+    "id": "thaumory:light_focus"
+  }
+}

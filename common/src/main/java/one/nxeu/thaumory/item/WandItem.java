@@ -9,9 +9,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import one.nxeu.thaumory.api.text.TextEffect;
@@ -19,11 +21,13 @@ import one.nxeu.thaumory.block.core.CircleCoreBlockEntity;
 import one.nxeu.thaumory.infusion.InfusionText;
 import one.nxeu.thaumory.sound.ThaumorySounds;
 import one.nxeu.thaumory.text.ThaumoryText;
+import one.nxeu.thaumory.wand.WandCasting;
 
 /**
  * The working tool for magic circles. Right-clicking a Core starts or stops a sustained circle, or
  * sets off a triggered one once, and says how it went on the action bar. With an item on the
  * Core's pedestal, it infuses that item instead. A sneaking right click takes the pedestal out.
+ * Anywhere else, a wand with a focus casts the focus's spell (requirements §17.7).
  */
 public final class WandItem extends Item {
     public WandItem(Properties properties) {
@@ -64,6 +68,26 @@ public final class WandItem extends Item {
             level.playSound(null, context.getClickedPos(), outcome.sound.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        ItemStack wand = player.getItemInHand(hand);
+        if (WandCasting.focusItem(wand).isEmpty()) {
+            return InteractionResult.PASS;
+        }
+        if (!(level instanceof ServerLevel server)) {
+            return InteractionResult.SUCCESS;
+        }
+        return switch (WandCasting.cast(server, player, wand)) {
+            case CAST -> InteractionResult.SUCCESS;
+            case NO_ESSENTIA -> {
+                player.sendOverlayMessage(Component.translatable("message.thaumory.focus.no_essentia"));
+                level.playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.5f, 1.4f);
+                yield InteractionResult.FAIL;
+            }
+            case NO_FOCUS, NOTHING -> InteractionResult.FAIL;
+        };
     }
 
     private enum Outcome {

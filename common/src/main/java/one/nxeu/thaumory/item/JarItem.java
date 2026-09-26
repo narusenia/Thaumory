@@ -30,6 +30,7 @@ import one.nxeu.thaumory.jar.EssentiaTransfer;
 import one.nxeu.thaumory.jar.JarContents;
 import one.nxeu.thaumory.rune.RuneInfusion;
 import one.nxeu.thaumory.sound.ThaumorySounds;
+import one.nxeu.thaumory.wand.WandCasting;
 
 /**
  * A jar in hand. Right-clicking a Crucible, a placed jar or a circle's Core draws Essentia into it; sneaking pours
@@ -77,10 +78,15 @@ public final class JarItem extends BlockItem {
                 && player.getOffhandItem().is(ThaumoryItems.BLANK_RUNE.get());
     }
 
-    /** Pouring into an off-hand item whose active infusion stores Essentia (requirements §10.2). */
+    /**
+     * Pouring into an off-hand item whose active infusion stores Essentia (requirements §10.2), or into
+     * an off-hand wand with a focus (§17.7).
+     */
     private static boolean pouringIntoItem(Player player, InteractionHand hand) {
+        ItemStack item = player.getOffhandItem();
         return hand == InteractionHand.MAIN_HAND && player.isSecondaryUseActive()
-                && !player.getOffhandItem().getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).storedAspects().isEmpty();
+                && (!item.getOrDefault(ThaumoryComponents.INFUSIONS.get(), Infusions.EMPTY).storedAspects().isEmpty()
+                || WandCasting.focusItem(item).isPresent());
     }
 
     /** Pours what the off-hand item stores out of the jar, as much as fits; the rest stays in the jar. */
@@ -90,15 +96,23 @@ public final class JarItem extends BlockItem {
         }
         ItemStack item = player.getOffhandItem();
         JarContents held = jar.getOrDefault(ThaumoryComponents.JAR_CONTENTS.get(), JarContents.EMPTY);
-        ItemEssentia.Fill fill = ItemEssentia.fill(item.getOrDefault(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.empty()),
-                held.aspects(), item.get(ThaumoryComponents.INFUSIONS.get()).storedAspects(),
-                CircleCoreBlockEntity.settings().infusion().itemEssentia());
-        if (fill.taken().isEmpty()) {
+        AspectList taken;
+        if (item.is(ThaumoryItems.WAND.get())) {
+            taken = WandCasting.fill(item, held.aspects());
+        } else {
+            ItemEssentia.Fill fill = ItemEssentia.fill(item.getOrDefault(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.empty()),
+                    held.aspects(), item.get(ThaumoryComponents.INFUSIONS.get()).storedAspects(),
+                    CircleCoreBlockEntity.settings().infusion().itemEssentia());
+            taken = fill.taken();
+            if (!taken.isEmpty()) {
+                InfusionRuntime.setStored(item, fill.stored());
+            }
+        }
+        if (taken.isEmpty()) {
             player.sendOverlayMessage(Component.translatable("message.thaumory.infusion_use.nothing_to_pour"));
             return InteractionResult.FAIL;
         }
-        InfusionRuntime.setStored(item, fill.stored());
-        JarContents updated = held.withAspects(held.aspects().minus(fill.taken()));
+        JarContents updated = held.withAspects(held.aspects().minus(taken));
         if (updated.isEmpty()) {
             jar.remove(ThaumoryComponents.JAR_CONTENTS.get());
         } else {

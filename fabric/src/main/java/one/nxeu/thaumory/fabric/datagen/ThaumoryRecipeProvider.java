@@ -73,6 +73,16 @@ final class ThaumoryRecipeProvider extends FabricRecipeProvider {
                         new AspectStack(AER, 16), new AspectStack(LUX, 16));
                 alchemy("monocle", ThaumoryItems.ARCANE_LOUPE.get(), ThaumoryItems.MONOCLE.get(), new AspectStack(LUX, 12), new AspectStack(ARCANUM, 8));
                 alchemy("crystal_wand_core", Items.STICK, ThaumoryItems.CRYSTAL_WAND_CORE.get(), new AspectStack(ARCANUM, 8), new AspectStack(LUX, 4));
+                alchemy("light_focus", ThaumoryItems.BLANK_FOCUS.get(), ThaumoryItems.LIGHT_FOCUS.get(), new AspectStack(LUX, 12));
+                // A crystal shard held in a ring of gold (requirements §17.7).
+                shaped(RecipeCategory.TOOLS, ThaumoryItems.BLANK_FOCUS.get())
+                        .pattern(" N ")
+                        .pattern("NCN")
+                        .pattern(" N ")
+                        .define('N', Items.GOLD_NUGGET)
+                        .define('C', ThaumoryItems.ARCANE_CRYSTAL_SHARD.get())
+                        .unlockedBy(getHasName(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get()), has(ThaumoryItems.ARCANE_CRYSTAL_SHARD.get()))
+                        .save(output);
                 // A gold chain with an Arcane Iron charm hanging from it.
                 shaped(RecipeCategory.TOOLS, ThaumoryItems.AMULET.get())
                         .pattern("N N")

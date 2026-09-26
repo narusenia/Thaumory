@@ -101,6 +101,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.ARCANE_IRON_WAND_CAP.get(), "Arcane Iron Wand Caps");
             builder.add(ThaumoryItems.AETHER_SILVER_WAND_CAP.get(), "Aether Silver Wand Caps");
             builder.add(ThaumoryItems.CRYSTAL_WAND_CORE.get(), "Crystal Wand Core");
+            builder.add(ThaumoryItems.BLANK_FOCUS.get(), "Blank Focus");
+            builder.add(ThaumoryItems.LIGHT_FOCUS.get(), "Focus of Light");
+            builder.add("tooltip.thaumory.wand.focus", "Focus: %s");
+            builder.add("message.thaumory.focus.no_essentia", "The wand holds too little Essentia for its focus");
             builder.add("tooltip.thaumory.wand.cap", "Caps: %s");
             builder.add("tooltip.thaumory.wand.cap_stats", " (holds %s)");
             builder.add("tooltip.thaumory.wand.core", "Core: %s");
@@ -267,6 +271,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.aether_silver.text", "Steep Arcane Iron again, deep in Aer and Lux, and it pales into Aether Silver. It holds more of a circle's effect than Arcane Iron can.");
             builder.add("chapter.thaumory.monocle", "Monocle of Revealing");
             builder.add("chapter.thaumory.monocle.text", "Steep a loupe deep in Lux and Arcanum, and it will stay at your eye. Worn on the head, it shows the Flux and what vessels, pipes and circles hold, without a hand to hold it. To name other things or to scan, you still need the loupe itself.");
+            builder.add("chapter.thaumory.wand_foci", "Wand Foci");
+            builder.add("chapter.thaumory.wand_foci.text", "Set a crystal shard in a ring of gold nuggets and you have a blank focus. Steeped in an aspect, it learns a spell; put it on a wand and a right click into the air casts it, paid from the Essentia the wand holds. Hold the focus key to choose among the foci you carry. The wand takes in only what its focus uses, as much as its caps hold: pour a jar into it from the other hand, or stand in a charging circle. Steeped in Lux, a focus sets a light that never goes out where you look; sneak to take one away.");
             builder.add("hint.thaumory.teleport", "Arcanum, bound with Aer, bends space.");
             builder.add("hint.thaumory.light", "Where Lux lies over Ignis, darkness gives way.");
             builder.add("hint.thaumory.purification", "Ordo and Lux clear what has stagnated.");
@@ -413,6 +419,10 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.ARCANE_IRON_WAND_CAP.get(), "魔鉄の金具");
             builder.add(ThaumoryItems.AETHER_SILVER_WAND_CAP.get(), "天銀の金具");
             builder.add(ThaumoryItems.CRYSTAL_WAND_CORE.get(), "結晶の芯");
+            builder.add(ThaumoryItems.BLANK_FOCUS.get(), "空の焦点");
+            builder.add(ThaumoryItems.LIGHT_FOCUS.get(), "光の焦点");
+            builder.add("tooltip.thaumory.wand.focus", "焦点: %s");
+            builder.add("message.thaumory.focus.no_essentia", "焦点に使う Essentia が杖に足りない");
             builder.add("tooltip.thaumory.wand.cap", "金具: %s");
             builder.add("tooltip.thaumory.wand.cap_stats", "（内蔵 %s）");
             builder.add("tooltip.thaumory.wand.core", "芯: %s");
@@ -579,6 +589,8 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add("chapter.thaumory.aether_silver.text", "魔鉄をさらに Aer と Lux にたっぷりと浸せば、色が抜けて天銀となる。魔鉄より多くの陣の効果を抱える。");
             builder.add("chapter.thaumory.monocle", "暴きのモノクル");
             builder.add("chapter.thaumory.monocle.text", "ルーペを Lux と Arcanum にたっぷりと浸せば、目に据わって離れなくなる。頭に着ければ、手に持たずとも Flux と、器・管・陣の中身が見える。ほかのものの名を知るにも、スキャンするにも、ルーペそのものが要る。");
+            builder.add("chapter.thaumory.wand_foci", "杖の焦点");
+            builder.add("chapter.thaumory.wand_foci.text", "結晶のかけらを金塊の輪にはめれば、空の焦点になる。アスペクトに浸すと呪文を覚え、杖に付けて空へ右クリックすれば、杖に蓄えた Essentia を払って撃てる。焦点のキーを押している間、持ち物の焦点から選べる。杖が受け入れるのは焦点が使うものだけで、量は金具しだい。もう片方の手の瓶から注ぐか、充填の陣の中に立てばよい。Lux に浸した焦点は、見つめた場所に消えない光を置く。しゃがめば消せる。");
             builder.add("hint.thaumory.teleport", "Arcanum は、Aer と結びつくとき、空間を歪める。");
             builder.add("hint.thaumory.light", "Lux が Ignis に重なるとき、闇は退く。");
             builder.add("hint.thaumory.purification", "Ordo と Lux は、淀みを澄ませる。");

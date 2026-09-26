@@ -80,6 +80,13 @@ public final class ThaumoryComponents {
                     .networkSynchronized(WandBuild.STREAM_CODEC)
                     .build());
 
+    /** The item of the focus on a wand (requirements §17.7). */
+    public static final RegistrySupplier<DataComponentType<Identifier>> WAND_FOCUS = COMPONENTS.register("wand_focus",
+            () -> DataComponentType.<Identifier>builder()
+                    .persistent(Identifier.CODEC)
+                    .networkSynchronized(Identifier.STREAM_CODEC)
+                    .build());
+
     private ThaumoryComponents() {}
 
     public static void register() {

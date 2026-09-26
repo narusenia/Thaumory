@@ -1,0 +1,18 @@
+{
+  "category": "thaumory:metals",
+  "conditions": [
+    {
+      "type": "thaumory:scanned",
+      "item": "minecraft:glowstone_dust"
+    }
+  ],
+  "icon": "thaumory:light_focus",
+  "requires": [
+    "thaumory:arcane_metals"
+  ],
+  "unlocks": [
+    "thaumory:alchemy/light_focus"
+  ],
+  "x": 1,
+  "y": 1
+}

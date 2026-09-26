@@ -318,6 +318,8 @@ final class ThaumoryModelProvider extends FabricModelProvider {
         generators.generateFlatItem(ThaumoryItems.ARCANE_IRON_WAND_CAP.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.AETHER_SILVER_WAND_CAP.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.CRYSTAL_WAND_CORE.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.BLANK_FOCUS.get(), ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(ThaumoryItems.LIGHT_FOCUS.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.CIRCLE_STONE.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.SCROLL.get(), ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(ThaumoryItems.AMULET.get(), ModelTemplates.FLAT_ITEM);

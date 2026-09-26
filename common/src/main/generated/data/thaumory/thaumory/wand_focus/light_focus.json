@@ -1,0 +1,11 @@
+{
+  "cooldown": 10,
+  "cost": {
+    "thaumory:lux": 1
+  },
+  "effect": "thaumory:light",
+  "item": "thaumory:light_focus",
+  "settings": {
+    "range": 32.0
+  }
+}

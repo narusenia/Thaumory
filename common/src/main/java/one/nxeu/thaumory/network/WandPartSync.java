@@ -7,9 +7,10 @@ import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import java.util.List;
 import net.minecraft.server.MinecraftServer;
+import one.nxeu.thaumory.wand.WandFoci;
 import one.nxeu.thaumory.wand.WandParts;
 
-/** Sends the wand parts to players when they join and after each datapack reload, for wand tooltips. */
+/** Sends the wand parts and foci to players when they join and after each datapack reload, for wand tooltips. */
 public final class WandPartSync {
     private static volatile MinecraftServer server;
 
@@ -31,6 +32,6 @@ public final class WandPartSync {
     }
 
     private static WandPartSyncPayload payload() {
-        return new WandPartSyncPayload(List.copyOf(WandParts.snapshot().values()));
+        return new WandPartSyncPayload(List.copyOf(WandParts.snapshot().values()), List.copyOf(WandFoci.snapshot().values()));
     }
 }
