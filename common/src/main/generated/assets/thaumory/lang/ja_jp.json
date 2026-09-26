@@ -214,6 +214,7 @@
   "hud.thaumory.stone.no_essentia": "Essentia が足りない",
   "hud.thaumory.stone.powered": "休止中（レッドストーン信号）",
   "hud.thaumory.stone.undefined": "この陣石は働かない",
+  "hud.thaumory.wand.capacity": "容量 %s",
   "infusion.thaumory.entry": "%s %s",
   "item.thaumory.aether_silver_axe": "天銀の斧",
   "item.thaumory.aether_silver_boots": "天銀のブーツ",

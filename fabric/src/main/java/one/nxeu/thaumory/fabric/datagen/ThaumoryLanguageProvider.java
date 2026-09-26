@@ -104,6 +104,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.BLANK_FOCUS.get(), "Blank Focus");
             builder.add(ThaumoryItems.LIGHT_FOCUS.get(), "Focus of Light");
             builder.add("tooltip.thaumory.wand.focus", "Focus: %s");
+            builder.add("hud.thaumory.wand.capacity", "Holds %s of each");
             builder.add("message.thaumory.focus.no_essentia", "The wand holds too little Essentia for its focus");
             builder.add("tooltip.thaumory.wand.cap", "Caps: %s");
             builder.add("tooltip.thaumory.wand.cap_stats", " (holds %s)");
@@ -422,6 +423,7 @@ abstract sealed class ThaumoryLanguageProvider extends FabricLanguageProvider {
             builder.add(ThaumoryItems.BLANK_FOCUS.get(), "空の焦点");
             builder.add(ThaumoryItems.LIGHT_FOCUS.get(), "光の焦点");
             builder.add("tooltip.thaumory.wand.focus", "焦点: %s");
+            builder.add("hud.thaumory.wand.capacity", "容量 %s");
             builder.add("message.thaumory.focus.no_essentia", "焦点に使う Essentia が杖に足りない");
             builder.add("tooltip.thaumory.wand.cap", "金具: %s");
             builder.add("tooltip.thaumory.wand.cap_stats", "（内蔵 %s）");

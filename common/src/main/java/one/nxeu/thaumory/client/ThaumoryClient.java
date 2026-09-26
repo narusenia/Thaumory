@@ -12,6 +12,7 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -62,6 +63,8 @@ import one.nxeu.thaumory.network.UseInfusionPayload;
 import one.nxeu.thaumory.network.WandPartSyncPayload;
 import one.nxeu.thaumory.particle.ThaumoryParticles;
 import one.nxeu.thaumory.wand.WandBuild;
+import one.nxeu.thaumory.wand.WandDisplay;
+import one.nxeu.thaumory.wand.WandFocus;
 import one.nxeu.thaumory.wand.WandPart;
 import one.nxeu.thaumory.wand.WandParts;
 import org.slf4j.Logger;
@@ -115,6 +118,7 @@ public final class ThaumoryClient {
             }
         });
         ClientGuiEvent.RENDER_HUD.register(LoupeHud::render);
+        ClientGuiEvent.RENDER_HUD.register(WandHud::render);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.JAR_ENTITY.get(), JarRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_CORE_ENTITY.get(), CircleCoreRenderer::new);
         BlockEntityRendererRegistry.register(ThaumoryBlocks.CIRCLE_STONE_ENTITY.get(), CircleStoneRenderer::new);
@@ -182,20 +186,18 @@ public final class ThaumoryClient {
         appendWandFocus(stack, WandParts.cap(parts, build.cap()).map(WandPart.Cap::essentia).orElse(0), lines);
     }
 
-    /**
-     * The wand's focus, then its Essentia against what the caps hold: the aspects the focus uses first,
-     * then any others left from an earlier focus.
-     */
+    /** The wand's focus, then its Essentia against what the caps hold, in {@link WandDisplay}'s order. */
     private static void appendWandFocus(ItemStack stack, int capacity, List<Component> lines) {
         Identifier focusItem = stack.get(ThaumoryComponents.WAND_FOCUS.get());
         if (focusItem != null) {
             lines.add(Component.translatable("tooltip.thaumory.wand.focus", partName(focusItem)).withColor(0xAAAAAA));
         }
         AspectList stored = stack.getOrDefault(ThaumoryComponents.STORED_ESSENTIA.get(), AspectList.empty());
-        List<Identifier> used = focusItem == null ? List.of()
-                : Optional.ofNullable(ClientWandParts.foci().get(focusItem)).map(focus -> focus.aspects().stream().sorted().toList()).orElse(List.of());
-        List<Identifier> shown = Stream.concat(used.stream(), stored.stacks().stream().map(s -> s.aspect().id()).filter(id -> !used.contains(id)).sorted())
-                .toList();
+        Map<Identifier, Integer> cost = focusItem == null ? Map.of()
+                : Optional.ofNullable(ClientWandParts.foci().get(focusItem)).map(WandFocus::cost).orElse(Map.of());
+        Map<Identifier, Integer> amounts = new HashMap<>();
+        stored.stacks().forEach(s -> amounts.put(s.aspect().id(), s.amount()));
+        List<Identifier> shown = WandDisplay.bars(cost, amounts).stream().map(WandDisplay.Bar::aspect).toList();
         if (shown.isEmpty()) {
             return;
         }

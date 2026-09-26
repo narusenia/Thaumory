@@ -214,6 +214,7 @@
   "hud.thaumory.stone.no_essentia": "Not enough Essentia",
   "hud.thaumory.stone.powered": "Resting (redstone signal)",
   "hud.thaumory.stone.undefined": "This stone does not work",
+  "hud.thaumory.wand.capacity": "Holds %s of each",
   "infusion.thaumory.entry": "%s %s",
   "item.thaumory.aether_silver_axe": "Aether Silver Axe",
   "item.thaumory.aether_silver_boots": "Aether Silver Boots",
